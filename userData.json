@@ -1,12 +1,11 @@
-﻿{
-  //miles or km driven, except flight is measured in time (hours)
+{
+
   "transportBicycle": 0,
   "transportCar" : 0,
   "transporBus": 0,
   "transportFlight": 0,
   "transportSubway": 0,
 
-  //number of portions
   "dietPlantBased": 0,
   "dietBeef": 0,
   "dietPork": 0,
@@ -32,15 +31,15 @@
   "footwearUsed": false,
 
 
-  "livingSpace": 0, //sq feet 
+  "livingSpace": 0,
   "numbPopleHouseHold": 0,
   "carMPG": 0,
   "shareData": true,
   "ecologicalFootPrint": 0,
 
-  //extra data that we don't store right now, BUT we might need?
+
   "email": "email@email.com",
-  "password": "1234",// is this the correct place to store passwords?
+  "password": "1234",
   "country": "country"
   
 
