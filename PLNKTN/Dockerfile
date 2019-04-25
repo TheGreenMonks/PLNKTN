@@ -1,7 +1,8 @@
-FROM microsoft/dotnet:1.0.0-preview2-sdk
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 
 WORKDIR /app
 
+ADD PLNKTN/*.sln PLNKTN/
 ADD PLNKTN/PLNKTN PLNKTN/PLNKTN
 
 RUN dotnet restore -v minimal PLNKTN/ \
