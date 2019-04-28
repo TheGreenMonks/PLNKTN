@@ -1,0 +1,44 @@
+{
+    "transport": {
+        "Bicycle": 2,
+        "Car": 3,
+        "Bus": 1,
+        "Flight": 1000,
+        "Subway": 20
+    },
+    "diet": {
+        "PlantBased": 0,
+		"Beef": 2,
+		"Pork": 0,
+		"Poultry": 1,
+		"Egg": 1,
+		"Diary": 3,
+		"Seafood": 0
+    },
+    "electronics": {
+        "Small": true,
+		"Medium": false,
+		"Large": false,
+		"Used": false
+    },
+    "clothing": {
+        "Small": false,
+		"Medium": false,
+		"Large": false,
+		"Used": true
+    },
+    "footwear": {
+        "Small": true,
+		"Medium": false,
+		"Large": false,
+		"Used": true
+    },
+    "livingSpace": "400",
+    "numPeopleHousehold": "2",
+    "carMPG": "33.5",
+    "shareData": "true",
+    "ecologicalFootPrint": "4.3",
+    "email": "dextercunningham@hotmail.co.uk",
+    "password": "123456789",
+    "country": "UK"
+}
