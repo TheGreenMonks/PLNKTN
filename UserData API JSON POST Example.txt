@@ -8,30 +8,30 @@
     },
     "diet": {
         "PlantBased": 0,
-		"Beef": 2,
-		"Pork": 0,
-		"Poultry": 1,
-		"Egg": 1,
-		"Diary": 3,
-		"Seafood": 0
+	"Beef": 2,
+	"Pork": 0,
+	"Poultry": 1,
+	"Egg": 1,
+	"Diary": 3,
+	"Seafood": 0
     },
     "electronics": {
         "Small": true,
-		"Medium": false,
-		"Large": false,
-		"Used": false
+	"Medium": false,
+	"Large": false,
+	"Used": false
     },
     "clothing": {
         "Small": false,
-		"Medium": false,
-		"Large": false,
-		"Used": true
+	"Medium": false,
+	"Large": false,
+	"Used": true
     },
     "footwear": {
         "Small": true,
-		"Medium": false,
-		"Large": false,
-		"Used": true
+	"Medium": false,
+	"Large": false,
+	"Used": true
     },
     "livingSpace": "400",
     "numPeopleHousehold": "2",
