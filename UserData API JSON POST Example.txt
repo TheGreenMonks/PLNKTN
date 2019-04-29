@@ -3,7 +3,7 @@
         "Bicycle": 2,
         "Car": 3,
         "Bus": 1,
-        "Flight": 1000,
+        "Flight": 6,
         "Subway": 20
     },
     "diet": {
@@ -31,7 +31,7 @@
         "Small": true,
 	"Medium": false,
 	"Large": false,
-	"Used": true
+	"Used": false
     },
     "livingSpace": "400",
     "numPeopleHousehold": "2",
