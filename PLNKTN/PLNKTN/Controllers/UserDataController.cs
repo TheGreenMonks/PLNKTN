@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PLNKTN.DTOs;
 using PLNKTN.Models;
+using PLNKTN.Repositories;
 
 namespace PLNKTN.Controllers
 {
@@ -21,6 +22,13 @@ namespace PLNKTN.Controllers
     [ApiController]
     public class UserDataController : ControllerBase
     {
+        private readonly IUserRepository _userRepository;
+
+        public UserDataController(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         // GET: api/UserData
         [HttpGet]
         public IEnumerable<string> Get()
@@ -51,39 +59,19 @@ namespace PLNKTN.Controllers
 
         // DELETE: api/UserData/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            //Task<IActionResult>
-            await ExecuteAsync();
+            //User user = new User
+            //{
+            //    Email = "c@c.com",
+            //    First_name = "d",
+            //    Last_name = "c",
+            //    Created_at = "20190430T122330Z",
+            //    Level = "L2"
+            //};
+
+            //_userRepository.Add(user);
             return BadRequest("userdata DELETE is not implemented");
-        }
-
-        public static async Task ExecuteAsync()
-        {
-            var chain = new CredentialProfileStoreChain();
-            AWSCredentials awsCredentials;
-            if (chain.TryGetAWSCredentials("Dexter", out awsCredentials))
-            {
-                var a = awsCredentials.GetCredentials();
-                AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
-                // This client will access the US West 1 region (N Cali).
-                clientConfig.RegionEndpoint = RegionEndpoint.USWest1;
-                AmazonDynamoDBClient client = new AmazonDynamoDBClient(a.AccessKey, a.SecretKey, clientConfig);
-
-                using (var context = new DynamoDBContext(client))
-                {
-                    User user = new User
-                    {
-                        Email = "b@b.com",
-                        First_name = "d",
-                        Last_name = "c",
-                        Created_at = "20190430T122330Z",
-                        Level = "L2"
-                    };
-
-                    await context.SaveAsync(user);
-                }
-            }
         }
     }
 }
