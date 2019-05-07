@@ -8,6 +8,6 @@ namespace PLNKTN.Repositories
 {
     public interface IUserRepository
     {
-        void Add(User user);
+        Task<bool> Add(User user);
     }
 }

@@ -36,10 +36,17 @@ namespace PLNKTN.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]User user)
+        public async Task<IActionResult> Post([FromBody]User user)
         {
-            _userRepository.Add(user);
-            return Ok();
+            if (await _userRepository.Add(user))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
+            
         }
 
         // PUT api/values/5

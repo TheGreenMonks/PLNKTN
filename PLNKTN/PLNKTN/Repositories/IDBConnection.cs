@@ -8,6 +8,6 @@ namespace PLNKTN.Repositories
 {
     public interface IDBConnection
     {
-        DynamoDBContext Context();
+        IDynamoDBContext Context();
     }
 }
