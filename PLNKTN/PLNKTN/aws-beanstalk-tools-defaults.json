@@ -4,7 +4,7 @@
     "profile" : "Dexter",
     "region"  : "us-west-1",
     "application" : "PLNKTN",
-    "environment" : "PLNKTN-dev",
+    "environment" : "Plnktn-env",
     "cname"       : "plnktn-dev",
     "solution-stack" : "64bit Windows Server 2016 v2.0.2 running IIS 10.0",
     "environment-type" : "SingleInstance",
