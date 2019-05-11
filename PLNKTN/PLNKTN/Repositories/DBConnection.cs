@@ -5,6 +5,7 @@ using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,22 +62,32 @@ namespace PLNKTN.Repositories
         {
             ICollection<string> keys = new List<string>();
 
-            using (StreamReader stream = File.OpenText(localCredsUri + localCredsFilename))
+            if (File.Exists(localCredsUri + localCredsFilename))
             {
-                keys.Add(stream.ReadLine());
-                keys.Add(stream.ReadLine());
+                using (StreamReader stream = File.OpenText(localCredsUri + localCredsFilename))
+                {
+                    keys.Add(stream.ReadLine());
+                    keys.Add(stream.ReadLine());
 
-                context = getDBClient(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
-                if (context != null)
-                {
-                    return true;
+                    context = getDBClient(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
+                    if (context != null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
                 }
-                else
-                {
-                    return false;
-                }
-                
             }
+            else
+            {
+                context = null;
+                return false;
+            }
+
+            
         }
 
         private IDynamoDBContext getDBClient(string accessKey, string secretKey)
@@ -92,9 +103,31 @@ namespace PLNKTN.Repositories
                 context = new DynamoDBContext(client);
                 return context;
             }
-            catch
+            catch (AmazonDynamoDBException e)
             {
-                // TODO: Implement explicit exceptions relevant to 'DynamoDBContext'
+                Debug.WriteLine("Could not complete operation");
+                Debug.WriteLine("Error Message:  " + e.Message);
+                Debug.WriteLine("HTTP Status:    " + e.StatusCode);
+                Debug.WriteLine("AWS Error Code: " + e.ErrorCode);
+                Debug.WriteLine("Error Type:     " + e.ErrorType);
+                Debug.WriteLine("Request ID:     " + e.RequestId);
+                return null;
+            }
+            catch (AmazonServiceException e)
+            {
+                Debug.WriteLine("Could not complete operation");
+                Debug.WriteLine("Error Message:  " + e.Message);
+                Debug.WriteLine("HTTP Status:    " + e.StatusCode);
+                Debug.WriteLine("AWS Error Code: " + e.ErrorCode);
+                Debug.WriteLine("Error Type:     " + e.ErrorType);
+                Debug.WriteLine("Request ID:     " + e.RequestId);
+                return null;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Could not complete operation");
+                Debug.WriteLine("Error Message:  " + e.Message);
+                Debug.WriteLine("HTTP Status:    " + e.InnerException);
                 return null;
             }
         }
