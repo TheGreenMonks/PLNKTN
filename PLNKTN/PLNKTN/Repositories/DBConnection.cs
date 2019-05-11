@@ -26,11 +26,11 @@ namespace PLNKTN.Repositories
         {
             IDynamoDBContext context;
 
-            if (tryGetToolkitAWSCredentials(_profileName, out context))
+            if (tryGetLocalDBContext(out context))
             {
                 return context;
             }
-            else if (tryGetLocalAWSCredentials(_localCredsUri, _localCredsFilename, out context))
+            else if (tryGetServerDBContext(out context))
             {
                 return context;
             }
@@ -40,36 +40,27 @@ namespace PLNKTN.Repositories
             }
         }
 
-        private bool tryGetToolkitAWSCredentials(string profileName, out IDynamoDBContext context)
+        private bool tryGetLocalDBContext(out IDynamoDBContext context)
         {
             var profileStore = new CredentialProfileStoreChain();
             AWSCredentials awsCredentials = null;
 
-            if (profileStore.TryGetAWSCredentials(profileName, out awsCredentials))
+            if (profileStore.TryGetAWSCredentials(_profileName, out awsCredentials))
             {
                 var credentials = awsCredentials.GetCredentials();
-                context = getDBClient(credentials.AccessKey, credentials.SecretKey);
+                context = getDBClientOnLocal(credentials.AccessKey, credentials.SecretKey);
                 return true;
             }
-            else
+            else if (File.Exists(_localCredsUri + _localCredsFilename))
             {
-                context = null;
-                return false;
-            }
-        }
+                ICollection<string> keys = new List<string>();
 
-        private bool tryGetLocalAWSCredentials(string localCredsUri, string localCredsFilename, out IDynamoDBContext context)
-        {
-            ICollection<string> keys = new List<string>();
-
-            if (File.Exists(localCredsUri + localCredsFilename))
-            {
-                using (StreamReader stream = File.OpenText(localCredsUri + localCredsFilename))
+                using (StreamReader stream = File.OpenText(_localCredsUri + _localCredsFilename))
                 {
                     keys.Add(stream.ReadLine());
                     keys.Add(stream.ReadLine());
 
-                    context = getDBClient(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
+                    context = getDBClientOnLocal(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
                     if (context != null)
                     {
                         return true;
@@ -78,7 +69,6 @@ namespace PLNKTN.Repositories
                     {
                         return false;
                     }
-
                 }
             }
             else
@@ -86,22 +76,41 @@ namespace PLNKTN.Repositories
                 context = null;
                 return false;
             }
-
-            
         }
 
-        private IDynamoDBContext getDBClient(string accessKey, string secretKey)
+        private IDynamoDBContext getDBClientOnLocal(string accessKey, string secretKey)
         {
-            IDynamoDBContext context;
             AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
             // This client will access the US West 1 region (N Cali).
             clientConfig.RegionEndpoint = RegionEndpoint.USWest1;
             AmazonDynamoDBClient client = new AmazonDynamoDBClient(accessKey, secretKey, clientConfig);
 
+            return getDBContext(client);
+        }
+
+        private bool tryGetServerDBContext(out IDynamoDBContext context)
+        {
+            AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
+            // This client will access the US West 1 region (N Cali).
+            clientConfig.RegionEndpoint = RegionEndpoint.USWest1;
+            AmazonDynamoDBClient client = new AmazonDynamoDBClient(clientConfig);
+
+            context = getDBContext(client);
+            if (context != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private IDynamoDBContext getDBContext(AmazonDynamoDBClient client)
+        {
             try
             {
-                context = new DynamoDBContext(client);
-                return context;
+                return new DynamoDBContext(client);
             }
             catch (AmazonDynamoDBException e)
             {
