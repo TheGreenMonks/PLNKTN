@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTN.DTOs;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
 
@@ -36,8 +37,28 @@ namespace PLNKTN.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]User user)
+        public async Task<IActionResult> Post([FromBody]UserCreateDTO userDto)
         {
+            if (userDto == null)
+            {
+                return BadRequest("User information formatted incorrectly.");
+            }
+
+            var user = new User()
+            {
+                Id = userDto.Id,
+                First_name = userDto.First_name,
+                Last_name = userDto.Last_name,
+                Created_at = userDto.Created_at,
+                Email = userDto.Email,
+                Level = userDto.Level,
+                LivingSpace = userDto.LivingSpace,
+                NumPeopleHousehold = userDto.NumPeopleHousehold,
+                CarMPG = userDto.CarMPG,
+                ShareData = userDto.ShareData,
+                Country = userDto.Country
+            };
+
             if (await _userRepository.Add(user))
             {
                 return Ok();
