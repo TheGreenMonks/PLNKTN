@@ -49,7 +49,7 @@ namespace PLNKTN.Controllers
                 Id = userDto.Id,
                 First_name = userDto.First_name,
                 Last_name = userDto.Last_name,
-                Created_at = userDto.Created_at,
+                Created_at = DateTime.UtcNow,
                 Email = userDto.Email,
                 Level = userDto.Level,
                 LivingSpace = userDto.LivingSpace,
