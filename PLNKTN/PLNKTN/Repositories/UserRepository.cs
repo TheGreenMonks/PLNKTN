@@ -11,20 +11,65 @@ namespace PLNKTN.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IDBConnection _dbConneciton;
+        private readonly IDBConnection _dbConnection;
 
         public UserRepository(IDBConnection dbConnection)
         {
-            _dbConneciton = dbConnection;
+            _dbConnection = dbConnection;
         }
 
         public async Task<bool> Add(User user)
         {
-            using (var context = _dbConneciton.Context())
+            using (var context = _dbConnection.Context())
             {
                 try
                 {
                     await context.SaveAsync(user);
+                    return true;
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return false;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return false;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
+        {
+
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var user = await context.LoadAsync<User>(userId);
+                    user.EcologicalMeasurements.Add(ecologicalMeasurement);
+                    await context.SaveAsync<User>(user);
                     return true;
                 }
                 catch (AmazonServiceException ase)

@@ -21,21 +21,21 @@ namespace PLNKTN.Controllers
             _userRepository = userRepository;
         }
 
-        // GET: api/values
+        // GET: api/users
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "PLNKTN", "Test" };
+            return new string[] { "PLNKTN", "app is up and running" };
         }
 
-        // GET api/values/5
+        // GET api/users/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/values
+        // POST api/users
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]UserCreateDTO userDto)
         {
@@ -70,16 +70,20 @@ namespace PLNKTN.Controllers
             
         }
 
+
+
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int id, [FromBody]string value)
         {
+            return BadRequest("users PUT is not implemented");
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            return BadRequest("users DELETE is not implemented");
         }
     }
 }

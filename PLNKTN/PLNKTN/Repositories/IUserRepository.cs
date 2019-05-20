@@ -9,5 +9,6 @@ namespace PLNKTN.Repositories
     public interface IUserRepository
     {
         Task<bool> Add(User user);
+        Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement);
     }
 }
