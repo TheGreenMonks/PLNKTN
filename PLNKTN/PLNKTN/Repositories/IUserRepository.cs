@@ -10,5 +10,6 @@ namespace PLNKTN.Repositories
     {
         Task<bool> Add(User user);
         Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement);
+        Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken);
     }
 }

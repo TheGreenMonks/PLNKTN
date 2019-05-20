@@ -36,24 +36,24 @@ namespace PLNKTN.Controllers
 
         // POST: api/EcologicalMeasurements
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EcologicalMeasurementDTO ecoMeasureDto)
+        public async Task<IActionResult> Post([FromBody] EcologicalMeasurementDTO dto)
         {
-            if (ecoMeasureDto == null)
+            if (dto == null)
             {
                 return BadRequest("Measurement information formatted incorrectly.");
             }
 
             var ecologicalMeasurement = new EcologicalMeasurement
             {
-                Date_taken = ecoMeasureDto.Date_taken,
-                Transport = ecoMeasureDto.Transport,
-                Diet = ecoMeasureDto.Diet,
-                Electronics = ecoMeasureDto.Electronics,
-                Clothing = ecoMeasureDto.Clothing,
-                Footwear = ecoMeasureDto.Footwear
+                Date_taken = dto.Date_taken,
+                Transport = dto.Transport,
+                Diet = dto.Diet,
+                Electronics = dto.Electronics,
+                Clothing = dto.Clothing,
+                Footwear = dto.Footwear
             };
 
-            if (await _userRepository.AddEcologicalMeasurement(ecoMeasureDto.UserId, ecologicalMeasurement))
+            if (await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement))
             {
                 return Ok();
             }
@@ -70,9 +70,27 @@ namespace PLNKTN.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
         {
+            if (dto == null)
+            {
+                return BadRequest("Measurement information formatted incorrectly.");
+            }
+
+            var elementsDeleted = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
+            if (elementsDeleted > 0)
+            {
+                return Ok(elementsDeleted + " measurement(s) deleted.");
+            }
+            else if (elementsDeleted == 0)
+            {
+                return BadRequest("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
+            }
+            else
+            {
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
     }
 }
