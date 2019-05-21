@@ -18,14 +18,22 @@ namespace PLNKTN.Repositories
             _dbConnection = dbConnection;
         }
 
-        public async Task<bool> Add(User user)
+        public async Task<int> CreateUser(User user)
         {
             using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    await context.SaveAsync(user);
-                    return true;
+                    var userExists = await context.LoadAsync<User>(user.Id);
+                    if (userExists != null)
+                    {
+                        return -10;
+                    }
+                    else
+                    {
+                        await context.SaveAsync(user);
+                        return 1;
+                    }
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -35,27 +43,27 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
                     Debug.WriteLine("Error Type:     " + ase.ErrorType);
                     Debug.WriteLine("Request ID:     " + ase.RequestId);
-                    return false;
+                    return -1;
                 }
                 catch (AmazonClientException ace)
                 {
                     Debug.WriteLine("Internal error occurred communicating with DynamoDB");
                     Debug.WriteLine("Error Message:  " + ace.Message);
-                    return false;
+                    return -1;
                 }
                 catch (NullReferenceException e)
                 {
                     Debug.WriteLine("Context obj for DynamoDB set to null");
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
-                    return false;
+                    return -1;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine("Internal error occurred communicating with DynamoDB");
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
-                    return false;
+                    return -1;
                 }
             }
         }
@@ -152,6 +160,48 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
                     return -1;
+                }
+            }
+        }
+
+        public async Task<User> GetUser(string userId)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var user = await context.LoadAsync<User>(userId);
+                    return user;
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return null;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return null;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
                 }
             }
         }

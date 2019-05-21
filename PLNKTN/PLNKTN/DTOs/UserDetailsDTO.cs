@@ -2,7 +2,7 @@
 
 namespace PLNKTN.DTOs
 {
-    public class UserCreateDTO
+    public class UserDetailsDTO
     {
         public string Id { get; set; }
         public string First_name { get; set; }

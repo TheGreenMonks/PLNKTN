@@ -12,11 +12,11 @@ using PLNKTN.Repositories;
 namespace PLNKTN.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController : Controller
+    public class UsersController : Controller
     {
         private readonly IUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -28,16 +28,30 @@ namespace PLNKTN.Controllers
             return new string[] { "PLNKTN", "app is up and running" };
         }
 
-        // GET api/users/5
+        // GET api/users/test
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id)
         {
-            return "value";
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("User ID information formatted incorrectly.");
+            }
+
+            var user = await _userRepository.GetUser(id);
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            else
+            {
+                return NotFound("User with ID '" + id + "' does not exist.");
+            }
         }
 
         // POST api/users
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]UserCreateDTO userDto)
+        public async Task<IActionResult> Post([FromBody]UserDetailsDTO userDto)
         {
             if (userDto == null)
             {
@@ -59,9 +73,15 @@ namespace PLNKTN.Controllers
                 Country = userDto.Country
             };
 
-            if (await _userRepository.Add(user))
+            var result = await _userRepository.CreateUser(user);
+
+            if (result == 1)
             {
-                return Ok();
+                return CreatedAtAction("Get", new { id = userDto.Id }, userDto);
+            }
+            else if (result == -10)
+            {
+                return Conflict("User with ID '" + userDto.Id + "' already exists.  Cannot create a duplicate.");
             }
             else
             {
@@ -72,16 +92,16 @@ namespace PLNKTN.Controllers
 
 
 
-        // PUT api/values/5
+        // PUT api/users/test
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]string value)
+        public IActionResult Put(string id, [FromBody]string value)
         {
             return BadRequest("users PUT is not implemented");
         }
 
-        // DELETE api/values/5
+        // DELETE api/users/test
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             return BadRequest("users DELETE is not implemented");
         }
