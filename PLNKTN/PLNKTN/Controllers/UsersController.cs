@@ -145,9 +145,27 @@ namespace PLNKTN.Controllers
 
         // DELETE api/users/test
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            return BadRequest("users DELETE is not implemented");
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("User information formatted incorrectly.");
+            }
+
+            var userDeleted = await _userRepository.DeleteUser(id);
+
+            if (userDeleted > 0)
+            {
+                return Ok("user with ID '" + id + "' deleted.");
+            }
+            else if (userDeleted == -9)
+            {
+                return NotFound("No user with ID '" + id + "' available to be deleted.");
+            }
+            else
+            {
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
     }
 }

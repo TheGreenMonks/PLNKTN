@@ -85,7 +85,7 @@ namespace PLNKTN.Controllers
             }
             else if (elementsDeleted == 0)
             {
-                return BadRequest("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
+                return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
             }
             else
             {
