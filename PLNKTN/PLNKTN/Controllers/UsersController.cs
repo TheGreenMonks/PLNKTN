@@ -34,6 +34,7 @@ namespace PLNKTN.Controllers
         {
             if (String.IsNullOrWhiteSpace(id))
             {
+                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User ID information formatted incorrectly.");
             }
 
@@ -41,10 +42,12 @@ namespace PLNKTN.Controllers
 
             if (user != null)
             {
+                // return HTTP 200
                 return Ok(user);
             }
             else
             {
+                // return HTTP 404 as user cannot be found in DB
                 return NotFound("User with ID '" + id + "' does not exist.");
             }
         }
@@ -55,6 +58,7 @@ namespace PLNKTN.Controllers
         {
             if (userDto == null)
             {
+                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User information formatted incorrectly.");
             }
 
@@ -77,26 +81,66 @@ namespace PLNKTN.Controllers
 
             if (result == 1)
             {
+                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = userDto.Id }, userDto);
             }
             else if (result == -10)
             {
+                // return HTTP 409 Conflict as user already exists in DB
                 return Conflict("User with ID '" + userDto.Id + "' already exists.  Cannot create a duplicate.");
             }
             else
             {
+                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
-            
         }
 
 
 
         // PUT api/users/test
-        [HttpPut("{id}")]
-        public IActionResult Put(string id, [FromBody]string value)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody]UserDetailsDTO dto)
         {
-            return BadRequest("users PUT is not implemented");
+            if (dto == null)
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("User information formatted incorrectly.");
+            }
+
+            var user = new User()
+            {
+                Id = dto.Id,
+                First_name = dto.First_name,
+                Last_name = dto.Last_name,
+                Created_at = dto.Created_at,
+                Email = dto.Email,
+                Level = dto.Level,
+                LivingSpace = dto.LivingSpace,
+                NumPeopleHousehold = dto.NumPeopleHousehold,
+                CarMPG = dto.CarMPG,
+                ShareData = dto.ShareData,
+                Country = dto.Country
+            };
+
+            var result = await _userRepository.UpdateUser(user);
+
+            if (result == 1)
+            {
+                // return HTTP 200 Ok user was updated.  PUT does not require user to be returned in HTTP body.
+                // Not done to save bandwidth.
+                return Ok();
+            }
+            else if (result == -9)
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + dto.Id + "' does not exist.");
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
 
         // DELETE api/users/test

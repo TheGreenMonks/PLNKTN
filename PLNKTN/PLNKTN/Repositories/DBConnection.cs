@@ -19,12 +19,16 @@ namespace PLNKTN.Repositories
         private static readonly string _profileName = "Dexter";
         // Location in file system where the local credentials file is stored.
         private static readonly string _localCredsUri = "C:\\";
-        // Name of teh local credentials file.
+        // Name of the local credentials file.
         private static readonly string _localCredsFilename = "Ahmed.csv";
+        // Caller can specify context config as required as per below documentation, defaults to null.
+        // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetDynamoDBContext.html#OptionalConfigParams
+        private static DynamoDBContextConfig _config = null;
 
-        public IDynamoDBContext Context()
+        public IDynamoDBContext Context(DynamoDBContextConfig config = null)
         {
             IDynamoDBContext context;
+            _config = config;
 
             if (tryGetLocalDBContext(out context))
             {
@@ -110,7 +114,7 @@ namespace PLNKTN.Repositories
         {
             try
             {
-                return new DynamoDBContext(client);
+                return new DynamoDBContext(client, _config);
             }
             catch (AmazonDynamoDBException e)
             {

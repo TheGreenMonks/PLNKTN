@@ -20,7 +20,7 @@ namespace PLNKTN.Models
         public string Last_name { get; set; }
 
         [DynamoDBProperty]
-        public DateTime Created_at { get; set; }
+        public DateTime? Created_at { get; set; }
 
         [DynamoDBProperty]
         public string Email { get; set; }
@@ -29,28 +29,28 @@ namespace PLNKTN.Models
         public string Level { get; set; }
 
         [DynamoDBProperty]
-        public List<EcologicalMeasurement> EcologicalMeasurements { get; set; } = new List<EcologicalMeasurement>();
+        public List<EcologicalMeasurement> EcologicalMeasurements { get; set; }
 
         [DynamoDBProperty]
-        public int LivingSpace { get; set; }
+        public int? LivingSpace { get; set; }
 
         [DynamoDBProperty]
-        public int NumPeopleHousehold { get; set; }
+        public int? NumPeopleHousehold { get; set; }
 
         [DynamoDBProperty]
-        public float CarMPG { get; set; }
+        public float? CarMPG { get; set; }
 
         [DynamoDBProperty]
-        public bool ShareData { get; set; }
+        public bool? ShareData { get; set; }
 
         [DynamoDBProperty]
-        public float EcologicalFootprint { get; set; }
+        public float? EcologicalFootprint { get; set; }
 
         [DynamoDBProperty]
-        public string Country { get; set; }
+        public string Country { get; set; } = null;
 
         [DynamoDBProperty]
-        public List<RewardUser> RewardsUser { get; set; } = new List<RewardUser>();
+        public List<RewardUser> RewardsUser { get; set; }
 
         public User()
         {
