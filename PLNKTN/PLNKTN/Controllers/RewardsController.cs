@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace PLNKTN.Controllers
 {
     [Route("api/[controller]")]
-    public class RewardsController : Controller
+    [ApiController]
+    public class RewardsController : ControllerBase
     {
         // GET: api/values
         [HttpGet]

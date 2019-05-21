@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace PLNKTN.Controllers
 {
     [Route("api/[controller]")]
-    public class ChallengesController : Controller
+    [ApiController]
+    public class ChallengesController : ControllerBase
     {
         // GET: api/values
         [HttpGet]

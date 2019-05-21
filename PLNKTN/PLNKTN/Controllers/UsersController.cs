@@ -12,7 +12,8 @@ using PLNKTN.Repositories;
 namespace PLNKTN.Controllers
 {
     [Route("api/[controller]")]
-    public class UsersController : Controller
+    [ApiController]
+    public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
 
