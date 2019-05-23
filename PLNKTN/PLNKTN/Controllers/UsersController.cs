@@ -83,7 +83,7 @@ namespace PLNKTN.Controllers
             if (result == 1)
             {
                 // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = userDto.Id }, userDto);
+                return CreatedAtAction("Get", new { id = userDto.Id }, user);
             }
             else if (result == -10)
             {
