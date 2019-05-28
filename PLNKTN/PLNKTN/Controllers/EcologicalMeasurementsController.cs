@@ -20,6 +20,7 @@ namespace PLNKTN.Controllers
         {
             _userRepository = userRepository;
         }
+
         // GET: api/EcologicalMeasurements/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
@@ -115,29 +116,27 @@ namespace PLNKTN.Controllers
             {
                 return BadRequest("Measurement information formatted incorrectly.");
             }
-            var user = await _userRepository.GetUser(dto.UserId);
 
-            if (user != null)
+            var ecologicalMeasurement = new EcologicalMeasurement
             {
-                // return HTTP 200
-                var ecologicalMeasure = user.EcologicalMeasurements.Find(
-                    delegate (EcologicalMeasurement em) {
-                        return DateTime.Equals(em.Date_taken, dto.Date_taken);
-                    });
-                if (ecologicalMeasure != null)
-                {
-                    ecologicalMeasure.GetType().GetProperty("Diet").SetValue(ecologicalMeasure.Diet, dto.Diet, null);
-                    ecologicalMeasure.GetType().GetProperty("Clothing").SetValue(ecologicalMeasure.Clothing, dto.Clothing, null);
-                    ecologicalMeasure.GetType().GetProperty("Electronics").SetValue(ecologicalMeasure.Electronics, dto.Electronics, null);
-                    ecologicalMeasure.GetType().GetProperty("Footwear").SetValue(ecologicalMeasure.Footwear, dto.Footwear, null);
-                    ecologicalMeasure.GetType().GetProperty("Transport").SetValue(ecologicalMeasure.Transport, dto.Transport, null);
-                    return Ok();
-                }
-                else
-                {
-                    // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
-                    return NotFound("User with ID '" + dto.UserId + "' does not have ecological measure on " + dto.Date_taken);
-                }
+                Date_taken = dto.Date_taken,
+                Transport = dto.Transport,
+                Diet = dto.Diet,
+                Electronics = dto.Electronics,
+                Clothing = dto.Clothing,
+                Footwear = dto.Footwear
+            };
+
+            var result = await _userRepository.UpdateEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+
+            if (result == 1)
+            {
+                return Ok();
+            }
+            else if (result == -8)
+            {
+                // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not have ecological measure on " + dto.Date_taken);
             }
             else
             {

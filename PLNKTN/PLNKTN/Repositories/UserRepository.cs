@@ -184,7 +184,7 @@ namespace PLNKTN.Repositories
 
         public async Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
         {
-            using (var context = _dbConnection.Context(_config))
+            using (var context = _dbConnection.Context())
             {
                 try
                 {
@@ -222,6 +222,100 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
                     return false;
+                }
+            }
+        }
+
+        public async Task<int> UpdateEcologicalMeasurement(string userId, EcologicalMeasurement updatedEcoMeasure)
+        {
+            using (var context = _dbConnection.Context(_config))
+            {
+                try
+                {
+                    var user = await context.LoadAsync<User>(userId);
+
+                    if (user != null)
+                    {
+                        // Find ecological measurement object in User object from the DB where the dates match
+                        var dbEcoMeasure = user.EcologicalMeasurements.Find(
+                            delegate (EcologicalMeasurement em) {
+                                return DateTime.Equals(em.Date_taken, updatedEcoMeasure.Date_taken);
+                            });
+
+                        if (dbEcoMeasure !=  null)
+                        {
+                            // Remove old ecological measurement from DB User
+                            user.EcologicalMeasurements.Remove(dbEcoMeasure);
+
+                            // Update DB updatedEcoMeasure with new values if not null
+                            if (updatedEcoMeasure.Diet != null)
+                            {
+                                dbEcoMeasure.Diet = updatedEcoMeasure.Diet;
+                            }
+                            if (updatedEcoMeasure.Clothing != null)
+                            {
+                                dbEcoMeasure.Clothing = updatedEcoMeasure.Clothing;
+                            }
+                            if (updatedEcoMeasure.Electronics != null)
+                            {
+                                dbEcoMeasure.Electronics = updatedEcoMeasure.Electronics;
+                            }
+                            if (updatedEcoMeasure.Footwear != null)
+                            {
+                                dbEcoMeasure.Footwear = updatedEcoMeasure.Footwear;
+                            }
+                            if (updatedEcoMeasure.Transport != null)
+                            {
+                                dbEcoMeasure.Transport = updatedEcoMeasure.Transport;
+                            }
+                            
+                            user.EcologicalMeasurements.Add(dbEcoMeasure);
+                            await context.SaveAsync<User>(user);
+                            // 200 - Ok save complete
+                            return 1;
+                        }
+                        else
+                        {
+                            // 404 - EcologicalMeasurement with specified date doesn't exist
+                            return -8;
+                        }
+                    }
+                    else
+                    {
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
                 }
             }
         }
