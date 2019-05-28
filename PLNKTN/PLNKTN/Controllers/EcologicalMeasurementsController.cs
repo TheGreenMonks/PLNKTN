@@ -22,7 +22,7 @@ namespace PLNKTN.Controllers
         }
 
         // GET: api/EcologicalMeasurements/5
-        [HttpGet("{id}")]
+        [HttpGet("GetMeasurements/{id}")]
         public async Task<IActionResult> Get(string id)
         {
             if (String.IsNullOrWhiteSpace(id))
@@ -45,8 +45,8 @@ namespace PLNKTN.Controllers
         }
 
         // GET: api/EcologicalMeasurements/5
-        [HttpGet("{id}", Name = "Get")]
-        public async Task<IActionResult> Get(string id, string date)
+        [HttpGet("GetMeasure/{id}/{date}")]
+        public async Task<IActionResult> Get(string id, DateTime date)
         {
             if (String.IsNullOrWhiteSpace(id))
             {
@@ -60,7 +60,7 @@ namespace PLNKTN.Controllers
                 // return HTTP 200
                 var ecologicalMeasure = user.EcologicalMeasurements.Find(
                     delegate (EcologicalMeasurement em) {
-                        return DateTime.Equals(em.Date_taken, DateTime.Parse(date));
+                        return DateTime.Equals(em.Date_taken, date);
                     });
                 if (ecologicalMeasure != null)
                 {

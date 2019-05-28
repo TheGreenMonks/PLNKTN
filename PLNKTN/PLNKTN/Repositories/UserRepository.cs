@@ -237,6 +237,7 @@ namespace PLNKTN.Repositories
                     if (user != null)
                     {
                         // Find ecological measurement object in User object from the DB where the dates match
+                        // TODO: Line 243: Compared dateTime objects need to compare their dates only and NOT their date AND time.
                         var dbEcoMeasure = user.EcologicalMeasurements.Find(
                             delegate (EcologicalMeasurement em) {
                                 return DateTime.Equals(em.Date_taken, updatedEcoMeasure.Date_taken);
