@@ -12,10 +12,18 @@ namespace PLNKTN.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly IDBConnection _dbConnection;
+        private DynamoDBContextConfig _config;
 
         public UserRepository(IDBConnection dbConnection)
         {
             _dbConnection = dbConnection;
+
+            // make context not delete attributes that are null, thus save operation will only 
+            // update values that have been set by user.
+            _config = new DynamoDBContextConfig
+            {
+                IgnoreNullValues = true
+            };
         }
 
         public async Task<int> CreateUser(User user)
@@ -70,14 +78,7 @@ namespace PLNKTN.Repositories
 
         public async Task<int> UpdateUser(User user)
         {
-            // make context not delete user attributes that are null, thus save operation will only 
-            // update values that have been set by user.
-            var config = new DynamoDBContextConfig
-            {
-                IgnoreNullValues = true
-            };
-
-            using (var context = _dbConnection.Context(config))
+            using (var context = _dbConnection.Context(_config))
             {
                 try
                 {
@@ -183,7 +184,7 @@ namespace PLNKTN.Repositories
 
         public async Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
         {
-            using (var context = _dbConnection.Context())
+            using (var context = _dbConnection.Context(_config))
             {
                 try
                 {
