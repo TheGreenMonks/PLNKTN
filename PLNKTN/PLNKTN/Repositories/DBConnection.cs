@@ -16,9 +16,9 @@ namespace PLNKTN.Repositories
     {
         // Set DB connection variables here
         // AWS Toolkit profile name to locate the keys of.
-        private static readonly string _profileName = "Dexter";
+        private static readonly string _profileName = "Ahmed";
         // Location in file system where the local credentials file is stored.
-        private static readonly string _localCredsUri = "C:\\";
+        private static readonly string _localCredsUri = "/Users/ahmedali89/Documents";
         // Name of the local credentials file.
         private static readonly string _localCredsFilename = "Ahmed.csv";
         // Caller can specify context config as required as per below documentation, defaults to null.

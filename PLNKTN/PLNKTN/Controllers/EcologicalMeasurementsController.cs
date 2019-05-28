@@ -20,18 +20,62 @@ namespace PLNKTN.Controllers
         {
             _userRepository = userRepository;
         }
-        // GET: api/EcologicalMeasurements
-        [HttpGet]
-        public IEnumerable<string> Get()
+        // GET: api/EcologicalMeasurements/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
         {
-            return new string[] { "value1", "value2" };
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("User ID information formatted incorrectly.");
+            }
+            var user = await _userRepository.GetUser(id);
+
+            if (user != null)
+            {
+                // return HTTP 200
+                return Ok(user.EcologicalMeasurements);
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + id + "' does not exist.");
+            }
         }
 
         // GET: api/EcologicalMeasurements/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id, string date)
         {
-            return "value";
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("User ID information formatted incorrectly.");
+            }
+            var user = await _userRepository.GetUser(id);
+
+            if (user != null)
+            {
+                // return HTTP 200
+                var ecologicalMeasure = user.EcologicalMeasurements.Find(
+                    delegate (EcologicalMeasurement em) {
+                        return DateTime.Equals(em.Date_taken, DateTime.Parse(date));
+                    });
+                if (ecologicalMeasure != null)
+                {
+                    return Ok(ecologicalMeasure);
+                }
+                else
+                {
+                    // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
+                    return NotFound("User with ID '" + id + "' does not have ecological measure on " + date);
+                }
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + id + "' does not exist.");
+            }
         }
 
         // POST: api/EcologicalMeasurements
@@ -63,10 +107,44 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // PUT: api/EcologicalMeasurements/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT: api/EcologicalMeasurements
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] EcologicalMeasurementDTO dto)
         {
+            if (dto == null)
+            {
+                return BadRequest("Measurement information formatted incorrectly.");
+            }
+            var user = await _userRepository.GetUser(dto.UserId);
+
+            if (user != null)
+            {
+                // return HTTP 200
+                var ecologicalMeasure = user.EcologicalMeasurements.Find(
+                    delegate (EcologicalMeasurement em) {
+                        return DateTime.Equals(em.Date_taken, dto.Date_taken);
+                    });
+                if (ecologicalMeasure != null)
+                {
+                    ecologicalMeasure.GetType().GetProperty("Diet").SetValue(ecologicalMeasure.Diet, dto.Diet, null);
+                    ecologicalMeasure.GetType().GetProperty("Clothing").SetValue(ecologicalMeasure.Clothing, dto.Clothing, null);
+                    ecologicalMeasure.GetType().GetProperty("Electronics").SetValue(ecologicalMeasure.Electronics, dto.Electronics, null);
+                    ecologicalMeasure.GetType().GetProperty("Footwear").SetValue(ecologicalMeasure.Footwear, dto.Footwear, null);
+                    ecologicalMeasure.GetType().GetProperty("Transport").SetValue(ecologicalMeasure.Transport, dto.Transport, null);
+                    return Ok();
+                }
+                else
+                {
+                    // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
+                    return NotFound("User with ID '" + dto.UserId + "' does not have ecological measure on " + dto.Date_taken);
+                }
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
+            }
+
         }
 
         // DELETE: api/ApiWithActions/5
