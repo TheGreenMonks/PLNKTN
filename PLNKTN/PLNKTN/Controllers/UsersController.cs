@@ -75,6 +75,7 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = userDto.NumPeopleHousehold,
                 CarMPG = userDto.CarMPG,
                 ShareData = userDto.ShareData,
+                EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country
             };
 
@@ -121,6 +122,7 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = dto.NumPeopleHousehold,
                 CarMPG = dto.CarMPG,
                 ShareData = dto.ShareData,
+                EcologicalFootprint = dto.EcologicalFootprint,
                 Country = dto.Country
             };
 
