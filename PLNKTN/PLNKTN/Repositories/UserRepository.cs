@@ -347,18 +347,27 @@ namespace PLNKTN.Repositories
             {
                 try
                 {
-                    var user = await context.LoadAsync<User>(userId);
-                    var numElementsRemoved = user.EcologicalMeasurements.RemoveAll(x => x.Date_taken == date_taken);
-
-                    if (numElementsRemoved == 0)
+                    User user = await context.LoadAsync<User>(userId);
+                    if (user != null)
                     {
-                        return numElementsRemoved;
+                        int numElementsRemoved = user.EcologicalMeasurements.RemoveAll(em => em.Date_taken.Date == date_taken.Date);
+
+                        if (numElementsRemoved == 0)
+                        {
+                            return numElementsRemoved;
+                        }
+                        else
+                        {
+                            await context.SaveAsync<User>(user);
+                            return numElementsRemoved;
+                        }
                     }
                     else
                     {
-                        await context.SaveAsync<User>(user);
-                        return numElementsRemoved;
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
                     }
+                    
                 }
                 catch (AmazonServiceException ase)
                 {
