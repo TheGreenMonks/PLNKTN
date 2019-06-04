@@ -98,9 +98,22 @@ namespace PLNKTN.Controllers
                 Footwear = dto.Footwear
             };
 
-            if (await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement))
+            int result = await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+
+            if (result == 1)
             {
-                return Ok();
+                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
+                return CreatedAtAction("GetMeasure", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
+            }
+            else if (result == -7)
+            {
+                // return HTTP 409 as ecologicalMeasure with date already exists - conflict
+                return Conflict("User with ID '" + dto.UserId + "' already has an ecological measure on " + dto.Date_taken);
+            }
+            else if(result == -9)
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
             }
             else
             {

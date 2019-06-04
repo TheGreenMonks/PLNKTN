@@ -182,16 +182,39 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<bool> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
+        public async Task<int> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
         {
-            using (var context = _dbConnection.Context())
+            using (IDynamoDBContext context = _dbConnection.Context())
             {
                 try
                 {
-                    var user = await context.LoadAsync<User>(userId);
-                    user.EcologicalMeasurements.Add(ecologicalMeasurement);
-                    await context.SaveAsync<User>(user);
-                    return true;
+                    User user = await context.LoadAsync<User>(userId);
+
+                    if (user != null)
+                    {
+                        // Find ecological measurement object in User object from the DB where the dates match
+                        EcologicalMeasurement dbEcoMeasure = user.EcologicalMeasurements.FirstOrDefault(e => e.Date_taken.Date == ecologicalMeasurement.Date_taken.Date);
+
+                        if (dbEcoMeasure == null)
+                        {
+                            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+                            await context.SaveAsync(user);
+                            return 1;
+                        }
+                        else
+                        {
+                            // 409 - EcologicalMeasurement with specified date already exists, conflict
+                            return -7;
+                        }
+                    }
+                    else
+                    {
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+
+                    
+                    
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -201,27 +224,27 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
                     Debug.WriteLine("Error Type:     " + ase.ErrorType);
                     Debug.WriteLine("Request ID:     " + ase.RequestId);
-                    return false;
+                    return -1;
                 }
                 catch (AmazonClientException ace)
                 {
                     Debug.WriteLine("Internal error occurred communicating with DynamoDB");
                     Debug.WriteLine("Error Message:  " + ace.Message);
-                    return false;
+                    return -1;
                 }
                 catch (NullReferenceException e)
                 {
                     Debug.WriteLine("Context obj for DynamoDB set to null");
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
-                    return false;
+                    return -1;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine("Internal error occurred communicating with DynamoDB");
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
-                    return false;
+                    return -1;
                 }
             }
         }
