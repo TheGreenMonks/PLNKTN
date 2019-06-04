@@ -29,7 +29,7 @@ namespace PLNKTN.Models
         public string Level { get; set; }
 
         [DynamoDBProperty]
-        public List<EcologicalMeasurement> EcologicalMeasurements { get; set; } = new List<EcologicalMeasurement>();
+        public List<EcologicalMeasurement> EcologicalMeasurements { get; set; }
 
         [DynamoDBProperty]
         public int? LivingSpace { get; set; }
@@ -50,7 +50,7 @@ namespace PLNKTN.Models
         public string Country { get; set; } = null;
 
         [DynamoDBProperty]
-        public List<RewardUser> RewardsUser { get; set; } = new List<RewardUser>();
+        public List<RewardUser> RewardsUser { get; set; }
 
         public User()
         {

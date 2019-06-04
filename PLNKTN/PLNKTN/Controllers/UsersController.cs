@@ -71,12 +71,14 @@ namespace PLNKTN.Controllers
                 Created_at = DateTime.UtcNow,
                 Email = userDto.Email,
                 Level = userDto.Level,
+                EcologicalMeasurements = new List<EcologicalMeasurement>(),
                 LivingSpace = userDto.LivingSpace,
                 NumPeopleHousehold = userDto.NumPeopleHousehold,
                 CarMPG = userDto.CarMPG,
                 ShareData = userDto.ShareData,
                 EcologicalFootprint = userDto.EcologicalFootprint,
-                Country = userDto.Country
+                Country = userDto.Country,
+                RewardsUser = new List<RewardUser>()
             };
 
             var result = await _userRepository.CreateUser(user);
