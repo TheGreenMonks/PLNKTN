@@ -103,7 +103,7 @@ namespace PLNKTN.Controllers
             if (result == 1)
             {
                 // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("GetMeasure", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
+                return CreatedAtAction("Get", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
             }
             else if (result == -7)
             {
