@@ -160,33 +160,33 @@ namespace PLNKTN.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete]
-        public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
-        {
-            if (dto == null)
-            {
-                return BadRequest("Measurement information formatted incorrectly.");
-            }
+        //[HttpDelete]
+        //public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
+        //{
+        //    if (dto == null)
+        //    {
+        //        return BadRequest("Measurement information formatted incorrectly.");
+        //    }
 
-            var result = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
+        //    var result = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
 
-            if (result > 0)
-            {
-                return Ok(result + " measurement(s) deleted.");
-            }
-            else if (result == 0)
-            {
-                return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
-            }
-            else if (result == -9)
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
-            }
-            else
-            {
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
-        }
+        //    if (result > 0)
+        //    {
+        //        return Ok(result + " measurement(s) deleted.");
+        //    }
+        //    else if (result == 0)
+        //    {
+        //        return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
+        //    }
+        //    else if (result == -9)
+        //    {
+        //        // return HTTP 404 as user cannot be found in DB
+        //        return NotFound("User with ID '" + dto.UserId + "' does not exist.");
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("An internal error occurred.  Please contact the system administrator.");
+        //    }
+        //}
     }
 }
