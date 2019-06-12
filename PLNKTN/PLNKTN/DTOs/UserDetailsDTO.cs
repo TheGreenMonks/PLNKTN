@@ -14,6 +14,7 @@ namespace PLNKTN.DTOs
         public int? NumPeopleHousehold { get; set; }
         public float? CarMPG { get; set; }
         public bool? ShareData { get; set; }
+        public float? EcologicalFootprint { get; set; }
         public string Country { get; set; }
     }
 }

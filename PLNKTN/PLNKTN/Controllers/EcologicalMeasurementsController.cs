@@ -20,18 +20,63 @@ namespace PLNKTN.Controllers
         {
             _userRepository = userRepository;
         }
-        // GET: api/EcologicalMeasurements
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        // GET: api/EcologicalMeasurements/5
+        [HttpGet("GetMeasurements/{id}")]
+        public async Task<IActionResult> Get(string id)
         {
-            return new string[] { "value1", "value2" };
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("User ID information formatted incorrectly.");
+            }
+            var user = await _userRepository.GetUser(id);
+
+            if (user != null)
+            {
+                // return HTTP 200
+                return Ok(user.EcologicalMeasurements);
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + id + "' does not exist.");
+            }
         }
 
         // GET: api/EcologicalMeasurements/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("GetMeasure/{id}/{date}")]
+        public async Task<IActionResult> Get(string id, DateTime date)
         {
-            return "value";
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("User ID information formatted incorrectly.");
+            }
+            var user = await _userRepository.GetUser(id);
+
+            if (user != null)
+            {
+                // return HTTP 200
+                var ecologicalMeasure = user.EcologicalMeasurements.Find(
+                    delegate (EcologicalMeasurement em) {
+                        return DateTime.Equals(em.Date_taken, date);
+                    });
+                if (ecologicalMeasure != null)
+                {
+                    return Ok(ecologicalMeasure);
+                }
+                else
+                {
+                    // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
+                    return NotFound("User with ID '" + id + "' does not have ecological measure on " + date);
+                }
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + id + "' does not exist.");
+            }
         }
 
         // POST: api/EcologicalMeasurements
@@ -53,9 +98,22 @@ namespace PLNKTN.Controllers
                 Footwear = dto.Footwear
             };
 
-            if (await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement))
+            int result = await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+
+            if (result == 1)
             {
-                return Ok();
+                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
+                return CreatedAtAction("Get", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
+            }
+            else if (result == -7)
+            {
+                // return HTTP 409 as ecologicalMeasure with date already exists - conflict
+                return Conflict("User with ID '" + dto.UserId + "' already has an ecological measure on " + dto.Date_taken);
+            }
+            else if(result == -9)
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
             }
             else
             {
@@ -63,34 +121,72 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // PUT: api/EcologicalMeasurements/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete]
-        public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
+        // PUT: api/EcologicalMeasurements
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] EcologicalMeasurementDTO dto)
         {
             if (dto == null)
             {
                 return BadRequest("Measurement information formatted incorrectly.");
             }
 
-            var elementsDeleted = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
-            if (elementsDeleted > 0)
+            var ecologicalMeasurement = new EcologicalMeasurement
             {
-                return Ok(elementsDeleted + " measurement(s) deleted.");
+                Date_taken = dto.Date_taken,
+                Transport = dto.Transport,
+                Diet = dto.Diet,
+                Electronics = dto.Electronics,
+                Clothing = dto.Clothing,
+                Footwear = dto.Footwear
+            };
+
+            var result = await _userRepository.UpdateEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+
+            if (result == 1)
+            {
+                return Ok();
             }
-            else if (elementsDeleted == 0)
+            else if (result == -8)
             {
-                return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
+                // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not have ecological measure on " + dto.Date_taken);
             }
             else
             {
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
             }
+
         }
+
+        // DELETE: api/ApiWithActions/5
+        //[HttpDelete]
+        //public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
+        //{
+        //    if (dto == null)
+        //    {
+        //        return BadRequest("Measurement information formatted incorrectly.");
+        //    }
+
+        //    var result = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
+
+        //    if (result > 0)
+        //    {
+        //        return Ok(result + " measurement(s) deleted.");
+        //    }
+        //    else if (result == 0)
+        //    {
+        //        return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
+        //    }
+        //    else if (result == -9)
+        //    {
+        //        // return HTTP 404 as user cannot be found in DB
+        //        return NotFound("User with ID '" + dto.UserId + "' does not exist.");
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("An internal error occurred.  Please contact the system administrator.");
+        //    }
+        //}
     }
 }
