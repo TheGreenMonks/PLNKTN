@@ -1,0 +1,48 @@
+{
+
+  "transportBicycle": 0,
+  "transportCar" : 0,
+  "transporBus": 0,
+  "transportFlight": 0,
+  "transportSubway": 0,
+
+  "dietPlantBased": 0,
+  "dietBeef": 0,
+  "dietPork": 0,
+  "dietPoultry": 0,
+  "dietEgg": 0,
+  "dietDiary": 0,
+  "dietSeafood": 0,
+
+
+  "elctronicsSmall": false,
+  "electronicsMedium": false,
+  "electronicsLarge": false,
+  "electronicsUsed": false,
+
+  "clothingSmall": false,
+  "clothingMedium": false,
+  "colthingLarge": false,
+  "clothingUsed": false,
+
+  "footwearSmall": false,
+  "footwearMedium": false,
+  "footwarLarge": false,
+  "footwearUsed": false,
+
+
+  "livingSpace": 0,
+  "numbPopleHouseHold": 0,
+  "carMPG": 0,
+  "shareData": true,
+  "ecologicalFootPrint": 0,
+
+
+  "email": "email@email.com",
+  "password": "1234",
+  "country": "country"
+  
+
+  
+}
+ 
