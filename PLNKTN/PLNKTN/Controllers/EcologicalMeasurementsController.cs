@@ -32,6 +32,7 @@ namespace PLNKTN.Controllers
             }
             var user = await _userRepository.GetUser(id);
 
+
             if (user != null)
             {
                 // return HTTP 200
@@ -44,7 +45,7 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // GET: api/EcologicalMeasurements/5
+        // GET: api/EcologicalMeasurements/5/date
         [HttpGet("GetMeasure/{id}/{date}")]
         public async Task<IActionResult> Get(string id, DateTime date)
         {
@@ -91,6 +92,7 @@ namespace PLNKTN.Controllers
             var ecologicalMeasurement = new EcologicalMeasurement
             {
                 Date_taken = dto.Date_taken,
+                EcologicalFootprint = dto.EcologicalFootprint,
                 Transport = dto.Transport,
                 Diet = dto.Diet,
                 Electronics = dto.Electronics,
@@ -101,9 +103,12 @@ namespace PLNKTN.Controllers
             int result = await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
 
             if (result == 1)
-            {
+            {  
+                /***  HERE MIGHT CAL Collective_EF ***/
+                   
                 // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
+
             }
             else if (result == -7)
             {
