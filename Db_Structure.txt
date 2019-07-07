@@ -1,3 +1,7 @@
+/* The User table holds all information about a discrete user of the system.  An array of ecological measurements stores
+ * the history of this users Earth resoruce usage and an array of Rewards that records the challenges and rewards a
+ * user has achieved.
+ */
 {
     "User": 
     {
@@ -50,7 +54,6 @@
         "NumPeopleHousehold": "",                   
         "CarMPG": "",
         "ShareData": "",
-        
         "Country": "",
         "Rewards_earned": 
         [   
@@ -75,29 +78,51 @@
     }
 }
 
+
+/* The Ecological_Data table currently only holds information about the collective ecological footprint calcualted
+ * overall for the application.  This is system level infomration that doesn't sit within a specific application 
+ * object, therefore has its own table.
+ */
 {
-    "Collective_EF":                     /*RECENTLY ADDED*/
-        [
-            "Date_taken": "",
-            "collective_ef": "4.5"
-        ]
-            
+    "Ecological_Data":
+    {
+        "Collective_EF":                     /*RECENTLY ADDED*/
+            [
+                "Date_taken": "",
+                "Collective_EF": "4.5"
+            ]
+    }
 }
 
+
+/* The Reward table holds all data required by the system about a reward the user can achieve.  In each reward instance
+ * an array of challenges is stored that holds all of the infomration about a specific challenge that a user must complete
+ * before they can unlock the current reward.
+ */
 {
-    "Reward": 
-    {
-        "ID":"",
-        "Title": "",
-        "Description": "",
-        "Description_not_unlocked": "",
-        "Challenges_to_complete": 
+  "Reward": {
+    "ID":"",
+    "Title":"",
+    "ImageURL": "/Users/alli/Google Drive/Plnktn/Unity/rewardsUI/images/badge01.png",
+    "Description": "",
+    "Link": "",
+    "GridPosition": [2,3],
+    "Text_When_Completed": "Congrats! You completed all 6 surrounding challenges and unlocked this reward!",
+    "Text_When_NotCompleted": "Complete all 6 surrounding challenges to unlock this reward!",
+    "Source": "",
+    "Challenges": 
         [
-            "Challenge":
+            "Challenge": 
             {
-                "ID": "",
-                "Category": "",
-                "Description": ""
+                "m_ID": "DIET_PLANTS_0001",
+                "name": "VEGUCATED X1",
+                "imageURL": "/Users/alli/Google Drive/Plnktn/Unity/rewardsUI/images/plants.png",
+                "description": "Each day, a person who eats a vegan diet saves 1,100 gallons of water, 45 pounds of grain, 30 sq ft of forested land, 20 lbs CO2 equivalent, and one animal’s life.",
+                "link": "",
+                "text_when_completed": "Awesome! By eating a 100% Plant Based diet one day/week you completed this challenge.",
+                "text_when_notCompleted": "Eat a 100% Plant Based diet one day/week to complete this challenge.",
+                "source": "",
+                "rule": 1  // to complete this challenge user eats plant based one day
             }
         ],
         "Country": "",
