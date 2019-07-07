@@ -1,0 +1,108 @@
+{
+    "User": 
+    {
+        "ID": "",
+        "First_name": "",
+        "Last_name": "",
+        "Created_at": "",
+        "Email": "",
+        "Level": "",
+        "EcologicalMeasurements": 
+        [
+            "Date_taken": "",
+            "EcologicalFootprint": "",                  /*RECENTLY ADDED*/
+            "Transport": {
+                "bicycle": 2,
+                "car": 3,
+                "bus": 1,
+                "flight": 1000,
+                "subway": 20
+            },
+            "Diet": {
+                "plantBased": 0,
+                "beef": 2,
+                "pork": 0,
+                "poultry": 1,
+                "egg": 1,
+                "dairy": 0,
+                "seafood": 0
+            },
+            "Electronics": {
+                "small": true,
+                "medium": false,
+                "large": false,
+                "used": false
+            },
+            "Clothing": {
+                "small": false,
+                "medium": false,
+                "large": false,
+                "used": true
+            },
+            "Footwear": {
+                "small": false,
+                "medium": false,
+                "large": false,
+                "used": true
+            }
+        ],
+        "LivingSpace": "",
+        "NumPeopleHousehold": "",                   
+        "CarMPG": "",
+        "ShareData": "",
+        
+        "Country": "",
+        "Rewards_earned": 
+        [   
+            "RewardUser": 
+            {
+                "ID":"",
+                "Title": "",
+                "Challenges_to_complete": 
+                [
+                    "ChallengeUser":
+                    {
+                        "ID": "",
+                        "Category": "",
+                        "Date_completed": "",
+                        "Status": ""
+                    }
+                ],
+                "Date_completed": "",
+                "Status": ""// this will have several different status(not completed, completed and planted)
+            }
+        ]
+    }
+}
+
+{
+    "Collective_EF":                     /*RECENTLY ADDED*/
+        [
+            "Date_taken": "",
+            "collective_ef": "4.5"
+        ]
+            
+}
+
+{
+    "Reward": 
+    {
+        "ID":"",
+        "Title": "",
+        "Description": "",
+        "Description_not_unlocked": "",
+        "Challenges_to_complete": 
+        [
+            "Challenge":
+            {
+                "ID": "",
+                "Category": "",
+                "Description": ""
+            }
+        ],
+        "Country": "",
+        "Overview": "",
+        "Impact": "",
+        "Tree_species": "",
+    }
+}
