@@ -163,7 +163,6 @@ namespace PLNKTN.Controllers
             }
 
         }
-
         // DELETE: api/ApiWithActions/5
         //[HttpDelete]
         //public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
