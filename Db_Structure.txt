@@ -1,0 +1,133 @@
+/* The User table holds all information about a discrete user of the system.  An array of ecological measurements stores
+ * the history of this users Earth resoruce usage and an array of Rewards that records the challenges and rewards a
+ * user has achieved.
+ */
+{
+    "User": 
+    {
+        "ID": "",
+        "First_name": "",
+        "Last_name": "",
+        "Created_at": "",
+        "Email": "",
+        "Level": "",
+        "EcologicalMeasurements": 
+        [
+            "Date_taken": "",
+            "EcologicalFootprint": "",                  /*RECENTLY ADDED*/
+            "Transport": {
+                "bicycle": 2,
+                "car": 3,
+                "bus": 1,
+                "flight": 1000,
+                "subway": 20
+            },
+            "Diet": {
+                "plantBased": 0,
+                "beef": 2,
+                "pork": 0,
+                "poultry": 1,
+                "egg": 1,
+                "dairy": 0,
+                "seafood": 0
+            },
+            "Electronics": {
+                "small": true,
+                "medium": false,
+                "large": false,
+                "used": false
+            },
+            "Clothing": {
+                "small": false,
+                "medium": false,
+                "large": false,
+                "used": true
+            },
+            "Footwear": {
+                "small": false,
+                "medium": false,
+                "large": false,
+                "used": true
+            }
+        ],
+        "LivingSpace": "",
+        "NumPeopleHousehold": "",                   
+        "CarMPG": "",
+        "ShareData": "",
+        "Country": "",
+        "Rewards_earned": 
+        [   
+            "RewardUser": 
+            {
+                "ID":"",
+                "Title": "",
+                "Challenges_to_complete": 
+                [
+                    "ChallengeUser":
+                    {
+                        "ID": "",
+                        "Category": "",
+                        "Date_completed": "",
+                        "Status": ""
+                    }
+                ],
+                "Date_completed": "",
+                "Status": ""// this will have several different status(not completed, completed and planted)
+            }
+        ]
+    }
+}
+
+
+/* The Ecological_Data table currently only holds information about the collective ecological footprint calcualted
+ * overall for the application.  This is system level infomration that doesn't sit within a specific application 
+ * object, therefore has its own table.
+ */
+{
+    "Ecological_Data":
+    {
+        "Collective_EF":                     /*RECENTLY ADDED*/
+            [
+                "Date_taken": "",
+                "Collective_EF": "4.5"
+            ]
+    }
+}
+
+
+/* The Reward table holds all data required by the system about a reward the user can achieve.  In each reward instance
+ * an array of challenges is stored that holds all of the infomration about a specific challenge that a user must complete
+ * before they can unlock the current reward.
+ */
+{
+  "Reward": {
+    "ID":"",
+    "Title":"",
+    "ImageURL": "/Users/alli/Google Drive/Plnktn/Unity/rewardsUI/images/badge01.png",
+    "Description": "",
+    "Link": "",
+    "GridPosition": [2,3],
+    "Text_When_Completed": "Congrats! You completed all 6 surrounding challenges and unlocked this reward!",
+    "Text_When_NotCompleted": "Complete all 6 surrounding challenges to unlock this reward!",
+    "Source": "",
+    "Challenges": 
+        [
+            "Challenge": 
+            {
+                "m_ID": "DIET_PLANTS_0001",
+                "name": "VEGUCATED X1",
+                "imageURL": "/Users/alli/Google Drive/Plnktn/Unity/rewardsUI/images/plants.png",
+                "description": "Each day, a person who eats a vegan diet saves 1,100 gallons of water, 45 pounds of grain, 30 sq ft of forested land, 20 lbs CO2 equivalent, and one animal’s life.",
+                "link": "",
+                "text_when_completed": "Awesome! By eating a 100% Plant Based diet one day/week you completed this challenge.",
+                "text_when_notCompleted": "Eat a 100% Plant Based diet one day/week to complete this challenge.",
+                "source": "",
+                "rule": 1  // to complete this challenge user eats plant based one day
+            }
+        ],
+        "Country": "",
+        "Overview": "",
+        "Impact": "",
+        "Tree_species": "",
+    }
+}
