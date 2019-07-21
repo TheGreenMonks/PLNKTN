@@ -535,6 +535,7 @@ namespace PLNKTN.Repositories
                 }
             }
         }
+        /*Function below are added new*/
         public async Task<List<CollectiveEF>> GetAllCollective_EFs()
         {
             using (var context = _dbConnection.Context())

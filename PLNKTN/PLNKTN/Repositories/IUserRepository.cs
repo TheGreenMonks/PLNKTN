@@ -16,6 +16,7 @@ namespace PLNKTN.Repositories
         Task<User> GetUser(string userId);
         Task<List<User>> GetUsers();
         Task<int> DeleteUser(string userId);
+        /*Function below are added new*/
         Task<CollectiveEF> GetCollective_EF(DateTime date_taken);
         Task<int> AddCollective_EF(DateTime date_taken, CollectiveEF cEF);
         Task<List<CollectiveEF>> GetAllCollective_EFs();

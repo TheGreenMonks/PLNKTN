@@ -14,10 +14,12 @@ namespace PLNKTN.Controllers
     public class CollectiveEFController : Controller
     {
         private readonly IUserRepository _userRepository;
+
         // GET: api/values
         [HttpGet]
         public async Task<IActionResult> Get()
-        {
+        {   
+            /* To get average Collective EF */
             var average_CEFs = await Compute_Average_Collective_EF();
             return Ok(average_CEFs);
         }
@@ -32,6 +34,10 @@ namespace PLNKTN.Controllers
                 return Ok(collective_EF);
             } else
             {
+                /*What happen when trying to get Collective_EF for today date but it was not computed yet 
+                So I thought here is a great place to do the computation and then return it to the front end
+                but at this moment we also need to post the newly computed value need to be post to the DB 
+                and this is where I am stuck is how to post the new computed value into the DB while doing get function*/
                 float cef = await this.Compute_Collective_EF();
                 DateTime dt = DateTime.Now;
                 collective_EF = new CollectiveEF
@@ -61,6 +67,7 @@ namespace PLNKTN.Controllers
         public void Delete(int id)
         {
         }
+        /*Function below are added new*/
         /*** HELPER FUNCTION TO COMPUTE THE COLLECTIVE_EF ***/
         private async Task<float> Compute_Collective_EF()
         {
