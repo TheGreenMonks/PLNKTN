@@ -10,15 +10,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PLNKTN.BusinessLogic;
 using PLNKTN.Repositories;
 
 namespace PLNKTN
 {
     public class Startup
     {
+        private ChallengeTimer challengeTimer;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            challengeTimer = new ChallengeTimer();
         }
 
         public IConfiguration Configuration { get; }

@@ -341,6 +341,7 @@ namespace PLNKTN.Repositories
             }
         }
 
+        // TODO: This code is not needed as per PLNKTN-44 & 45 - DELETE
         public async Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken)
         {
             using (var context = _dbConnection.Context())
@@ -442,6 +443,11 @@ namespace PLNKTN.Repositories
                     return null;
                 }
             }
+        }
+
+        public async Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement)
+        {
+            return -1;
         }
     }
 }
