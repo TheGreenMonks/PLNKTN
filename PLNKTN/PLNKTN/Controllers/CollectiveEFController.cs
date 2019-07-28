@@ -39,10 +39,9 @@ namespace PLNKTN.Controllers
                 but at this moment we also need to post the newly computed value need to be post to the DB 
                 and this is where I am stuck is how to post the new computed value into the DB while doing get function*/
                 float cef = await this.Compute_Collective_EF();
-                DateTime dt = DateTime.Now;
                 collective_EF = new CollectiveEF
                 {
-                    Date_taken : dt,
+                    Date_taken : date,
                     collective_ef : cef,
                 };
 
