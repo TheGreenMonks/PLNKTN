@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 
 namespace PLNKTN.Repositories
 {
-    public class CreateDynamoDBTables
+    public class DBAdmin
     {
-        public CreateDynamoDBTables()
+        public DBAdmin()
+        {
+            
+        }
+
+        private async int createUserTable()
         {
             AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-            string tableName = "Users";
 
             var request = new CreateTableRequest
             {
-                TableName = tableName,
+                TableName = "Users",
                 AttributeDefinitions = new List<AttributeDefinition>()
                 {
                     new AttributeDefinition
@@ -40,7 +44,9 @@ namespace PLNKTN.Repositories
                 }
             };
 
-            var response = client.CreateTableAsync(request);
+            var response = await client.CreateTableAsync(request);
+
+            response.
         }
     }
 }
