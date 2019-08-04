@@ -55,9 +55,9 @@
         "CarMPG": "",
         "ShareData": "",
         "Country": "",
-        "Rewards_earned": 
+        "RewardsEarned": 
         [   
-            "RewardUser": 
+            "UserReward": 
             {
                 "ID":"",
                 "Title": "",
