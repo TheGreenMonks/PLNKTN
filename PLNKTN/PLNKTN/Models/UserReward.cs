@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PLNKTN.Models
 {
-    public class RewardUser
+    public class UserReward
     {
         [DynamoDBProperty]
         public string Id { get; set; }
@@ -15,10 +15,10 @@ namespace PLNKTN.Models
         public string Title { get; set; }
 
         [DynamoDBProperty]
-        public List<ChallengeUser> Challenges_to_complete { get; set; } = new List<ChallengeUser>();
+        public List<UserRewardChallenge> ChallengesUnderway { get; set; } = new List<UserRewardChallenge>();
 
         [DynamoDBProperty]
-        public DateTime Date_completed { get; set; }
+        public DateTime DateCompleted { get; set; }
 
         [DynamoDBProperty]
         public string Status { get; set; }

@@ -50,7 +50,7 @@ namespace PLNKTN.Models
         public string Country { get; set; } = null;
 
         [DynamoDBProperty]
-        public List<RewardUser> RewardsUser { get; set; }
+        public List<UserReward> RewardsEarned { get; set; }
 
         public User()
         {

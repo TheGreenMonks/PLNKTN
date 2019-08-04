@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace PLNKTN.Models
 {
-    public class Challenge
+    public class RewardGridPosition
     {
         [DynamoDBProperty]
-        public string Id { get; set; }
+        public int x { get; set; }
 
         [DynamoDBProperty]
-        public string Category { get; set; }
-
-        [DynamoDBProperty]
-        public string Description { get; set; }
+        public int y { get; set; }
     }
 }

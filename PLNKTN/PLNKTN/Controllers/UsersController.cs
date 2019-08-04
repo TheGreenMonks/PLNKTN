@@ -78,7 +78,7 @@ namespace PLNKTN.Controllers
                 ShareData = userDto.ShareData,
                 EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
-                RewardsUser = new List<RewardUser>()
+                RewardsEarned = new List<UserReward>()
             };
 
             var result = await _userRepository.CreateUser(user);
