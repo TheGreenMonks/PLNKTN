@@ -22,7 +22,7 @@ namespace PLNKTN
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            challengeTimer = new ChallengeTimer();
+            //challengeTimer = new ChallengeTimer();
         }
 
         public IConfiguration Configuration { get; }

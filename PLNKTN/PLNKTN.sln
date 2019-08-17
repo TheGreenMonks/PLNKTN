@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLNKTN", "PLNKTN\PLNKTN.csproj", "{DF6645FA-D3F1-4466-87F3-7486B2566761}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLNKTN", "PLNKTN\PLNKTN.csproj", "{DF6645FA-D3F1-4466-87F3-7486B2566761}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rewards_Challenges_Calculation", "Rewards_Challenges_Calculation\Rewards_Challenges_Calculation.csproj", "{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DF6645FA-D3F1-4466-87F3-7486B2566761}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF6645FA-D3F1-4466-87F3-7486B2566761}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF6645FA-D3F1-4466-87F3-7486B2566761}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
