@@ -9,7 +9,7 @@ namespace PLNKTN.Models
     public class RewardChallenge
     {
         [DynamoDBProperty]
-        public string c_Id { get; set; }
+        public string Id { get; set; }
 
         [DynamoDBProperty]
         public string Name { get; set; }

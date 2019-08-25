@@ -9,6 +9,7 @@ namespace PLNKTN.Repositories
     public interface IRewardRepository
     {
         // General Reward tasks
-        Task<IList<Reward>> GetAllRewards();
+        Task<int> CreateReward(Reward reward);
+        Task<int> UpdateReward(Reward reward);
     }
 }

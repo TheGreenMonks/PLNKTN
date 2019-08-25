@@ -16,5 +16,8 @@ namespace PLNKTN.Models
 
         [DynamoDBProperty]
         public string SubCategory { get; set; }
+
+        [DynamoDBProperty]
+        public string RestrictionType { get; set; }
     }
 }
