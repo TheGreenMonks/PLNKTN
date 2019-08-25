@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime;
 using PLNKTN.Models;
@@ -457,7 +458,9 @@ namespace PLNKTN.Repositories
                     // ref -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
 
                     // Defins scan conditions - there are none as we want all users
-                    IEnumerable<ScanCondition> conditions = new List<ScanCondition>();
+                    var conditions = new List<ScanCondition>();
+                    conditions.Add(new ScanCondition("UserRewards", ScanOperator.IsNotNull));
+                    conditions.Add(new ScanCondition("EcologicalMeasurements", ScanOperator.IsNotNull));
 
                     // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
                     var users = await context.ScanAsync<User>(conditions).GetRemainingAsync();
@@ -495,11 +498,6 @@ namespace PLNKTN.Repositories
                     return null;
                 }
             }
-        }
-
-        public Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement)
-        {
-            throw new NotImplementedException();
         }
     }
 }

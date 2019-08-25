@@ -12,12 +12,12 @@ namespace PLNKTN.Models
         public string Id { get; set; }
 
         [DynamoDBProperty]
-        public string Category { get; set; }
-
-        [DynamoDBProperty]
         public DateTime DateCompleted { get; set; }
 
         [DynamoDBProperty]
         public string Status { get; set; }
+
+        [DynamoDBProperty]
+        public UserRewardChallengeRule Rule { get; set; }
     }
 }

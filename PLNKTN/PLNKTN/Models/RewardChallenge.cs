@@ -33,6 +33,6 @@ namespace PLNKTN.Models
         public string Source { get; set; }
 
         [DynamoDBProperty]
-        public string Rule { get; set; }
+        public RewardChallengeRule Rule { get; set; }
     }
 }

@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace PLNKTN.Models
 {
-    public class UserReward
+    public class UserRewardChallengeRule
     {
         [DynamoDBProperty]
-        public string Id { get; set; }
+        public int Time { get; set; }
 
         [DynamoDBProperty]
-        public List<UserRewardChallenge> Challenges { get; set; }
+        public string Category { get; set; }
 
         [DynamoDBProperty]
-        public DateTime DateCompleted { get; set; }
+        public string SubCategory { get; set; }
 
         [DynamoDBProperty]
-        public string Status { get; set; }
+        public string RestrictionType { get; set; }
     }
 }
