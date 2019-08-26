@@ -20,7 +20,7 @@ namespace PLNKTN.Controllers
             _rewardRepository = rewardRepository;
         }
 
-        // GET: api/values
+        // GET: api/Rewards
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -34,7 +34,7 @@ namespace PLNKTN.Controllers
             return "value";
         }
 
-        // POST api/values
+        // POST api/Rewards
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Reward reward)
         {
@@ -66,12 +66,12 @@ namespace PLNKTN.Controllers
 
             if (result == 1)
             {
-                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
+                // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = reward.Id }, reward);
             }
             else if (result == -10)
             {
-                // return HTTP 409 Conflict as user already exists in DB
+                // return HTTP 409 Conflict as reward already exists in DB
                 return Conflict("Reward with ID '" + reward.Id + "' already exists.  Cannot create a duplicate.");
             }
             else
@@ -81,13 +81,54 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        // PUT api/Rewards
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody]Reward reward)
         {
+            if (reward == null)
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Reward information formatted incorrectly.");
+            }
+
+            var user = new Reward()
+            {
+                Id = reward.Id,
+                Title = reward.Title,
+                ImageURL = reward.ImageURL,
+                Description = reward.Description,
+                Link = reward.Link,
+                GridPosition = reward.GridPosition,
+                Text_When_Completed = reward.Text_When_Completed,
+                Text_When_Not_Completed = reward.Text_When_Not_Completed,
+                Source = reward.Source,
+                Challenges = reward.Challenges,
+                Country = reward.Country,
+                Overview = reward.Overview,
+                Impact = reward.Impact,
+                Tree_species = reward.Tree_species
+            };
+
+            var result = await _rewardRepository.UpdateReward(reward);
+
+            if (result == 1)
+            {
+                // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
+                return CreatedAtAction("Get", new { id = reward.Id }, reward);
+            }
+            else if (result == -10)
+            {
+                // return HTTP 409 Conflict as reward already exists in DB
+                return Conflict("Reward with ID '" + reward.Id + "' already exists.  Cannot create a duplicate.");
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
 
-        // DELETE api/values/5
+        // DELETE api/Rewards/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
