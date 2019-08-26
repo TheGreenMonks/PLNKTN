@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace PLNKTN.Controllers
     public class RewardsController : ControllerBase
     {
         private readonly IRewardRepository _rewardRepository;
+        private readonly IUserRepository _userRepository;
 
-        public RewardsController(IRewardRepository rewardRepository)
+        public RewardsController(IRewardRepository rewardRepository, IUserRepository userRepository)
         {
             _rewardRepository = rewardRepository;
+            _userRepository = userRepository;
         }
 
         // GET: api/Rewards
@@ -63,6 +66,9 @@ namespace PLNKTN.Controllers
             };
 
             var result = await _rewardRepository.CreateReward(reward);
+
+            // Add reward to the users in the Database.
+            postUserRewards(reward);
 
             if (result == 1)
             {
@@ -132,6 +138,42 @@ namespace PLNKTN.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        /* Business Logic
+         * Methods here are stubs to transfer data further than just the rewards table.  It is a way of updating the user rewards and the rewards table at the same time.
+         */
+
+        private void postUserRewards(Reward reward)
+        {
+            var userRewardChallenge = new List<UserRewardChallenge>();
+
+            foreach (var challenge in reward.Challenges)
+            {
+                userRewardChallenge.Add(new UserRewardChallenge
+                {
+                    Id = challenge.Id,
+                    DateCompleted = null,
+                    Rule = new UserRewardChallengeRule
+                    {
+                        Category = challenge.Rule.Category,
+                        RestrictionType = challenge.Rule.RestrictionType,
+                        SubCategory = challenge.Rule.SubCategory,
+                        Time = challenge.Rule.Time
+                    },
+                    Status = "INCOMPLETE"
+                });
+            }
+
+            var userReward = new UserReward
+            {
+                Id = reward.Id,
+                Challenges = userRewardChallenge,
+                DateCompleted = null,
+                Status = "INCOMPLETE"
+            };
+
+            _userRepository.AddUserReward(userReward);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace PLNKTN.Models
         public List<UserRewardChallenge> Challenges { get; set; }
 
         [DynamoDBProperty]
-        public DateTime DateCompleted { get; set; }
+        public DateTime? DateCompleted { get; set; }
 
         [DynamoDBProperty]
         public string Status { get; set; }

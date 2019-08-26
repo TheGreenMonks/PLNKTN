@@ -71,7 +71,7 @@ namespace PLNKTN.Controllers
                         var _time = _challenge.Rule.Time;
                         var _restrictionType = _challenge.Rule.RestrictionType;
                         // Flag to assess success of user against challenge rule.
-                        var isSuccessful = true;
+                        var isSuccessful = false;
 
                         // Determine how many eco measurements will be required to successfully complete the challenge
                         // and an index start position for the for loop later.
@@ -99,15 +99,10 @@ namespace PLNKTN.Controllers
                         // Sets where the enumerator should start in the list of eco measurements
                         var indexStart = numOfEcoMeasurements - offset;
 
+                        // If the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
                         // If there are not enough eco measurements in dbUsers Db entry indexStart will be < 0 and it is impossible
                         // for them to successfully complete this task, therefore break.
-                        if (indexStart < 0)
-                        {
-                            break;
-                        }
-
-                        // If the rule restriction is SKIP, i.e. do not eat beef for 1 week.
-                        if (String.Equals(_restrictionType, "SKIP"))
+                        if (String.Equals(_restrictionType, "SKIP") && indexStart >= 0)
                         {
                             for (int i = indexStart; i <= offset; i++)
                             {
@@ -130,11 +125,12 @@ namespace PLNKTN.Controllers
                                 }
                                 else if (_reflectedRetrievedValue == 0 && skippedEnoughtTimes == 0)
                                 {
+                                    isSuccessful = true;
                                     break;
                                 }
                             }
                         }
-                        else if (String.Equals(_restrictionType, "ONLY_THIS"))
+                        else if (String.Equals(_restrictionType, "ONLY_THIS") && indexStart >= 0)
                         {
                             for (int i = indexStart; i <= offset; i++)
                             {
@@ -182,6 +178,7 @@ namespace PLNKTN.Controllers
                                 }
                                 else if (_reflectedRetrievedValue > 0 && skippedEnoughtTimes == 0)
                                 {
+                                    isSuccessful = true;
                                     break;
                                 }
                             }

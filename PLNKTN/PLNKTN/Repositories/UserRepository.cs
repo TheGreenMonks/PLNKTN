@@ -499,5 +499,154 @@ namespace PLNKTN.Repositories
                 }
             }
         }
+
+        public async Task<int> AddUserReward(UserReward reward)
+        {
+            using (IDynamoDBContext context = _dbConnection.Context())
+            {
+                try
+                {
+                    // TODO - This needs to be correctly designed as performace at scale is a VERY large issue
+                    // as the DB increases in size.
+                    // ref -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
+
+                    // Defins scan conditions - there are none as we want all users
+                    var conditions = new List<ScanCondition>();
+
+                    // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
+                    var users = await context.ScanAsync<User>(conditions).GetRemainingAsync();
+
+
+                    if (users != null)
+                    {
+                        foreach (var user in users)
+                        {
+                            if (user.UserRewards == null)
+                            {
+                                user.UserRewards = new List<UserReward>();
+                            }
+                            // Find reward object in User object from the DB where the IDs match
+                            UserReward dbReward = user.UserRewards.FirstOrDefault(r => r.Id == reward.Id);
+
+                            if (dbReward == null)
+                            {
+                                user.UserRewards.Add(reward);
+                                await context.SaveAsync(user);
+                            }
+                            else
+                            {
+                                // 409 - reward with specified ID already exists, conflict
+                            }
+                        }
+                        // OK All saves complete
+                        return 1;
+                    }
+                    else
+                    {
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+        public async Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge)
+        {
+            using (IDynamoDBContext context = _dbConnection.Context(_config))
+            {
+                try
+                {
+                    User user = await context.LoadAsync<User>(userId);
+
+                    if (user != null)
+                    {
+                        // Find reward object in User object from the DB where the IDs match
+                        UserReward dbReward = user.UserRewards.FirstOrDefault(e => e.Id == rewardId);
+
+                        if (dbReward != null)
+                        {
+                            user.UserRewards.Remove(dbReward);
+                            dbReward.Challenges.Add(challenge);
+                            user.UserRewards.Add(dbReward);
+                            await context.SaveAsync(user);
+                            return 1;
+                        }
+                        else
+                        {
+                            // 409 - reward with specified ID already exists, conflict
+                            return -7;
+                        }
+                    }
+                    else
+                    {
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+
+
+
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
     }
 }
