@@ -76,7 +76,27 @@ namespace PLNKTN.Controllers
                         // Determine how many eco measurements will be required to successfully complete the challenge
                         // and an index start position for the for loop later.
                         var numOfEcoMeasurements = _user.EcologicalMeasurements.Count;
-                        var offset = _time * 7;
+                        var offset = 0;
+
+                        // This sets the offset (the number of eco measurements to look at) based on how long the user
+                        // is to go without/only use a specific item.
+                        if (_time <= 7)
+                        {
+                            offset = 7;
+                        }
+                        else if (_time > 7 && _time <= 14)
+                        {
+                            offset = 14;
+                        }
+                        else if (_time > 14 && _time <= 30)
+                        {
+                            offset = 30;
+                        }
+                        else if (_time > 30 && _time <= 60)
+                        {
+                            offset = 60;
+                        }
+                        // Sets where the enumerator should start in the list of eco measurements
                         var indexStart = numOfEcoMeasurements - offset;
 
                         // If there are not enough eco measurements in dbUsers Db entry indexStart will be < 0 and it is impossible
@@ -100,10 +120,16 @@ namespace PLNKTN.Controllers
 
                                 // Convert the retrieved value to either an int.
                                 var _reflectedRetrievedValue = Convert.ToInt32(_reflectedSubCategory);
+                                // A number that when it == 0 means that the user has skipped an item for the required amount of time
+                                var skippedEnoughtTimes = i - _time;
 
                                 if (_reflectedRetrievedValue > 0)
                                 {
                                     isSuccessful = false;
+                                    break;
+                                }
+                                else if (_reflectedRetrievedValue == 0 && skippedEnoughtTimes == 0)
+                                {
                                     break;
                                 }
                             }
@@ -144,12 +170,18 @@ namespace PLNKTN.Controllers
 
                                 // Convert the retrieved value to an int.
                                 var _reflectedRetrievedValue = Convert.ToInt32(_reflectedSubCategoryValue);
+                                // A number that when it == 0 means that the user has only used an item for the required amount of time
+                                var skippedEnoughtTimes = i - _time;
 
                                 // The use fails the challenge if any other sub category is used or if they have not logged 
                                 // usage of the only sub category that is supposed to be used (prevents auto completion by not entering any info).
                                 if (_reflectedRetrievedValue == 0 || _countOtherSubCategoriesUsed > 0)
                                 {
                                     isSuccessful = false;
+                                    break;
+                                }
+                                else if (_reflectedRetrievedValue > 0 && skippedEnoughtTimes == 0)
+                                {
                                     break;
                                 }
                             }
