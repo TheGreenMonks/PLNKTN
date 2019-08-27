@@ -8,10 +8,8 @@ namespace PLNKTN.Models
 {
     public class RewardGridPosition
     {
-        [DynamoDBProperty]
         public int x { get; set; }
 
-        [DynamoDBProperty]
         public int y { get; set; }
     }
 }
