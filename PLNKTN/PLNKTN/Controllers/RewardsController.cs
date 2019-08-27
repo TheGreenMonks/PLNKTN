@@ -25,9 +25,58 @@ namespace PLNKTN.Controllers
 
         // GET: api/Rewards
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async void Get()
         {
-            return new string[] { "value1", "value2" };
+            /* Algorithm
+             * Foreach User check each Reward's Challenge status to see if the User has completed all Challenges.  If all Challenges in a
+             * Reward are complete then set the status of the UserReward to complete and set the date of completion.
+             * 
+             * TODO - Efficiency Improvements -- 1. Only get the required fields from the db (i.e. eco measurments aren't needed)
+             */
+
+            // Get Users from DB
+
+            /* TODO
+             * This action will need to be paginated and parallelised as the max transfer size is 1MB, which will will be exceed quickly.
+             * this functionality will enable multiple app threads to work on crunching the data via multiple 1MB requests
+             * Reference -> https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html
+             * and -> https://stackoverflow.com/questions/48631715/retrieving-all-items-in-a-table-with-dynamodb
+             * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
+             */
+
+            // Get all users from the DB who have NOT NULL Reward arrays
+            var dbUsers = await _userRepository.GetAllUsers();
+
+            // Iterate over each user that has rewards in their DB record.
+            foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
+            {
+                // Flag to indicate if changes to challenge status have been made
+                var changesMade = false;
+                // Sort eco measurements by date for easier processing in all challenge rule checks.
+                _user.EcologicalMeasurements.OrderBy(e => e.Date_taken);
+
+                // Iterate over all incomplete rewards.
+                foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
+                {
+                    var incompleteChallenges = _reward.Challenges.Where(c => c.Status != UserRewardChallengeStatus.Complete).ToList();
+                    
+                    // if all challenges are complete then set the reward status to complete
+                    if (incompleteChallenges.Count() == 0)
+                    {
+                        _reward.DateCompleted = DateTime.UtcNow;
+                        _reward.Status = UserRewardStatus.Complete;
+                        changesMade = true;
+                    }
+                }
+
+                // Save changes to DB (removes eco emasurements as they don't all need to be sent back to the server.
+                if (changesMade)
+                {
+                    _user.EcologicalMeasurements = null;
+                    await _userRepository.UpdateUser(_user);
+                }
+
+            }
         }
 
         // GET api/values/5
@@ -134,9 +183,9 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // DELETE api/Rewards/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE api/Rewards
+        [HttpDelete]
+        public void Delete()
         {
         }
 
@@ -161,7 +210,7 @@ namespace PLNKTN.Controllers
                         SubCategory = challenge.Rule.SubCategory,
                         Time = challenge.Rule.Time
                     },
-                    Status = "INCOMPLETE"
+                    Status = UserRewardChallengeStatus.Incomplete
                 });
             }
 
@@ -170,7 +219,7 @@ namespace PLNKTN.Controllers
                 Id = reward.Id,
                 Challenges = userRewardChallenge,
                 DateCompleted = null,
-                Status = "INCOMPLETE"
+                Status = UserRewardStatus.Incomplete
             };
 
             _userRepository.AddUserReward(userReward);

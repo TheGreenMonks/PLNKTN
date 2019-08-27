@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
@@ -59,11 +56,11 @@ namespace PLNKTN.Controllers
                 _user.EcologicalMeasurements.OrderBy(e => e.Date_taken);
 
                 // Iterate over all incomplete rewards.
-                foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != "COMPLETE"))
+                foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
                 {
 
                     // For each challenge in this reward that is not complete
-                    foreach (var _challenge in _reward.Challenges.Where(c => c.Status != "COMPLETE"))
+                    foreach (var _challenge in _reward.Challenges.Where(c => c.Status != UserRewardChallengeStatus.Complete))
                     {
                         // Get rule information in local vars (because easier to user later)
                         var _category = _challenge.Rule.Category;
@@ -102,7 +99,7 @@ namespace PLNKTN.Controllers
                         // If the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
                         // If there are not enough eco measurements in dbUsers Db entry indexStart will be < 0 and it is impossible
                         // for them to successfully complete this task, therefore break.
-                        if (String.Equals(_restrictionType, "SKIP") && indexStart >= 0)
+                        if (_restrictionType == ChallengeType.Skip && indexStart >= 0)
                         {
                             for (int i = indexStart; i <= offset; i++)
                             {
@@ -130,7 +127,7 @@ namespace PLNKTN.Controllers
                                 }
                             }
                         }
-                        else if (String.Equals(_restrictionType, "ONLY_THIS") && indexStart >= 0)
+                        else if (_restrictionType == ChallengeType.Only_This && indexStart >= 0)
                         {
                             for (int i = indexStart; i <= offset; i++)
                             {
@@ -187,7 +184,8 @@ namespace PLNKTN.Controllers
                         // Change the challenge status if user is successful.
                         if (isSuccessful)
                         {
-                            _challenge.Status = "COMPLETE";
+                            _challenge.Status = UserRewardChallengeStatus.Complete;
+                            _challenge.DateCompleted = DateTime.UtcNow;
                             changesMade = true;
                         }
 
