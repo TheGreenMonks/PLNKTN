@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTN.BusinessLogic;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
 
@@ -14,6 +15,7 @@ namespace PLNKTN.Controllers
     public class ChallengesController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly string ctrlName = "Challenge";
 
         public ChallengesController(IUserRepository userRepository)
         {
@@ -46,6 +48,8 @@ namespace PLNKTN.Controllers
 
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
+            // New List to hold all email messages generated
+            ICollection<string> emailMessages = new List<string>();
 
             // Iterate over each user that has rewards in their DB record.
             foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
@@ -187,6 +191,7 @@ namespace PLNKTN.Controllers
                             _challenge.Status = UserRewardChallengeStatus.Complete;
                             _challenge.DateCompleted = DateTime.UtcNow;
                             changesMade = true;
+                            emailMessages.Add(EmailHelper.EmailMessage(_user.Id, ctrlName, _challenge.Id));
                         }
 
                     }
@@ -200,6 +205,14 @@ namespace PLNKTN.Controllers
                 }
                 
             }
+
+            // If there are no item completions this time then confirm this in the email with a message.
+            if (emailMessages.Count == 0)
+            {
+                emailMessages.Add("No " + ctrlName + "s completed this time...\n");
+            }
+
+            EmailHelper.SendEmail(emailMessages, ctrlName);
         }
 
         // GET api/values/5

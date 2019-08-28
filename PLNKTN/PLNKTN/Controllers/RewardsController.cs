@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTN.BusinessLogic;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
 
@@ -20,6 +17,7 @@ namespace PLNKTN.Controllers
     {
         private readonly IRewardRepository _rewardRepository;
         private readonly IUserRepository _userRepository;
+        private readonly string ctrlName = "Reward";
 
         public RewardsController(IRewardRepository rewardRepository, IUserRepository userRepository)
         {
@@ -50,14 +48,14 @@ namespace PLNKTN.Controllers
 
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
+            // New List to hold all email messages generated
+            ICollection<string> emailMessages = new List<string>();
 
             // Iterate over each user that has rewards in their DB record.
             foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
             {
                 // Flag to indicate if changes to challenge status have been made
                 var changesMade = false;
-                // Sort eco measurements by date for easier processing in all challenge rule checks.
-                _user.EcologicalMeasurements.OrderBy(e => e.Date_taken);
 
                 // Iterate over all incomplete rewards.
                 foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
@@ -70,6 +68,7 @@ namespace PLNKTN.Controllers
                         _reward.DateCompleted = DateTime.UtcNow;
                         _reward.Status = UserRewardStatus.Complete;
                         changesMade = true;
+                        emailMessages.Add(EmailHelper.EmailMessage(_user.Id, ctrlName, _reward.Id));
                     }
                 }
 
@@ -79,10 +78,15 @@ namespace PLNKTN.Controllers
                     _user.EcologicalMeasurements = null;
                     await _userRepository.UpdateUser(_user);
                 }
-
             }
 
-            sendEmail();
+            // If there are no item completions this time then confirm this in the email with a message.
+            if (emailMessages.Count == 0)
+            {
+                emailMessages.Add("No " + ctrlName + "s completed this time...\n");
+            }
+
+            EmailHelper.SendEmail(emailMessages, ctrlName);
         }
 
         // GET api/values/5
@@ -229,57 +233,6 @@ namespace PLNKTN.Controllers
             };
 
             _userRepository.AddUserReward(userReward);
-        }
-
-        private void sendEmail()
-        {
-            var pwFile = "C:\\gmpw.txt";
-            string fromEmail = "";
-            string toEmail = "";
-            string pw = "";
-
-            // Code to get pw from local file to keep it out of the code.
-            if (System.IO.File.Exists(pwFile))
-            {
-                using (StreamReader stream = System.IO.File.OpenText(pwFile))
-                {
-                    fromEmail = stream.ReadLine();
-                    toEmail = stream.ReadLine();
-                    pw = stream.ReadLine();
-                }
-
-                // Code to set upi email and send it.
-                var fromAddress = new MailAddress("skippy6263@gmail.com", "PLNKTN Web App");
-                var toAddress = new MailAddress("dextercunningham@hotmail.co.uk", "Developers");
-                string subject = "Reward and Challenge Completion Calculation Execution";
-                string body = "The Reward and Challenge Completion Calculation methods have been executed at " +
-                    DateTime.UtcNow.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n\n" +
-                    "Best regards,\n\n\n" + "The PLNKTN Web App";
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Credentials = new NetworkCredential(fromAddress.Address, pw),
-                    Timeout = 20000
-                };
-                using (var message = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = subject,
-                    Body = body
-                })
-                {
-                    smtp.Send(message);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("Error: Email send error");
-                Debug.WriteLine("Location: RewardsController in 'sendEmail()' method.");
-                Debug.WriteLine("Cause: Could not send email, possibly due to bad password file, bad access or bad email set up.");
-            }
         }
     }
 }
