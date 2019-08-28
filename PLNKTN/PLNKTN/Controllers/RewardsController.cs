@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTN.Models;
@@ -77,6 +81,8 @@ namespace PLNKTN.Controllers
                 }
 
             }
+
+            sendEmail();
         }
 
         // GET api/values/5
@@ -223,6 +229,57 @@ namespace PLNKTN.Controllers
             };
 
             _userRepository.AddUserReward(userReward);
+        }
+
+        private void sendEmail()
+        {
+            var pwFile = "C:\\gmpw.txt";
+            string fromEmail = "";
+            string toEmail = "";
+            string pw = "";
+
+            // Code to get pw from local file to keep it out of the code.
+            if (System.IO.File.Exists(pwFile))
+            {
+                using (StreamReader stream = System.IO.File.OpenText(pwFile))
+                {
+                    fromEmail = stream.ReadLine();
+                    toEmail = stream.ReadLine();
+                    pw = stream.ReadLine();
+                }
+
+                // Code to set upi email and send it.
+                var fromAddress = new MailAddress("skippy6263@gmail.com", "PLNKTN Web App");
+                var toAddress = new MailAddress("dextercunningham@hotmail.co.uk", "Developers");
+                string subject = "Reward and Challenge Completion Calculation Execution";
+                string body = "The Reward and Challenge Completion Calculation methods have been executed at " +
+                    DateTime.UtcNow.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n\n" +
+                    "Best regards,\n\n\n" + "The PLNKTN Web App";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential(fromAddress.Address, pw),
+                    Timeout = 20000
+                };
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send(message);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Error: Email send error");
+                Debug.WriteLine("Location: RewardsController in 'sendEmail()' method.");
+                Debug.WriteLine("Cause: Could not send email, possibly due to bad password file, bad access or bad email set up.");
+            }
         }
     }
 }
