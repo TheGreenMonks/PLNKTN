@@ -126,8 +126,11 @@ namespace PLNKTN.Controllers
 
             var result = await _rewardRepository.CreateReward(reward);
 
-            // Add reward to the users in the Database.
-            postUserRewards(reward);
+            // Generate a 'user reward' and add it to all users in the DB.
+            var rewards = new List<Reward>();
+            rewards.Add(reward);
+            var userReward = UsersController.GenerateUserRewards(rewards);
+            await _userRepository.AddUserRewardToAllUsers(userReward.First());
 
             if (result == 1)
             {
@@ -197,42 +200,6 @@ namespace PLNKTN.Controllers
         [HttpDelete]
         public void Delete()
         {
-        }
-
-        /* Business Logic
-         * Methods here are stubs to transfer data further than just the rewards table.  It is a way of updating the user rewards and the rewards table at the same time.
-         */
-
-        private void postUserRewards(Reward reward)
-        {
-            var userRewardChallenge = new List<UserRewardChallenge>();
-
-            foreach (var challenge in reward.Challenges)
-            {
-                userRewardChallenge.Add(new UserRewardChallenge
-                {
-                    Id = challenge.Id,
-                    DateCompleted = null,
-                    Rule = new UserRewardChallengeRule
-                    {
-                        Category = challenge.Rule.Category,
-                        RestrictionType = challenge.Rule.RestrictionType,
-                        SubCategory = challenge.Rule.SubCategory,
-                        Time = challenge.Rule.Time
-                    },
-                    Status = UserRewardChallengeStatus.Incomplete
-                });
-            }
-
-            var userReward = new UserReward
-            {
-                Id = reward.Id,
-                Challenges = userRewardChallenge,
-                DateCompleted = null,
-                Status = UserRewardStatus.Incomplete
-            };
-
-            _userRepository.AddUserReward(userReward);
         }
     }
 }

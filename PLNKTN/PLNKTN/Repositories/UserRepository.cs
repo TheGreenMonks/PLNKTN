@@ -500,7 +500,12 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<int> AddUserReward(UserReward reward)
+        /* Add the 'userReward' to all 'users' in the DB.  This is used when a new 'Reward' is created.
+         * 'Reward' - Refers to the information required by a user object in the DB in reference to
+         * rewards and challenges.
+         * 
+         */
+        public async Task<int> AddUserRewardToAllUsers(UserReward reward)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
@@ -538,6 +543,67 @@ namespace PLNKTN.Repositories
                                 // 409 - reward with specified ID already exists, conflict
                             }
                         }
+                        // OK All saves complete
+                        return 1;
+                    }
+                    else
+                    {
+                        // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+
+        /* Adds all 'userRewards' to a single user.  This is used when a new User is created.
+         * 'userRewards' - Refers to the infomration required by a user object in the DB in reference to
+         * rewards and challenges.
+         * 
+         */
+        public async Task<int> AddAllUserRewardsToAUser(string userId, ICollection<UserReward> userRewards)
+        {
+            using (IDynamoDBContext context = _dbConnection.Context())
+            {
+                try
+                {
+                    // Gets useru from table.
+                    var user = await context.LoadAsync<User>(userId);
+
+                    if (user != null)
+                    {
+                        user.UserRewards.AddRange(userRewards);
+                        await context.SaveAsync(user);
                         // OK All saves complete
                         return 1;
                     }

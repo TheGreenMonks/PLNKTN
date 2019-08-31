@@ -21,7 +21,7 @@ namespace PLNKTN.Repositories
         // TODO: This code below is not needed as per PLNKTN-44 & 45 - DELETE
         Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken);
 
-        Task<int> AddUserReward(UserReward reward);
+        Task<int> AddUserRewardToAllUsers(UserReward reward);
         Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge);
     }
 }

@@ -65,6 +65,12 @@ namespace PLNKTN.Controllers
                 return BadRequest("User information formatted incorrectly.");
             }
 
+            // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
+            // list of rewards and challenges so, they can participate in reward and challenge completion.
+            var rewards = await _rewardRepository.GetAllRewards();
+            var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
+
+            // Create new user
             var user = new User()
             {
                 Id = userDto.Id,
@@ -80,12 +86,11 @@ namespace PLNKTN.Controllers
                 ShareData = userDto.ShareData,
                 EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
-                UserRewards = new List<UserReward>()
+                UserRewards = userRewards
             };
 
+            // Save the new user to the DB
             var result = await _userRepository.CreateUser(user);
-            var rewards = await _rewardRepository.GetAllRewards();
-            postUserRewards(rewards);
 
             if (result == 1)
             {
@@ -103,8 +108,6 @@ namespace PLNKTN.Controllers
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
         }
-
-
 
         // PUT api/users/test
         [HttpPut]
@@ -177,8 +180,11 @@ namespace PLNKTN.Controllers
             }
         }
 
-        private void postUserRewards(ICollection<Reward> rewards)
+        //  Adds all reward and challenge data required by the user object to a 
+        internal static ICollection<UserReward> GenerateUserRewards(ICollection<Reward> rewards)
         {
+            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
+
             foreach (var _reward in rewards)
             {
                 var userRewardChallenge = new List<UserRewardChallenge>();
@@ -208,8 +214,10 @@ namespace PLNKTN.Controllers
                     Status = UserRewardStatus.Incomplete
                 };
 
-                _userRepository.AddUserReward(userReward);
+                generatedUserRewards.Add(userReward);
             }
+
+            return generatedUserRewards;
         }
     }
 }
