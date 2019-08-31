@@ -111,20 +111,26 @@ namespace PLNKTN.Controllers
 
                                 // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
                                 // based on the text values held in the Challenge list entry.
-                                var _reflectedCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
-                                var _reflectedSubCategory = _reflectedCategory.GetType().GetProperty(_subCategory).GetValue(_reflectedCategory);
+                                var _skipItemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
+                                var _skipItem = _skipItemsCategory.GetType().GetProperty(_subCategory).GetValue(_skipItemsCategory);
 
-                                // Convert the retrieved value to either an int.
-                                var _reflectedRetrievedValue = Convert.ToInt32(_reflectedSubCategory);
+                                // Convert the retrieved value to an int.
+                                var _skipItemAsInt = Convert.ToInt32(_skipItem);
                                 // A number that when it == 0 means that the user has skipped an item for the required amount of time
-                                var skippedEnoughtTimes = i - _time;
+                                var skippedEnoughTimes = i - _time;
 
-                                if (_reflectedRetrievedValue > 0)
+                                //if (_skipItemAsInt > 0)
+                                //{
+                                //    isSuccessful = false;
+                                //    break;
+                                //}
+                                //else 
+                                if (_time <= 3 && skippedEnoughTimes == 0)
                                 {
-                                    isSuccessful = false;
+                                    isSuccessful = true;
                                     break;
                                 }
-                                else if (_reflectedRetrievedValue == 0 && skippedEnoughtTimes == 0)
+                                else if (_skipItemAsInt == 0 && skippedEnoughTimes == 0)
                                 {
                                     isSuccessful = true;
                                     break;

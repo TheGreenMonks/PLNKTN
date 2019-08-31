@@ -16,10 +16,12 @@ namespace PLNKTN.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRewardRepository _rewardRepository;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
         {
             _userRepository = userRepository;
+            _rewardRepository = rewardRepository;
         }
 
         // GET: api/users
@@ -82,6 +84,8 @@ namespace PLNKTN.Controllers
             };
 
             var result = await _userRepository.CreateUser(user);
+            var rewards = await _rewardRepository.GetAllRewards();
+            postUserRewards(rewards);
 
             if (result == 1)
             {
@@ -170,6 +174,41 @@ namespace PLNKTN.Controllers
             else
             {
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
+        }
+
+        private void postUserRewards(ICollection<Reward> rewards)
+        {
+            foreach (var _reward in rewards)
+            {
+                var userRewardChallenge = new List<UserRewardChallenge>();
+
+                foreach (var challenge in _reward.Challenges)
+                {
+                    userRewardChallenge.Add(new UserRewardChallenge
+                    {
+                        Id = challenge.Id,
+                        DateCompleted = null,
+                        Rule = new UserRewardChallengeRule
+                        {
+                            Category = challenge.Rule.Category,
+                            RestrictionType = challenge.Rule.RestrictionType,
+                            SubCategory = challenge.Rule.SubCategory,
+                            Time = challenge.Rule.Time
+                        },
+                        Status = UserRewardChallengeStatus.Incomplete
+                    });
+                }
+
+                var userReward = new UserReward
+                {
+                    Id = _reward.Id,
+                    Challenges = userRewardChallenge,
+                    DateCompleted = null,
+                    Status = UserRewardStatus.Incomplete
+                };
+
+                _userRepository.AddUserReward(userReward);
             }
         }
     }
