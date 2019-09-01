@@ -48,6 +48,7 @@ namespace PLNKTN.Controllers
 
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
+
             // New List to hold all email messages generated
             ICollection<string> emailMessages = new List<string>();
 
@@ -57,7 +58,7 @@ namespace PLNKTN.Controllers
                 // Flag to indicate if changes to challenge status have been made
                 var changesMade = false;
                 // Sort eco measurements by date for easier processing in all challenge rule checks.
-                _user.EcologicalMeasurements.OrderBy(e => e.Date_taken);
+                _user.EcologicalMeasurements = _user.EcologicalMeasurements.OrderBy(e => e.Date_taken.Date).ToList();
 
                 // Iterate over all incomplete rewards.
                 foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
@@ -105,7 +106,10 @@ namespace PLNKTN.Controllers
                         // for them to successfully complete this task, therefore break.
                         if (_restrictionType == ChallengeType.Skip && indexStart >= 0)
                         {
-                            for (int i = indexStart; i <= offset; i++)
+                            // A counter to count the number of times an item has been skipped
+                            var skippedEnoughTimes = 0;
+
+                            for (int i = indexStart; i < numOfEcoMeasurements; i++)
                             {
                                 var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
 
@@ -116,37 +120,41 @@ namespace PLNKTN.Controllers
 
                                 // Convert the retrieved value to an int.
                                 var _skipItemAsInt = Convert.ToInt32(_skipItem);
-                                // A number that when it == 0 means that the user has skipped an item for the required amount of time
-                                var skippedEnoughTimes = i - _time;
 
-                                //if (_skipItemAsInt > 0)
-                                //{
-                                //    isSuccessful = false;
-                                //    break;
-                                //}
-                                //else 
-                                if (_time <= 3 && skippedEnoughTimes == 0)
+                                // Check if the user has skipped the item in this EF and increment if they have.
+                                if (_skipItemAsInt == 0)
+                                {
+                                    skippedEnoughTimes++;
+                                }
+
+                                // Checks if the challenge is to skip 1, 2 or 3 times in a week and if the user has skipped the item enough times
+                                // to be successful yet.  Else if it is just a week or more check if they have skipped for the whole time.
+                                if (_time <= 3 && skippedEnoughTimes == _time)
                                 {
                                     isSuccessful = true;
                                     break;
                                 }
-                                else if (_skipItemAsInt == 0 && skippedEnoughTimes == 0)
+                                else if (skippedEnoughTimes == _time)
                                 {
                                     isSuccessful = true;
                                     break;
                                 }
+
                             }
                         }
                         else if (_restrictionType == ChallengeType.Only_This && indexStart >= 0)
                         {
-                            for (int i = indexStart; i <= offset; i++)
+                            // A counter to count the number of times an item has been skipped
+                            var skippedEnoughTimes = 0;
+
+                            for (int i = indexStart; i < numOfEcoMeasurements; i++)
                             {
                                 var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
 
                                 // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
                                 // based on the text values held in the Challenge list entry.
-                                var _reflectedCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
-                                var _reflectedSubCategoryValue = _reflectedCategory.GetType().GetProperty(_subCategory).GetValue(_reflectedCategory);
+                                var _onlyThisItemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
+                                var _onlyThisItem = _onlyThisItemsCategory.GetType().GetProperty(_subCategory).GetValue(_onlyThisItemsCategory);
                                 // Count for other subcategories used and used in calculation of challenge success
                                 var _countOtherSubCategoriesUsed = 0;
 
@@ -154,9 +162,9 @@ namespace PLNKTN.Controllers
                                 var properties = new Dictionary<string, int>();
 
                                 // Iterate over the list of sub categories and add their property names and values to dict.
-                                foreach (var _tempProps in _reflectedCategory.GetType().GetProperties())
+                                foreach (var _tempProps in _onlyThisItemsCategory.GetType().GetProperties())
                                 {
-                                    properties.Add(_tempProps.Name, (int)_tempProps.GetValue(_reflectedCategory));
+                                    properties.Add(_tempProps.Name, (int)_tempProps.GetValue(_onlyThisItemsCategory));
                                 }
 
                                 // Remove the subcategory that is only to be used in this challenge so it doesn't false flag and fail the challenge.
@@ -172,18 +180,22 @@ namespace PLNKTN.Controllers
                                 }
 
                                 // Convert the retrieved value to an int.
-                                var _reflectedRetrievedValue = Convert.ToInt32(_reflectedSubCategoryValue);
-                                // A number that when it == 0 means that the user has only used an item for the required amount of time
-                                var skippedEnoughtTimes = i - _time;
+                                var _onlyThisItemAsInt = Convert.ToInt32(_onlyThisItem);
 
-                                // The use fails the challenge if any other sub category is used or if they have not logged 
-                                // usage of the only sub category that is supposed to be used (prevents auto completion by not entering any info).
-                                if (_reflectedRetrievedValue == 0 || _countOtherSubCategoriesUsed > 0)
+                                // Check if the user has only used the item in this EF and increment if they have.
+                                if (_onlyThisItemAsInt > 0 && _countOtherSubCategoriesUsed == 0)
                                 {
-                                    isSuccessful = false;
+                                    skippedEnoughTimes++;
+                                }
+
+                                // Checks if the challenge is to only use a specific item for 1, 2 or 3 times in a week and if the user has only used the item enough times
+                                // to be successful yet.  Else if it is just a week or more check if they have only used the item for the whole time.
+                                if (_time <= 3 && skippedEnoughTimes == _time)
+                                {
+                                    isSuccessful = true;
                                     break;
                                 }
-                                else if (_reflectedRetrievedValue > 0 && skippedEnoughtTimes == 0)
+                                else if (skippedEnoughTimes == _time)
                                 {
                                     isSuccessful = true;
                                     break;

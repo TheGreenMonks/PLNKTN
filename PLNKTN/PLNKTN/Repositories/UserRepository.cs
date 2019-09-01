@@ -462,6 +462,10 @@ namespace PLNKTN.Repositories
                     conditions.Add(new ScanCondition("UserRewards", ScanOperator.IsNotNull));
                     conditions.Add(new ScanCondition("EcologicalMeasurements", ScanOperator.IsNotNull));
 
+                    // TODO ******************** DEBUG ONLY REMOVE FROM TESTING *****************************
+                    //conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "2019/8/31/13/31/00/000"));
+
+
                     // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
                     var users = await context.ScanAsync<User>(conditions).GetRemainingAsync();
 
