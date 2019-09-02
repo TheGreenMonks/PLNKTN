@@ -213,8 +213,8 @@ namespace PLNKTN.Repositories
                         return -9;
                     }
 
-                    
-                    
+
+
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -263,7 +263,7 @@ namespace PLNKTN.Repositories
                         var dbEcoMeasure = user.EcologicalMeasurements.FirstOrDefault(e => e.Date_taken.Date == updatedEcoMeasure.Date_taken.Date);
 
 
-                        if (dbEcoMeasure !=  null)
+                        if (dbEcoMeasure != null)
                         {
                             // Remove old ecological measurement from DB User
                             user.EcologicalMeasurements.Remove(dbEcoMeasure);
@@ -289,7 +289,7 @@ namespace PLNKTN.Repositories
                             {
                                 dbEcoMeasure.Transport = updatedEcoMeasure.Transport;
                             }
-                            
+
                             user.EcologicalMeasurements.Add(dbEcoMeasure);
                             await context.SaveAsync<User>(user);
                             // 200 - Ok save complete
@@ -341,6 +341,7 @@ namespace PLNKTN.Repositories
             }
         }
 
+        // TODO: This code is not needed as per PLNKTN-44 & 45 - DELETE
         public async Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken)
         {
             using (var context = _dbConnection.Context())
@@ -367,7 +368,7 @@ namespace PLNKTN.Repositories
                         // 404 - User with specified userId doesn't exist
                         return -9;
                     }
-                    
+
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -451,7 +452,7 @@ namespace PLNKTN.Repositories
                 try
                 {
                     var collective_EF = await context.LoadAsync<CollectiveEF>(date_taken);
-                    return collective_EF != null? collective_EF : null;
+                    return collective_EF != null ? collective_EF : null;
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -626,6 +627,10 @@ namespace PLNKTN.Repositories
                     return -1;
                 }
             }
+        }
+        public async Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement)
+        {
+            return -1;
         }
     }
 }

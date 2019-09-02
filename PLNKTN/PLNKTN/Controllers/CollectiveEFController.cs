@@ -20,7 +20,7 @@ namespace PLNKTN.Controllers
         public async Task<IActionResult> Get()
         {   
             /* To get average Collective EF */
-            var average_CEFs = await Compute_Average_Collective_EF();
+            var average_CEFs = await _userRepository.GetCollective_EF(DateTime.Today);
             return Ok(average_CEFs);
         }
 
@@ -28,7 +28,7 @@ namespace PLNKTN.Controllers
         [HttpGet("{date}")]
         public async Task<IActionResult> Get(DateTime date)
         {
-            var collective_EF = _userRepository.GetCollective_EF(date);
+            var collective_EF = this.Compute_Collective_EF(date);
             if (collective_EF != null)
             {
                 return Ok(collective_EF);
@@ -38,11 +38,11 @@ namespace PLNKTN.Controllers
                 So I thought here is a great place to do the computation and then return it to the front end
                 but at this moment we also need to post the newly computed value need to be post to the DB 
                 and this is where I am stuck is how to post the new computed value into the DB while doing get function*/
-                float cef = await this.Compute_Collective_EF();
-                collective_EF = new CollectiveEF
+                float cef = await this.Compute_Collective_EF(date);
+                CollectiveEF collective_EF = new CollectiveEF
                 {
-                    Date_taken : date,
-                    collective_ef : cef,
+                    Date_taken = date, 
+                    collective_ef = cef
                 };
 
                 return Ok(collective_EF);
@@ -68,7 +68,7 @@ namespace PLNKTN.Controllers
         }
         /*Function below are added new*/
         /*** HELPER FUNCTION TO COMPUTE THE COLLECTIVE_EF ***/
-        private async Task<float> Compute_Collective_EF()
+        private async Task<float> Compute_Collective_EF(DateTime date)
         {
             var users = await _userRepository.GetUsers();
             if (users != null)
@@ -77,28 +77,10 @@ namespace PLNKTN.Controllers
                 int size = 0;
                 foreach (var user in users)
                 {
-                    total_collective_Ef += user.EcologicalFootprint;
+                    total_collective_Ef += user.EcologicalMeasurements.Find(x => x.Date_taken == date).EcologicalFootprint;
                     size += 1;
                 }
                 return (float)total_collective_Ef / size;
-            }
-            else
-                return -1;
-        }
-
-        private async Task<float> Compute_Average_Collective_EF()
-        {
-            var CollectiveEFs = await _userRepository.GetAllCollective_EFs();
-            if (CollectiveEFs != null)
-            {
-                float? total_collective_Efs = 0;
-                int size = 0;
-                foreach (var CollectiveEF in CollectiveEFs)
-                {
-                    total_collective_Efs += CollectiveEF.Collective_EF;
-                    size += 1;
-                }
-                return (float)total_collective_Efs / size;
             }
             else
                 return -1;
