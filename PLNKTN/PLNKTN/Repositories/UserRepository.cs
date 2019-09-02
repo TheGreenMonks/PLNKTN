@@ -465,9 +465,13 @@ namespace PLNKTN.Repositories
                     // TODO ******************** DEBUG ONLY REMOVE FROM TESTING *****************************
                     //conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "2019/8/31/13/31/00/000"));
 
+                    // Makes the read a strong consistent one to ensure latest values are retrieved.
+                    var dbConfig = new DynamoDBOperationConfig();
+                    dbConfig.ConsistentRead = true;
+
 
                     // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
-                    var users = await context.ScanAsync<User>(conditions).GetRemainingAsync();
+                    var users = await context.ScanAsync<User>(conditions, dbConfig).GetRemainingAsync();
 
                     return users;
                 }

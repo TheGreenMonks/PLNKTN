@@ -15,9 +15,15 @@ namespace Rewards_Challenges_Calculation
                 "Calculate User Challange completion\n" +
                 "Calculate User Reward completion");
 
+            // For debug - waits for server to start up properly before calling
             Thread.Sleep(1000);
 
             ExecuteChallengeCompletionAPICall().Wait();
+
+            // Waits 20s for DynamoDb to synchronise any writes from the previous call.  Shouldn't be needed as consistent read is set
+            // however this doesn't seem to be working.  20s is the AWS stipulated period of time.
+            Thread.Sleep(20000);
+
             ExecuteRewardCompletionAPICall().Wait();
 
             // TODO - Remove from release version
@@ -38,7 +44,8 @@ namespace Rewards_Challenges_Calculation
                 if (res.IsSuccessStatusCode)
                 {
                     var s = await res.Content.ReadAsStringAsync();
-                    Console.WriteLine("\n\n" + "METHOD -- ExecuteChallengeCompletionAPICall() -- Complete\n" + "API Call Output: " + s);
+                    Console.WriteLine("\n\n" + "METHOD -- ExecuteChallengeCompletionAPICall() -- Complete\n" + "API Content Output: " + s + "\n" +
+                        "API HTTP Response: " + res.StatusCode.ToString());
                 }
             }
         }
@@ -57,7 +64,8 @@ namespace Rewards_Challenges_Calculation
                 if (res.IsSuccessStatusCode)
                 {
                     var s = await res.Content.ReadAsStringAsync();
-                    Console.WriteLine("\n\n" + "METHOD -- ExecuteRewardCompletionAPICall() -- Complete\n" + "API Call Output: " + s);
+                    Console.WriteLine("\n\n" + "METHOD -- ExecuteRewardCompletionAPICall() -- Complete\n" + "API Content Output: " + s + "\n" +
+                        "API HTTP Response: " + res.StatusCode.ToString());
                 }
             }
         }
