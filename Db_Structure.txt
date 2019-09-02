@@ -55,23 +55,23 @@
         "CarMPG": "",
         "ShareData": "",
         "Country": "",
-        "Rewards_earned": 
+        "RewardsEarned": 
         [   
-            "RewardUser": 
+            "UserReward": 
             {
                 "ID":"",
                 "Title": "",
-                "Challenges_to_complete": 
+                "ChallengesUnderway": 
                 [
                     "ChallengeUser":
                     {
                         "ID": "",
                         "Category": "",
-                        "Date_completed": "",
+                        "DateCompleted": "",
                         "Status": ""
                     }
                 ],
-                "Date_completed": "",
+                "DateCompleted": "",
                 "Status": ""// this will have several different status(not completed, completed and planted)
             }
         ]
