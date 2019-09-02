@@ -16,10 +16,12 @@ namespace PLNKTN.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRewardRepository _rewardRepository;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
         {
             _userRepository = userRepository;
+            _rewardRepository = rewardRepository;
         }
 
         // GET: api/users
@@ -74,6 +76,12 @@ namespace PLNKTN.Controllers
                 return BadRequest("User information formatted incorrectly.");
             }
 
+            // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
+            // list of rewards and challenges so, they can participate in reward and challenge completion.
+            var rewards = await _rewardRepository.GetAllRewards();
+            var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
+
+            // Create new user
             var user = new User()
             {
                 Id = userDto.Id,
@@ -89,9 +97,10 @@ namespace PLNKTN.Controllers
                 ShareData = userDto.ShareData,
                 // EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
-                RewardsUser = new List<RewardUser>()
+                UserRewards = userRewards
             };
 
+            // Save the new user to the DB
             var result = await _userRepository.CreateUser(user);
 
             if (result == 1)
@@ -110,8 +119,6 @@ namespace PLNKTN.Controllers
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
         }
-
-
 
         // PUT api/users/test
         [HttpPut]
@@ -182,6 +189,46 @@ namespace PLNKTN.Controllers
             {
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
+        }
+
+        //  Adds all reward and challenge data required by the user object to a 
+        internal static ICollection<UserReward> GenerateUserRewards(ICollection<Reward> rewards)
+        {
+            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
+
+            foreach (var _reward in rewards)
+            {
+                var userRewardChallenge = new List<UserRewardChallenge>();
+
+                foreach (var challenge in _reward.Challenges)
+                {
+                    userRewardChallenge.Add(new UserRewardChallenge
+                    {
+                        Id = challenge.Id,
+                        DateCompleted = null,
+                        Rule = new UserRewardChallengeRule
+                        {
+                            Category = challenge.Rule.Category,
+                            RestrictionType = challenge.Rule.RestrictionType,
+                            SubCategory = challenge.Rule.SubCategory,
+                            Time = challenge.Rule.Time
+                        },
+                        Status = UserRewardChallengeStatus.Incomplete
+                    });
+                }
+
+                var userReward = new UserReward
+                {
+                    Id = _reward.Id,
+                    Challenges = userRewardChallenge,
+                    DateCompleted = null,
+                    Status = UserRewardStatus.Incomplete
+                };
+
+                generatedUserRewards.Add(userReward);
+            }
+
+            return generatedUserRewards;
         }
     }
 }

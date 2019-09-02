@@ -18,57 +18,77 @@ namespace PLNKTN.Controllers
         // GET: api/values
         [HttpGet]
         public async Task<IActionResult> Get()
-        {   
+        {
             /* To get average Collective EF */
-            var average_CEFs = await _userRepository.GetCollective_EF(DateTime.Today);
-            return Ok(average_CEFs);
+            var collective_EF = await _userRepository.GetCollective_EF(DateTime.Today);
+            if (collective_EF != null)
+            {
+                return Ok(collective_EF);
+            } else
+            {
+                return NotFound("CollectiveEF has not yet been commputed for today date");
+            }
         }
 
         // GET api/values/5
         [HttpGet("{date}")]
         public async Task<IActionResult> Get(DateTime date)
         {
-            var collective_EF = this.Compute_Collective_EF(date);
+            var collective_EF = await _userRepository.GetCollective_EF(date);
             if (collective_EF != null)
             {
                 return Ok(collective_EF);
             } else
             {
-                /*What happen when trying to get Collective_EF for today date but it was not computed yet 
-                So I thought here is a great place to do the computation and then return it to the front end
-                but at this moment we also need to post the newly computed value need to be post to the DB 
-                and this is where I am stuck is how to post the new computed value into the DB while doing get function*/
-                float cef = await this.Compute_Collective_EF(date);
-                CollectiveEF collective_EF = new CollectiveEF
-                {
-                    Date_taken = date, 
-                    collective_ef = cef
-                };
-
-                return Ok(collective_EF);
+                return  NotFound("CollectiveEF has not yet been commputed");
             }
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Post(DateTime date)
         {
+            CollectiveEF cEF = null;
+            float collective_EF = await Compute_Collective_EFAsync(date);
+            if (collective_EF != -1)
+            {
+                cEF = new CollectiveEF()
+                {
+                    Date_taken = date,
+                    Collective_EF = collective_EF
+                };
+                int result = await _userRepository.AddCollective_EF(cEF);
+                if (result == 1)
+                {
+                    return Ok();
+                } else
+                {
+                    return BadRequest("Saving Collective EF encounter DB issue.");
+                }
+            } else
+            {
+                return BadRequest("Computing Collective EF encounter DB issue.");
+            }
+
+
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
-        {
+        { 
+            /*** NOT NEEDED   ****/
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            /*** NOT NEEDED   ****/
         }
         /*Function below are added new*/
         /*** HELPER FUNCTION TO COMPUTE THE COLLECTIVE_EF ***/
-        private async Task<float> Compute_Collective_EF(DateTime date)
+        private async Task<float> Compute_Collective_EFAsync(DateTime date)
         {
             var users = await _userRepository.GetUsers();
             if (users != null)

@@ -13,6 +13,7 @@ namespace PLNKTN.Repositories
         Task<int> UpdateUser(User user);
         Task<User> GetUser(string userId);
         Task<int> DeleteUser(string userId);
+        Task<IList<User>> GetAllUsers();
 
         // Ecological Measurement tasks
         Task<int> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement);
@@ -31,5 +32,9 @@ namespace PLNKTN.Repositories
         Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement);
 
         // Reward tasks
+
+        Task<int> AddUserRewardToAllUsers(UserReward reward);
+        Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge);
+
     }
 }
