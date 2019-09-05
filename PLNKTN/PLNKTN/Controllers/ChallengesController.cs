@@ -101,10 +101,41 @@ namespace PLNKTN.Controllers
                         // Sets where the enumerator should start in the list of eco measurements
                         var indexStart = numOfEcoMeasurements - offset;
 
+                        /*
+                         * Check if there has been any activity in the specified category in the specified amount of time so that
+                         * we can check early if the user is activly tracking this category while using PLNKTN.
+                         */
+                        var _activityDetected = false;
+                        for (int i = indexStart; i < numOfEcoMeasurements; i++)
+                        {
+                            var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
+                            // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
+                            // based on the text values held in the Challenge list entry.
+                            var _itemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
+
+                            // Create a dictionary to hold the list of property names and their values
+                            //var properties = new Dictionary<string, int>();
+                            // Iterate over the list of sub categories and add their property names and values to dict.
+                            foreach (var _tempProps in _itemsCategory.GetType().GetProperties())
+                            {
+                                if ((int)_tempProps.GetValue(_itemsCategory) > 0)
+                                {
+                                    _activityDetected = true;
+                                    break;
+                                }
+                                //properties.Add(_tempProps.Name, (int)_tempProps.GetValue(_itemsCategory));
+                            }
+
+                            if (_activityDetected)
+                            {
+                                break;
+                            }
+                        }
+
                         // If the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
                         // If there are not enough eco measurements in dbUsers Db entry indexStart will be < 0 and it is impossible
                         // for them to successfully complete this task, therefore break.
-                        if (_restrictionType == ChallengeType.Skip && indexStart >= 0)
+                        if (_restrictionType == ChallengeType.Skip && indexStart >= 0 && _activityDetected)
                         {
                             // A counter to count the number of times an item has been skipped
                             var skippedEnoughTimes = 0;
@@ -142,7 +173,7 @@ namespace PLNKTN.Controllers
 
                             }
                         }
-                        else if (_restrictionType == ChallengeType.Only_This && indexStart >= 0)
+                        else if (_restrictionType == ChallengeType.Only_This && indexStart >= 0 && _activityDetected)
                         {
                             // A counter to count the number of times an item has been skipped
                             var skippedEnoughTimes = 0;

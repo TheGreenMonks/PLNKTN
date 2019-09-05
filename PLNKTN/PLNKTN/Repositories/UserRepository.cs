@@ -463,7 +463,7 @@ namespace PLNKTN.Repositories
                     conditions.Add(new ScanCondition("EcologicalMeasurements", ScanOperator.IsNotNull));
 
                     // TODO ******************** DEBUG ONLY REMOVE FROM TESTING *****************************
-                    //conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "2019/8/31/13/31/00/000"));
+                    conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "2019/8/31/13/31/00/000"));
 
                     // Makes the read a strong consistent one to ensure latest values are retrieved.
                     var dbConfig = new DynamoDBOperationConfig();
