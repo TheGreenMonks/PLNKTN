@@ -202,7 +202,8 @@ namespace PLNKTN.Controllers
                             SubCategory = challenge.Rule.SubCategory,
                             Time = challenge.Rule.Time
                         },
-                        Status = UserRewardChallengeStatus.Incomplete
+                        Status = UserRewardChallengeStatus.Incomplete,
+                        NotificationStatus = NotificationStatus.Not_Complete
                     });
                 }
 
@@ -211,7 +212,8 @@ namespace PLNKTN.Controllers
                     Id = _reward.Id,
                     Challenges = userRewardChallenge,
                     DateCompleted = null,
-                    Status = UserRewardStatus.Incomplete
+                    Status = UserRewardStatus.Incomplete,
+                    NotificationStatus = NotificationStatus.Not_Complete
                 };
 
                 generatedUserRewards.Add(userReward);

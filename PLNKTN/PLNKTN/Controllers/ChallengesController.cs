@@ -238,6 +238,7 @@ namespace PLNKTN.Controllers
                         if (isSuccessful)
                         {
                             _challenge.Status = UserRewardChallengeStatus.Complete;
+                            _challenge.NotificationStatus = NotificationStatus.Not_Notified;
                             _challenge.DateCompleted = DateTime.UtcNow;
                             changesMade = true;
                             emailMessages.Add(EmailHelper.EmailMessage(_user.Id, ctrlName, _challenge.Id));

@@ -12,5 +12,7 @@ namespace PLNKTN.Models
         public UserRewardChallengeStatus Status { get; set; }
 
         public UserRewardChallengeRule Rule { get; set; }
+
+        public NotificationStatus NotificationStatus { get; set; }
     }
 }

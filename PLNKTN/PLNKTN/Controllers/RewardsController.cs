@@ -67,6 +67,7 @@ namespace PLNKTN.Controllers
                     {
                         _reward.DateCompleted = DateTime.UtcNow;
                         _reward.Status = UserRewardStatus.Complete;
+                        _reward.NotificationStatus = NotificationStatus.Not_Notified;
                         changesMade = true;
                         emailMessages.Add(EmailHelper.EmailMessage(_user.Id, ctrlName, _reward.Id));
                     }
