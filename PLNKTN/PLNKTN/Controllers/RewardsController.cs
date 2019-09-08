@@ -26,6 +26,7 @@ namespace PLNKTN.Controllers
             _userRepository = userRepository;
         }
 
+        #region Calculate Reward & Challenge Completion
         [AcceptVerbs("CalcRewards")]
         public async void CalculateUserRewardCompletion()
         {
@@ -331,8 +332,8 @@ namespace PLNKTN.Controllers
 
             EmailHelper.SendEmail(emailMessages, strChallenge);
         }
+        #endregion
 
-        
 
         // GET: api/Rewards
         [HttpGet]
