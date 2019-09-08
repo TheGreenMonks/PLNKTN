@@ -39,7 +39,10 @@ namespace Rewards_Challenges_Calculation
 
             using (cons)
             {
-                HttpResponseMessage res = await cons.GetAsync("api/Challenges");
+                // Create a custom HTTP request message and use it to call the API method
+                var customMethod = new HttpMethod("CalcChallenges");
+                var requestMessage = new HttpRequestMessage(customMethod, "api/Rewards");
+                HttpResponseMessage res = await cons.SendAsync(requestMessage);
                 res.EnsureSuccessStatusCode();
                 if (res.IsSuccessStatusCode)
                 {
@@ -59,7 +62,10 @@ namespace Rewards_Challenges_Calculation
 
             using (cons)
             {
-                HttpResponseMessage res = await cons.GetAsync("api/Rewards");
+                // Create a custom HTTP request message and use it to call the API method
+                var customMethod = new HttpMethod("CalcRewards");
+                var requestMessage = new HttpRequestMessage(customMethod, "api/Rewards");
+                HttpResponseMessage res = await cons.SendAsync(requestMessage);
                 res.EnsureSuccessStatusCode();
                 if (res.IsSuccessStatusCode)
                 {
