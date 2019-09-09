@@ -7,8 +7,6 @@ using PLNKTN.BusinessLogic;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace PLNKTN.Controllers
 {
     [Route("api/[controller]")]
@@ -170,91 +168,63 @@ namespace PLNKTN.Controllers
                         var indexStart = numOfEcoMeasurements - offset;
 
                         /*
-                         * Check if there has been any activity in the specified category in the specified amount of time so that
-                         * we can check early if the user is activly tracking this category while using PLNKTN.
+                         * Check to see if the user has x (_time) days of Ecological Measurements from today back however many days are specified
+                         * by variable 'offset' (this provides the date range) for the challenge to be assessed against.
+                         * This works becasue the _user.EcologicalMeasurements list is ordered earlier in this method.
                          */
-                        var _activityDetected = false;
-                        for (int i = indexStart; i < numOfEcoMeasurements; i++)
-                        {
-                            var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
-                            // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
-                            // based on the text values held in the Challenge list entry.
-                            var _itemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
+                        var _fullDateRange = false;
+                        var challengeStart = DateTime.UtcNow.AddDays(-offset);
+                        var ecoMeasurementsOfInterest = _user.EcologicalMeasurements.Where(e => e.Date_taken.Date > challengeStart.Date).ToList();
+                        if (ecoMeasurementsOfInterest.Count >= _time)
+                            _fullDateRange = true;
 
-                            // Create a dictionary to hold the list of property names and their values
-                            //var properties = new Dictionary<string, int>();
-                            // Iterate over the list of sub categories and add their property names and values to dict.
-                            foreach (var _tempProps in _itemsCategory.GetType().GetProperties())
-                            {
-                                if ((int)_tempProps.GetValue(_itemsCategory) > 0)
-                                {
-                                    _activityDetected = true;
-                                    break;
-                                }
-                                //properties.Add(_tempProps.Name, (int)_tempProps.GetValue(_itemsCategory));
-                            }
-
-                            if (_activityDetected)
-                            {
-                                break;
-                            }
-                        }
-
-                        // If the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
-                        // If there are not enough eco measurements in dbUsers Db entry indexStart will be < 0 and it is impossible
-                        // for them to successfully complete this task, therefore break.
-                        if (_restrictionType == ChallengeType.Skip && indexStart >= 0 && _activityDetected)
+                        // Check if the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
+                        // check there are enough eco measurements in the given date range to successfully complete the challenge
+                        if (_restrictionType == ChallengeType.Skip && _fullDateRange)
                         {
                             // A counter to count the number of times an item has been skipped
                             var skippedEnoughTimes = 0;
 
-                            for (int i = indexStart; i < numOfEcoMeasurements; i++)
+                            foreach (var ecoMeasurement in ecoMeasurementsOfInterest)
                             {
-                                var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
-
-                                // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
-                                // based on the text values held in the Challenge list entry.
-                                var _skipItemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
-                                var _skipItem = _skipItemsCategory.GetType().GetProperty(_subCategory).GetValue(_skipItemsCategory);
-
-                                // Convert the retrieved value to an int.
-                                var _skipItemAsInt = Convert.ToInt32(_skipItem);
-
-                                // Check if the user has skipped the item in this EF and increment if they have.
-                                if (_skipItemAsInt == 0)
+                                // Check if the user has logged activity for this EM in the specific category
+                                if (ecoMeasurementHasActivity(_category, ecoMeasurement))
                                 {
-                                    skippedEnoughTimes++;
-                                }
+                                    // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
+                                    // based on the text values held in the Challenge list entry.
+                                    var _skipItemsCategory = ecoMeasurement.GetType().GetProperty(_category).GetValue(ecoMeasurement);
+                                    var _skipItem = _skipItemsCategory.GetType().GetProperty(_subCategory).GetValue(_skipItemsCategory);
 
-                                // Checks if the challenge is to skip 1, 2 or 3 times in a week and if the user has skipped the item enough times
-                                // to be successful yet.  Else if it is just a week or more check if they have skipped for the whole time.
-                                if (_time <= 3 && skippedEnoughTimes == _time)
-                                {
-                                    isSuccessful = true;
-                                    break;
-                                }
-                                else if (skippedEnoughTimes == _time)
-                                {
-                                    isSuccessful = true;
-                                    break;
-                                }
+                                    // Convert the retrieved value to an int.
+                                    var _skipItemAsInt = Convert.ToInt32(_skipItem);
 
+                                    // Check if the user has skipped the item in this EF and increment if they have.
+                                    if (_skipItemAsInt == 0)
+                                    {
+                                        skippedEnoughTimes++;
+                                    }
+
+                                    // Checks if challenge item has been skipped enough times to complete the challenge
+                                    if (skippedEnoughTimes == _time)
+                                    {
+                                        isSuccessful = true;
+                                        break;
+                                    }
+                                }
                             }
                         }
-                        else if (_restrictionType == ChallengeType.Only_This && indexStart >= 0 && _activityDetected)
+                        else if (_restrictionType == ChallengeType.Only_This /*&& indexStart >= 0*/ && _fullDateRange)
                         {
-                            // A counter to count the number of times an item has been skipped
-                            var skippedEnoughTimes = 0;
+                            // A counter to count the number of times an item has been discretely used
+                            var onlyUsedEnoughtTimes = 0;
 
-                            for (int i = indexStart; i < numOfEcoMeasurements; i++)
+                            foreach (var ecoMeasurement in ecoMeasurementsOfInterest)
                             {
-                                var ecoMeasureTemp = _user.EcologicalMeasurements.ElementAt(i);
-
                                 // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
                                 // based on the text values held in the Challenge list entry.
-                                var _onlyThisItemsCategory = ecoMeasureTemp.GetType().GetProperty(_category).GetValue(ecoMeasureTemp);
+                                var _onlyThisItemsCategory = ecoMeasurement.GetType().GetProperty(_category).GetValue(ecoMeasurement);
                                 var _onlyThisItem = _onlyThisItemsCategory.GetType().GetProperty(_subCategory).GetValue(_onlyThisItemsCategory);
-                                // Count for other subcategories used and used in calculation of challenge success
+                                // Count for other subcategories used and utilsied in calculation of challenge success
                                 var _countOtherSubCategoriesUsed = 0;
 
                                 // Create a dictionary to hold the list of property names and their values
@@ -281,20 +251,14 @@ namespace PLNKTN.Controllers
                                 // Convert the retrieved value to an int.
                                 var _onlyThisItemAsInt = Convert.ToInt32(_onlyThisItem);
 
-                                // Check if the user has only used the item in this EF and increment if they have.
+                                // Check if the user has only used the 'only_use' item in this EF and increment if they have.
                                 if (_onlyThisItemAsInt > 0 && _countOtherSubCategoriesUsed == 0)
                                 {
-                                    skippedEnoughTimes++;
+                                    onlyUsedEnoughtTimes++;
                                 }
 
-                                // Checks if the challenge is to only use a specific item for 1, 2 or 3 times in a week and if the user has only used the item enough times
-                                // to be successful yet.  Else if it is just a week or more check if they have only used the item for the whole time.
-                                if (_time <= 3 && skippedEnoughTimes == _time)
-                                {
-                                    isSuccessful = true;
-                                    break;
-                                }
-                                else if (skippedEnoughTimes == _time)
+                                // Checks if challenge item has been discretely used enough times to complete the challenge
+                                if (onlyUsedEnoughtTimes == _time)
                                 {
                                     isSuccessful = true;
                                     break;
@@ -331,6 +295,34 @@ namespace PLNKTN.Controllers
             }
 
             EmailHelper.SendEmail(emailMessages, strChallenge);
+        }
+
+        /*
+        * Check if there has been any activity in the specified category in the specified amount of time so that
+        * we can check early if the user is activly tracking this category while using PLNKTN.
+        */
+        private bool ecoMeasurementHasActivity(string _category, EcologicalMeasurement ecoMeasurement)
+        {
+
+            var _activityDetected = false;
+
+            // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
+            // based on the text values held in the Challenge list entry.
+            var _itemsCategory = ecoMeasurement.GetType().GetProperty(_category).GetValue(ecoMeasurement);
+
+            // Create a dictionary to hold the list of property names and their values
+            //var properties = new Dictionary<string, int>();
+            // Iterate over the list of sub categories and add their property names and values to dict.
+            foreach (var _tempProps in _itemsCategory.GetType().GetProperties())
+            {
+                if ((int)_tempProps.GetValue(_itemsCategory) > 0)
+                {
+                    _activityDetected = true;
+                    break;
+                }
+            }
+
+            return _activityDetected;
         }
         #endregion
 
