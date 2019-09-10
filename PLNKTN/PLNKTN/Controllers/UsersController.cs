@@ -219,5 +219,41 @@ namespace PLNKTN.Controllers
 
             return generatedUserRewards;
         }
+
+        //  Adds all reward and challenge data required by the user object to a 
+        internal static ICollection<UserReward> GenerateUpdateUserRewards(ICollection<Reward> rewards)
+        {
+            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
+
+            foreach (var _reward in rewards)
+            {
+                var userRewardChallenge = new List<UserRewardChallenge>();
+
+                foreach (var challenge in _reward.Challenges)
+                {
+                    userRewardChallenge.Add(new UserRewardChallenge
+                    {
+                        Id = challenge.Id,
+                        Rule = new UserRewardChallengeRule
+                        {
+                            Category = challenge.Rule.Category,
+                            RestrictionType = challenge.Rule.RestrictionType,
+                            SubCategory = challenge.Rule.SubCategory,
+                            Time = challenge.Rule.Time
+                        },
+                    });
+                }
+
+                var userReward = new UserReward
+                {
+                    Id = _reward.Id,
+                    Challenges = userRewardChallenge,
+                };
+
+                generatedUserRewards.Add(userReward);
+            }
+
+            return generatedUserRewards;
+        }
     }
 }
