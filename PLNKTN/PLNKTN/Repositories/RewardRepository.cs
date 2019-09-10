@@ -12,7 +12,7 @@ namespace PLNKTN.Repositories
     public class RewardRepository : IRewardRepository
     {
         private readonly IDBConnection _dbConnection;
-        private DynamoDBContextConfig _config;
+        private readonly DynamoDBContextConfig _config;
 
         public RewardRepository(IDBConnection dbConnection)
         {

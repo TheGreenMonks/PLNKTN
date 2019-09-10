@@ -353,36 +353,18 @@ namespace PLNKTN.Controllers
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var user = new Reward()
-            {
-                Id = reward.Id,
-                Title = reward.Title,
-                ImageURL = reward.ImageURL,
-                Description = reward.Description,
-                Link = reward.Link,
-                GridPosition = reward.GridPosition,
-                Text_When_Completed = reward.Text_When_Completed,
-                Text_When_Not_Completed = reward.Text_When_Not_Completed,
-                Source = reward.Source,
-                Challenges = reward.Challenges,
-                Country = reward.Country,
-                Overview = reward.Overview,
-                Impact = reward.Impact,
-                Tree_species = reward.Tree_species
-            };
-
             var result = await _rewardRepository.CreateReward(reward);
-
-            // Generate a 'user reward' and add it to all users in the DB.
-            var rewards = new List<Reward>
-            {
-                reward
-            };
-            var userReward = UsersController.GenerateUserRewards(rewards);
-            await _userRepository.AddUserRewardToAllUsers(userReward.First());
 
             if (result == 1)
             {
+                // Generate a 'user reward' and add it to all users in the DB.
+                var rewards = new List<Reward>
+                {
+                    reward
+                };
+                var userReward = UsersController.GenerateUserRewards(rewards);
+                await _userRepository.AddUserRewardToAllUsers(userReward.First());
+
                 // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = reward.Id }, reward);
             }
