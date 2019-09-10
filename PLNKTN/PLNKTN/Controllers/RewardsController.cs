@@ -15,8 +15,6 @@ namespace PLNKTN.Controllers
     {
         private readonly IRewardRepository _rewardRepository;
         private readonly IUserRepository _userRepository;
-        private readonly string strReward = "Reward";
-        private readonly string strChallenge = "Challenge";
 
         public RewardsController(IRewardRepository rewardRepository, IUserRepository userRepository)
         {
@@ -25,6 +23,7 @@ namespace PLNKTN.Controllers
         }
 
         #region Calculate Reward & Challenge Completion
+
         [AcceptVerbs("CalcRewards")]
         public async void CalculateUserRewardCompletion()
         {
@@ -44,7 +43,8 @@ namespace PLNKTN.Controllers
              * and -> https://stackoverflow.com/questions/48631715/retrieving-all-items-in-a-table-with-dynamodb
              * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
              */
-
+            
+            var strReward = "Reward";
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
             // New List to hold all email messages generated
@@ -111,7 +111,8 @@ namespace PLNKTN.Controllers
              * and -> https://stackoverflow.com/questions/48631715/retrieving-all-items-in-a-table-with-dynamodb
              * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
              */
-
+            
+            var strChallenge = "Challenge";
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
 
@@ -188,7 +189,7 @@ namespace PLNKTN.Controllers
                             foreach (var ecoMeasurement in ecoMeasurementsOfInterest)
                             {
                                 // Check if the user has logged activity for this EM in the specific category
-                                if (ecoMeasurementHasActivity(_category, ecoMeasurement))
+                                if (EcoMeasurementHasActivity(_category, ecoMeasurement))
                                 {
                                     // Use reflection to dynamically get the correct 'category' and 'sub category' from the eco measurement
                                     // based on the text values held in the Challenge list entry.
@@ -213,7 +214,7 @@ namespace PLNKTN.Controllers
                                 }
                             }
                         }
-                        else if (_restrictionType == ChallengeType.Only_This /*&& indexStart >= 0*/ && _fullDateRange)
+                        else if (_restrictionType == ChallengeType.Only_This && _fullDateRange)
                         {
                             // A counter to count the number of times an item has been discretely used
                             var onlyUsedEnoughtTimes = 0;
@@ -301,7 +302,7 @@ namespace PLNKTN.Controllers
         * Check if there has been any activity in the specified category in the specified amount of time so that
         * we can check early if the user is activly tracking this category while using PLNKTN.
         */
-        private bool ecoMeasurementHasActivity(string _category, EcologicalMeasurement ecoMeasurement)
+        private bool EcoMeasurementHasActivity(string _category, EcologicalMeasurement ecoMeasurement)
         {
 
             var _activityDetected = false;
@@ -324,6 +325,7 @@ namespace PLNKTN.Controllers
 
             return _activityDetected;
         }
+
         #endregion
 
 
@@ -372,8 +374,10 @@ namespace PLNKTN.Controllers
             var result = await _rewardRepository.CreateReward(reward);
 
             // Generate a 'user reward' and add it to all users in the DB.
-            var rewards = new List<Reward>();
-            rewards.Add(reward);
+            var rewards = new List<Reward>
+            {
+                reward
+            };
             var userReward = UsersController.GenerateUserRewards(rewards);
             await _userRepository.AddUserRewardToAllUsers(userReward.First());
 

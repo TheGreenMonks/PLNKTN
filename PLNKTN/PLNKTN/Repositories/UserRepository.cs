@@ -14,7 +14,7 @@ namespace PLNKTN.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly IDBConnection _dbConnection;
-        private DynamoDBContextConfig _config;
+        private readonly DynamoDBContextConfig _config;
 
         public UserRepository(IDBConnection dbConnection)
         {
@@ -458,17 +458,20 @@ namespace PLNKTN.Repositories
                     // ref -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
 
                     // Defins scan conditions - there are none as we want all users
-                    var conditions = new List<ScanCondition>();
-                    conditions.Add(new ScanCondition("UserRewards", ScanOperator.IsNotNull));
-                    conditions.Add(new ScanCondition("EcologicalMeasurements", ScanOperator.IsNotNull));
+                    var conditions = new List<ScanCondition>
+                    {
+                        new ScanCondition("UserRewards", ScanOperator.IsNotNull),
+                        new ScanCondition("EcologicalMeasurements", ScanOperator.IsNotNull)
+                    };
 
                     // TODO ******************** DEBUG ONLY REMOVE FROM TESTING *****************************
                     //conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "2019/8/31/13/31/00/000"));
 
                     // Makes the read a strong consistent one to ensure latest values are retrieved.
-                    var dbConfig = new DynamoDBOperationConfig();
-                    dbConfig.ConsistentRead = true;
-
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        ConsistentRead = true
+                    };
 
                     // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
                     var users = await context.ScanAsync<User>(conditions, dbConfig).GetRemainingAsync();
