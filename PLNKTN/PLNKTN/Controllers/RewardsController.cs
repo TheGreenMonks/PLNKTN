@@ -348,9 +348,25 @@ namespace PLNKTN.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id)
         {
-            return "Not Implemented";
+            if (String.IsNullOrEmpty(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Reward information formatted incorrectly.");
+            }
+
+            var result = await _rewardRepository.GetReward(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("Reward with ID '" + id + "' does not exist.");
+            }
         }
 
         // POST api/Rewards
