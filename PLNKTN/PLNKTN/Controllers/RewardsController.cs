@@ -350,7 +350,7 @@ namespace PLNKTN.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            if (String.IsNullOrEmpty(id))
+            if (String.IsNullOrWhiteSpace(id))
             {
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Reward information formatted incorrectly.");
@@ -444,10 +444,33 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // DELETE api/Rewards
-        [HttpDelete]
-        public void Delete()
+        // DELETE api/Rewards/rewardId
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Reward information formatted incorrectly.");
+            }
+
+            var result = await _rewardRepository.DeleteReward(id);
+
+            if (result == 1)
+            {
+                await _userRepository.DeleteUserRewardFromAllUsers(id);
+                return Ok();
+            }
+            else if (result == -9)
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("Reward with ID '" + id + "' does not exist.");
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
     }
 }

@@ -24,5 +24,6 @@ namespace PLNKTN.Repositories
         Task<int> AddUserRewardToAllUsers(UserReward reward);
         Task<int> UpdateUserRewardInAllUsers(UserReward reward);
         Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge);
+        Task<int> DeleteUserRewardFromAllUsers(string rewardId);
     }
 }

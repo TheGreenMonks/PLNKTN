@@ -13,5 +13,6 @@ namespace PLNKTN.Repositories
         Task<int> UpdateReward(Reward reward);
         Task<ICollection<Reward>> GetAllRewards();
         Task<Reward> GetReward(string id);
+        Task<int> DeleteReward(string id);
     }
 }

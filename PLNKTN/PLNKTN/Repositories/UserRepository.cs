@@ -759,6 +759,87 @@ namespace PLNKTN.Repositories
             }
         }
 
+        /* Delete the specified 'userReward' in all 'users' in the DB.  This is used when a 'Reward' needs to be removed.
+         * 'Reward' - Refers to the information required by a user object in the DB in reference to
+         * rewards and challenges.
+         * 
+         */
+        public async Task<int> DeleteUserRewardFromAllUsers(string rewardId)
+        {
+            using (IDynamoDBContext context = _dbConnection.Context())
+            {
+                try
+                {
+                    // TODO - This needs to be correctly designed as performace at scale is a VERY large issue
+                    // as the DB increases in size.
+                    // ref -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
+
+                    // Defins scan conditions - there are none as we want all users
+                    var conditions = new List<ScanCondition>();
+
+                    // Gets users from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
+                    var users = await context.ScanAsync<User>(conditions).GetRemainingAsync();
+
+
+                    if (users != null)
+                    {
+                        foreach (var user in users)
+                        {
+                            // Find reward object in User object from the DB where the IDs match
+                            UserReward dbUserReward = user.UserRewards.FirstOrDefault(r => r.Id == rewardId);
+
+                            if (dbUserReward != null)
+                            {
+                                user.UserRewards.Remove(dbUserReward);
+                                await context.SaveAsync(user);
+                            }
+                            else
+                            {
+                                // 409 - reward with specified ID already exists, conflict
+                            }
+                        }
+                        // OK All saves complete
+                        return 1;
+                    }
+                    else
+                    {
+                        // 404 - No users in the DB
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
         public async Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge)
         {
             using (IDynamoDBContext context = _dbConnection.Context(_config))
