@@ -631,10 +631,7 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        public async Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement)
-        {
 
-        }
 
         public async Task<IList<User>> GetAllUsers()
         {
@@ -902,6 +899,11 @@ namespace PLNKTN.Repositories
                     return -1;
                 }
             }
+        }
+
+        public Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement)
+        {
+            throw new NotImplementedException();
         }
     }
 }

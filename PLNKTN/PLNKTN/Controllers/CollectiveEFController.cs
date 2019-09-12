@@ -15,6 +15,11 @@ namespace PLNKTN.Controllers
     {
         private readonly IUserRepository _userRepository;
 
+        public CollectiveEFController(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         // GET: api/values
         [HttpGet]
         public async Task<IActionResult> Get()
