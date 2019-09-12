@@ -331,9 +331,19 @@ namespace PLNKTN.Controllers
 
         // GET: api/Rewards
         [HttpGet]
-        public string Get()
+        public async Task<IActionResult> Get()
         {
-            return "Not Implemented";
+            var result = await _rewardRepository.GetAllRewards();
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("No Rewards are present in the DB.");
+            }
         }
 
         // GET api/values/5
