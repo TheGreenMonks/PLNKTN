@@ -795,7 +795,7 @@ namespace PLNKTN.Repositories
                             }
                             else
                             {
-                                // 409 - reward with specified ID already exists, conflict
+                                // This user doesn't have the associated dbUserReward in its UserReward collection - Do nothing
                             }
                         }
                         // OK All saves complete
