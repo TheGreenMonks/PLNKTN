@@ -335,7 +335,7 @@ namespace PLNKTN.Controllers
         {
             var result = await _rewardRepository.GetAllRewards();
 
-            if (result != null)
+            if (result != null && result.Count > 0)
             {
                 return Ok(result);
             }

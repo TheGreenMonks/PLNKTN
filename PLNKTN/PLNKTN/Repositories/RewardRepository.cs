@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using PLNKTN.Models;
 
@@ -89,6 +90,9 @@ namespace PLNKTN.Repositories
 
                     // Defins scan conditions - there are none as we want all rewards
                     var conditions = new List<ScanCondition>();
+
+                    // TODO ******************** DEBUG ONLY REMOVE FROM TESTING *****************************
+                    //conditions.Add(new ScanCondition("Id", ScanOperator.Equal, "test"));
 
                     // Gets rewards from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
                     var rewards = await context.ScanAsync<Reward>(conditions).GetRemainingAsync();
