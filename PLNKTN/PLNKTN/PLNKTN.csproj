@@ -23,4 +23,9 @@
   <ItemGroup>
     <Compile Remove="Controllers\ValuesController.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".ebextensions\https-cert-script.config" />
+    <None Include=".ebextensions\https-instance-single.config" />
+  </ItemGroup>
 </Project>
