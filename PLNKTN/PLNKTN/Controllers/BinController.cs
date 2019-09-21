@@ -41,7 +41,7 @@ namespace PLNKTN.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
+        [HttpPut("ThrowTreeInBin/region_name")]
         public async Task<IActionResult> Put(string region_name, [FromBody] Rgn project)
         {
             if (region_name == null)

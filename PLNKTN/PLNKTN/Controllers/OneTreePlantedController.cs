@@ -21,7 +21,7 @@ namespace PLNKTN.Controllers
             _rewardRepository = rewardRepository;
         }
         // GET: api/countryname
-        [HttpGet("GetAllRegionsFromCountry/country_name")]
+        [HttpGet("GetAllProjects/country_name")]
         public async Task<IActionResult> Get(string region_name)
         {
             if (String.IsNullOrWhiteSpace(region_name))
@@ -44,7 +44,7 @@ namespace PLNKTN.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("GetRegionInfo/country_name/region_name")]
+        [HttpGet("GetProjectInfo/country_name/region_name")]
         public async Task<IActionResult> Get(string region_name, string project_name)
         {
             if (String.IsNullOrWhiteSpace(region_name) || String.IsNullOrWhiteSpace(project_name))
@@ -104,7 +104,7 @@ namespace PLNKTN.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("AddRegionIntoCountry/country_name/region_name")]
+        [HttpPut("AddProject/region_name")]
         public async Task<IActionResult> Put(string region_name, [FromBody] Project project)
         {
             if (region_name == null)
