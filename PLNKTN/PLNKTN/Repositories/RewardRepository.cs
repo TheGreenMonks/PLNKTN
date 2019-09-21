@@ -180,20 +180,20 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<int> CreateRegion(RewardCountry country)
+        public async Task<int> CreateRegion(RewardRegion region)
         {
             using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    var countryExists = await context.LoadAsync<User>(country.name);
-                    if (countryExists != null)
+                    var exits = await context.LoadAsync<RewardRegion>(region.Region_name);
+                    if (exits != null)
                     {
                         return -10;
                     }
                     else
                     {
-                        await context.SaveAsync(country);
+                        await context.SaveAsync(region);
                         return 1;
                     }
                 }
@@ -230,17 +230,17 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<int> AddRegionIntoCountry(string country_name,Region region)
+        public async Task<int> AddProject(string region_name, Project project)
         {
             using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    RewardCountry ctr = await context.LoadAsync<RewardCountry>(country_name);
-                    if (ctr != null)
+                    RewardRegion region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region != null)
                     {
-                        ctr.Regions.Add(region);
-                        await context.SaveAsync(ctr);
+                        region.Projects.Add(project);
+                        await context.SaveAsync(region);
                         return 1;
                     }
                     else
@@ -282,16 +282,16 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<List<Region>> GetAllRegionsFromCountry(string country_name)
+        public async Task<List<Project>> GetAllProjects(string region_name)
         {
             using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    var country = await context.LoadAsync<RewardCountry>(country_name);
-                    if (country != null)
+                    var region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region != null)
                     {
-                        return country.Regions;
+                        return region.Projects;
                     }
                     else
                     {
@@ -331,17 +331,17 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<Region> GetRegionInfo(string country_name, string region_name)
+        public async Task<Project> GetProjectInfo(string region_name, string project_name)
         {
             using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    var country = await context.LoadAsync<RewardCountry>(country_name);
-                    var region = country.Regions.FirstOrDefault(e => e.Region_name == region_name);
-                    if (region != null)
+                    var region = await context.LoadAsync<RewardRegion>(region_name);
+                    var project = region.Projects.FirstOrDefault(e => e.Project_name == project_name);
+                    if (project != null)
                     {
-                        return region;
+                        return project;
                     }
                     else
                     {
@@ -377,6 +377,58 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("Error Message:  " + e.Message);
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
                     return null;
+                }
+            }
+        }
+
+        public async Task<int> ThrowTreeInBin(string region_name, Rgn project)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    Bin region = await context.LoadAsync<Bin>(region_name);
+                    if (region != null)
+                    {
+                        region.Projects.Add(project);
+                        await context.SaveAsync(region);
+                        return 1;
+                    }
+                    else
+                    {
+                        // 404 - Country with specified name doesn't exist
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
                 }
             }
         }

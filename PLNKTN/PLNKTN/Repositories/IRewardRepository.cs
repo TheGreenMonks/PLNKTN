@@ -14,9 +14,12 @@ namespace PLNKTN.Repositories
         Task<ICollection<Reward>> GetAllRewards();
 
         /*** Functions for OneTreePlanted table ***/
-        Task<int> CreateRegion(RewardCountry country);
-        Task<int> AddRegionIntoCountry(string country_name, Region region);
-        Task<List<Region>> GetAllRegionsFromCountry(string country_name);
-        Task<Region> GetRegionInfo(string country_name, string region_name);
+        Task<int> CreateRegion(RewardRegion region);
+        Task<int> AddProject(string region_name, Project project);
+        Task<List<Project>> GetAllProjects(string region_name);
+        Task<Project> GetProjectInfo(string region_name, string project_name);
+
+        /***Dumpster***/
+        Task<int> ThrowTreeInBin(string region_name, Rgn project);
     }
 }

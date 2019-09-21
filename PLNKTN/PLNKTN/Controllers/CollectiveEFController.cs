@@ -105,6 +105,8 @@ namespace PLNKTN.Controllers
                     total_collective_Ef += user.EcologicalMeasurements.Find(x => x.Date_taken == date).EcologicalFootprint;
                     size += 1;
                 }
+                if (total_collective_Ef == 0)
+                    return -1;
                 return (float)total_collective_Ef / size;
             }
             else

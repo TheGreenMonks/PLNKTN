@@ -21,44 +21,44 @@ namespace PLNKTN.Controllers
             _rewardRepository = rewardRepository;
         }
         // GET: api/countryname
-        [HttpGet]
-        public async Task<IActionResult> Get(string country_name)
+        [HttpGet("GetAllRegionsFromCountry/country_name")]
+        public async Task<IActionResult> Get(string region_name)
         {
-            if (String.IsNullOrWhiteSpace(country_name))
+            if (String.IsNullOrWhiteSpace(region_name))
             {
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Country information formatted incorrectly.");
             }
 
-            var regions = await _rewardRepository.GetAllRegionsFromCountry(country_name);
-            if (regions != null)
+            var pojects = await _rewardRepository.GetAllProjects(region_name);
+            if (pojects != null)
             {
                 // return HTTP 200
-                return Ok(regions);
+                return Ok(pojects);
             }
             else
             {
                 // return HTTP 404 as region cannot be found in DB
-                return NotFound("Country with name '" + country_name + "' does not exist.");
+                return NotFound("Country with name '" + region_name + "' does not exist.");
             }
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string country_name, string region_name)
+        [HttpGet("GetRegionInfo/country_name/region_name")]
+        public async Task<IActionResult> Get(string region_name, string project_name)
         {
-            if (String.IsNullOrWhiteSpace(country_name) || String.IsNullOrWhiteSpace(region_name))
+            if (String.IsNullOrWhiteSpace(region_name) || String.IsNullOrWhiteSpace(project_name))
             {
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Country or Region information formatted incorrectly.");
             }
 
-            var region = await _rewardRepository.GetRegionInfo(country_name, region_name);
+            var project = await _rewardRepository.GetProjectInfo(region_name, project_name);
 
-            if (region != null)
+            if (project != null)
             {
                 // return HTTP 200
-                return Ok(region);
+                return Ok(project);
             }
             else
             {
@@ -69,33 +69,32 @@ namespace PLNKTN.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]RewardCountry country)
+        public async Task<IActionResult> Post([FromBody]RewardRegion region)
         {
-            if (country == null)
+            if (region == null)
             {
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Country information formatted incorrectly.");
             }
 
-            // Create new user
-            var ctr = new RewardCountry()
+            var rgn = new RewardRegion()
             {
-                name = country.name,
-                Regions = country.Regions
+                Region_name = region.Region_name,
+                Projects = region.Projects
             };
 
             // Save the new user to the DB
-            var result = await _rewardRepository.CreateRegion(ctr);
+            var result = await _rewardRepository.CreateRegion(rgn);
 
             if (result == 1)
             {
                 // return HTTP 201 Created with country object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { name = country.name }, ctr);
+                return CreatedAtAction("Get", new { name = region.Projects }, rgn);
             }
             else if (result == -10)
             {
                 // return HTTP 409 Conflict as user already exists in DB
-                return Conflict("country with name '" + country.name + "' already exists.  Cannot create a duplicate.");
+                return Conflict("country with name '" + region.Projects + "' already exists.  Cannot create a duplicate.");
             }
             else
             {
@@ -105,9 +104,33 @@ namespace PLNKTN.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPut("AddRegionIntoCountry/country_name/region_name")]
+        public async Task<IActionResult> Put(string region_name, [FromBody] Project project)
         {
+            if (region_name == null)
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Country information formatted incorrectly.");
+            }
+
+            var prj = new Project()
+            {
+                Project_name = project.Project_name,
+                Description = project.Description,
+                Impact = project.Impact,
+                Tree_species = project.Tree_species,
+                Images = project.Images
+            };
+
+            var result = await _rewardRepository.AddProject(region_name, prj);
+            if (result == 1)
+            {
+                return Ok();
+            } else
+            {
+                return NotFound("Country with name '" + region_name + "' does not exist.");
+            }
+
         }
 
         // DELETE api/values/5
