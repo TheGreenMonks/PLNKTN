@@ -1,8 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace PLNKTN.Models
 {
@@ -10,6 +8,7 @@ namespace PLNKTN.Models
     public class Reward
     {
         [DynamoDBHashKey]
+        [Required]
         public string Id { get; set; }
 
         public string Title { get; set; }
@@ -28,6 +27,7 @@ namespace PLNKTN.Models
 
         public string Source { get; set; }
 
+        [Required]
         public List<RewardChallenge> Challenges { get; set; }
 
         public string Country { get; set; }
