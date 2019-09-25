@@ -429,13 +429,13 @@ namespace PLNKTN.Controllers
                 var userReward = UsersController.GenerateUpdateUserRewards(rewards);
                 await _userRepository.UpdateUserRewardInAllUsers(userReward.First());
 
-                // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = reward.Id }, reward);
+                // return HTTP 200 Ok reward was updated.  PUT does not require object to be returned in HTTP body.
+                return Ok();
             }
-            else if (result == -10)
+            else if (result == -9)
             {
-                // return HTTP 409 Conflict as reward already exists in DB
-                return Conflict("Reward with ID '" + reward.Id + "' already exists.  Cannot create a duplicate.");
+                // return HTTP 404 as object cannot be found in DB
+                return NotFound("Reward with ID '" + reward.Id + "' does not exist.");
             }
             else
             {
