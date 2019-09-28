@@ -50,11 +50,12 @@ namespace PLNKTN.Controllers
         }
 
         // POST api/values
-        [HttpPost]
+        [HttpPost("{date}")]
         public async Task<IActionResult> Post(DateTime date)
         {
             CollectiveEF cEF = null;
             float collective_EF = await Compute_Collective_EFAsync(date);
+
             if (collective_EF != -1)
             {
                 cEF = new CollectiveEF()
@@ -62,20 +63,25 @@ namespace PLNKTN.Controllers
                     Date_taken = date,
                     Collective_EF = collective_EF
                 };
+
                 int result = await _userRepository.AddCollective_EF(cEF);
+
                 if (result == 1)
                 {
                     return Ok();
-                } else
+                }
+                else if (result == -7)
                 {
-                    return BadRequest("Saving Collective EF encounter DB issue.");
+                    return Conflict("A Collective EF with that date already exists.");
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error.  Please contact the administrator.");
                 }
             } else
             {
-                return BadRequest("Computing Collective EF encounter DB issue.");
+                return NotFound("Currently there are no Ecological Footprints recorded by any Users on '" + date.Date.ToShortDateString() + "'.");
             }
-
-
         }
 
         // PUT api/values/5
@@ -96,17 +102,26 @@ namespace PLNKTN.Controllers
         private async Task<float> Compute_Collective_EFAsync(DateTime date)
         {
             var users = await _userRepository.GetUsers();
+
             if (users != null)
             {
                 float? total_collective_Ef = 0;
                 int size = 0;
+
                 foreach (var user in users)
                 {
-                    total_collective_Ef += user.EcologicalMeasurements.Find(x => x.Date_taken == date).EcologicalFootprint;
-                    size += 1;
+                    var user_ef = user.EcologicalMeasurements.SingleOrDefault(x => x.Date_taken.Date == date.Date);
+
+                    if (user_ef != null)
+                    {
+                        total_collective_Ef += user_ef.EcologicalFootprint;
+                        size += 1;
+                    }
                 }
+
                 if (total_collective_Ef == 0)
                     return -1;
+
                 return (float)total_collective_Ef / size;
             }
             else

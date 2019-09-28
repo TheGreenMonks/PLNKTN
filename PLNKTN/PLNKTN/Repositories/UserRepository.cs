@@ -460,9 +460,9 @@ namespace PLNKTN.Repositories
                     // Gets items from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
                     var collective_EF = await context.ScanAsync<CollectiveEF>(conditions).GetRemainingAsync();
 
-                    var result = collective_EF.SingleOrDefault(cf => cf.Date_taken.Date == date_taken.Date);
+                    var result = collective_EF.FindAll(cf => cf.Date_taken.Date == date_taken.Date);
 
-                    return result != null ? result : null;
+                    return result.Count > 1 ? result[0] : null;
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -605,8 +605,18 @@ namespace PLNKTN.Repositories
             {
                 try
                 {
-                    await context.SaveAsync(cEF);
-                    return 1;
+                    var alreadyHasCEF = await GetCollective_EF(cEF.Date_taken);
+
+                    if (alreadyHasCEF == null)
+                    {
+                        await context.SaveAsync(cEF);
+                        return 1;
+                    }
+                    else
+                    {
+                        // item already exists
+                        return -7;
+                    }
                 }
                 catch (AmazonServiceException ase)
                 {
