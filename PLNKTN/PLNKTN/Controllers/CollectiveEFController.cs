@@ -45,7 +45,7 @@ namespace PLNKTN.Controllers
                 return Ok(collective_EF);
             } else
             {
-                return  NotFound("CollectiveEF has not yet been commputed");
+                return  NotFound("No collective EFs have been calculated yet.");
             }
         }
 

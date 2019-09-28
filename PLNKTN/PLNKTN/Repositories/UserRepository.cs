@@ -462,7 +462,7 @@ namespace PLNKTN.Repositories
 
                     var result = collective_EF.FindAll(cf => cf.Date_taken.Date == date_taken.Date);
 
-                    return result.Count > 1 ? result[0] : null;
+                    return result.Count > 0 ? result[0] : null;
                 }
                 catch (AmazonServiceException ase)
                 {
