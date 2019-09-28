@@ -454,8 +454,15 @@ namespace PLNKTN.Repositories
             {
                 try
                 {
-                    var collective_EF = await context.LoadAsync<CollectiveEF>(date_taken);
-                    return collective_EF != null ? collective_EF : null;
+                    // Define scan conditions
+                    var conditions = new List<ScanCondition>();
+
+                    // Gets items from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
+                    var collective_EF = await context.ScanAsync<CollectiveEF>(conditions).GetRemainingAsync();
+
+                    var result = collective_EF.SingleOrDefault(cf => cf.Date_taken.Date == date_taken.Date);
+
+                    return result != null ? result : null;
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -547,7 +554,9 @@ namespace PLNKTN.Repositories
                 try
                 {
                     var conditions = new List<ScanCondition>();
+
                     List<CollectiveEF> collectiveEFs = await context.ScanAsync<CollectiveEF>(conditions).GetRemainingAsync();
+
                     if (collectiveEFs != null)
                     {
                         return collectiveEFs;

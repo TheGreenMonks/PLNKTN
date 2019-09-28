@@ -24,14 +24,14 @@ namespace PLNKTN.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            /* To get average Collective EF */
-            var collective_EF = await _userRepository.GetCollective_EF(DateTime.Today);
+            var collective_EF = await _userRepository.GetAllCollective_EFs();
+
             if (collective_EF != null)
             {
                 return Ok(collective_EF);
             } else
             {
-                return NotFound("CollectiveEF has not yet been commputed for today date");
+                return NotFound("No collective EFs have been calculated yet.");
             }
         }
 
