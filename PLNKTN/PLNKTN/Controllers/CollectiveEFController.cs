@@ -51,7 +51,7 @@ namespace PLNKTN.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task<IActionResult> Post(DateTime date)
+        public async Task<IActionResult> Post([FromBody]DateTime date)
         {
             CollectiveEF cEF = null;
             float collective_EF = await Compute_Collective_EFAsync(date);

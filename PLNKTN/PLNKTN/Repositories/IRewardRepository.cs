@@ -19,7 +19,8 @@ namespace PLNKTN.Repositories
         Task<List<Project>> GetAllProjects(string region_name);
         Task<Project> GetProjectInfo(string region_name, string project_name);
 
-        /***Dumpster***/
-        Task<int> ThrowTreeInBin(string region_name, Rgn project);
+        /***Bin***/
+        Task<int> ThrowTreeInBin(string region_name, Rgn project);        
+
     }
 }
