@@ -74,7 +74,7 @@ namespace PLNKTN.Controllers
             if (region == null)
             {
                 // return HTTP 400 badrequest as something is wrong
-                return BadRequest("Country information formatted incorrectly.");
+                return BadRequest("Region information formatted incorrectly.");
             }
 
             var rgn = new RewardRegion()
@@ -94,7 +94,7 @@ namespace PLNKTN.Controllers
             else if (result == -10)
             {
                 // return HTTP 409 Conflict as user already exists in DB
-                return Conflict("country with name '" + region.Projects + "' already exists.  Cannot create a duplicate.");
+                return Conflict("Region with name '" + region.Projects + "' already exists.  Cannot create a duplicate.");
             }
             else
             {
@@ -110,7 +110,7 @@ namespace PLNKTN.Controllers
             if (region_name == null)
             {
                 // return HTTP 400 badrequest as something is wrong
-                return BadRequest("Country information formatted incorrectly.");
+                return BadRequest("Region name formatted incorrectly.");
             }
 
             var prj = new Project()
@@ -125,10 +125,10 @@ namespace PLNKTN.Controllers
             var result = await _rewardRepository.AddProject(region_name, prj);
             if (result == 1)
             {
-                return Ok();
+                return Ok("Region has been updated with the new project");
             } else
             {
-                return NotFound("Country with name '" + region_name + "' does not exist.");
+                return NotFound("Region with name '" + region_name + "' does not exist.");
             }
 
         }

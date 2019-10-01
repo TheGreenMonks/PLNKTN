@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +67,7 @@ namespace PLNKTN.Controllers
 
                 if (result == 1)
                 {
-                    return Ok();
+                    return Ok("Collective EF has been calculated and saved to the DB for today date!!");
                 }
                 else if (result == -7)
                 {
