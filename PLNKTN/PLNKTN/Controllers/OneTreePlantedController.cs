@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
+using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,7 +19,7 @@ namespace PLNKTN.Controllers
             _rewardRepository = rewardRepository;
         }
         // GET: api/countryname
-        [HttpGet("GetAllProjects/region_name")]
+        [HttpGet("GetAllProjects/{region_name}")]
         public async Task<IActionResult> Get(string region_name)
         {
             if (String.IsNullOrWhiteSpace(region_name))
@@ -44,7 +42,7 @@ namespace PLNKTN.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("GetProjectInfo/region_name/project_name")]
+        [HttpGet("GetProjectInfo/{region_name}/{project_name}")]
         public async Task<IActionResult> Get(string region_name, string project_name)
         {
             if (String.IsNullOrWhiteSpace(region_name) || String.IsNullOrWhiteSpace(project_name))
@@ -63,7 +61,7 @@ namespace PLNKTN.Controllers
             else
             {
                 // return HTTP 404 as region cannot be found in DB
-                return NotFound("Region with name '" + region_name + "' does not exist.");
+                return NotFound("Either the region '" + region_name + "' does not exist or the project '" + project_name + "' does not exist.");
             }
         }
 
@@ -89,12 +87,12 @@ namespace PLNKTN.Controllers
             if (result == 1)
             {
                 // return HTTP 201 Created with country object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { name = region.Projects }, rgn);
+                return CreatedAtAction("Get", new { region_name = region.Region_name }, rgn);
             }
             else if (result == -10)
             {
                 // return HTTP 409 Conflict as user already exists in DB
-                return Conflict("Region with name '" + region.Projects + "' already exists.  Cannot create a duplicate.");
+                return Conflict("Region with name '" + region.Region_name + "' already exists.  Cannot create a duplicate.");
             }
             else
             {
@@ -104,7 +102,7 @@ namespace PLNKTN.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("AddProject/region_name")]
+        [HttpPut("AddProject/{region_name}")]
         public async Task<IActionResult> Put(string region_name, [FromBody] Project project)
         {
             if (region_name == null)
@@ -113,20 +111,13 @@ namespace PLNKTN.Controllers
                 return BadRequest("Region name formatted incorrectly.");
             }
 
-            var prj = new Project()
-            {
-                Project_name = project.Project_name,
-                Description = project.Description,
-                Impact = project.Impact,
-                Tree_species = project.Tree_species,
-                Images = project.Images
-            };
+            var result = await _rewardRepository.AddProject(region_name, project);
 
-            var result = await _rewardRepository.AddProject(region_name, prj);
             if (result == 1)
             {
-                return Ok("Region has been updated with the new project");
-            } else
+                return Ok("Region has been updated with the new project called '" + project.Project_name + "'.");
+            }
+            else
             {
                 return NotFound("Region with name '" + region_name + "' does not exist.");
             }

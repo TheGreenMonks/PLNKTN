@@ -338,6 +338,11 @@ namespace PLNKTN.Repositories
                 try
                 {
                     var region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region == null)
+                    {
+                        return null;
+                    }
+
                     var project = region.Projects.FirstOrDefault(e => e.Project_name == project_name);
                     if (project != null)
                     {
