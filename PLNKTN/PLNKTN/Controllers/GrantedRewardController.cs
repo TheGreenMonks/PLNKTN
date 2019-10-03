@@ -62,25 +62,16 @@ namespace PLNKTN.Controllers
                 return BadRequest("granted reward formatted incorrectly.");
             }
 
-            var granted = new Bin
-            {
-                Region_name = grantedReward.Region_name,
-                Projects = grantedReward.Projects
-            };
-
-            int result = await _userRepository.AddUserReward(id, granted);
+            int result = await _userRepository.AddUserGrantedReward(id, grantedReward);
 
             if (result == 1)
             {
-                /***  HERE MIGHT CAL Collective_EF ***/
-
-                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = id}, granted);
-
+                // return HTTP 201 Created with granted reward object in body of return and a 'location' header with URL of newly created object
+                return CreatedAtAction("Get", new { id = id, region_name = grantedReward.Region_name}, grantedReward);
             }
             else if (result == -7)
             {
-                return Ok("User already planted in this area. It is ok to plant again");
+                return Ok("User already planted in this area. It is ok to plant again. Region count has been incremented");
             }
             else if (result == -9)
             {

@@ -6,5 +6,6 @@ namespace PLNKTN.Models
     {
         public string Region_name { set; get; }
         public List<Rgn> Projects { set; get; }
+        public int Count { get; set; } = 0;
     }
 }

@@ -993,7 +993,7 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        public async Task<int> AddUserReward(string userId, Bin rewardRegion)
+        public async Task<int> AddUserGrantedReward(string userId, Bin rewardRegion)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
@@ -1014,7 +1014,9 @@ namespace PLNKTN.Repositories
                         }
                         else
                         {
-                            // user already planted here(it is okay to plant again)
+                            // user already planted here(it is okay to plant again).  Increate count
+                            dbgrantedReward.Count++;
+                            await context.SaveAsync(user);
                             return -7;
                         }
                     }
@@ -1023,9 +1025,6 @@ namespace PLNKTN.Repositories
                         // 404 - User with specified userId doesn't exist
                         return -9;
                     }
-
-
-
                 }
                 catch (AmazonServiceException ase)
                 {
