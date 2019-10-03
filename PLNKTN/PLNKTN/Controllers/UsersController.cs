@@ -26,9 +26,20 @@ namespace PLNKTN.Controllers
 
         // GET: api/users
         [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "PLNKTN", "app is up and running" };
+        public async Task<IActionResult> Get()
+        { 
+            var users = await _userRepository.GetUsers();
+
+            if (users != null)
+            {
+                // return HTTP 200
+                return Ok(users.Count);
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("List of Users does not exist.");
+            }
         }
 
         // GET api/users/test
@@ -85,7 +96,8 @@ namespace PLNKTN.Controllers
                 CarMPG = userDto.CarMPG,
                 ShareData = userDto.ShareData,
                 Country = userDto.Country,
-                UserRewards = userRewards
+                UserRewards = userRewards,
+                GrantedRewards = new List<Bin>()
             };
 
             // Save the new user to the DB

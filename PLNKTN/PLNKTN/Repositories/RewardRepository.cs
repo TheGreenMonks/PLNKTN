@@ -229,11 +229,11 @@ namespace PLNKTN.Repositories
 
         public async Task<int> DeleteReward(string id)
         {
-            using (var context = _dbConnection.Context())
+        using (var context = _dbConnection.Context())
             {
                 try
                 {
-                    var reward = await context.LoadAsync<Reward>(id);
+                var reward = await context.LoadAsync<Reward>(id);
                     if (reward != null)
                     {
                         await context.DeleteAsync(reward);
@@ -243,6 +243,274 @@ namespace PLNKTN.Repositories
                     else
                     {
                         // Object not found in db
+                            return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+        public async Task<int> CreateRegion(RewardRegion region)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var exits = await context.LoadAsync<RewardRegion>(region.Region_name);
+                    if (exits != null)
+                    {
+                        return -10;
+                    }
+                    else
+                    {
+                        await context.SaveAsync(region);
+                        return 1;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+        public async Task<int> AddProject(string region_name, Project project)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    RewardRegion region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region != null)
+                    {
+                        region.Projects.Add(project);
+                        await context.SaveAsync(region);
+                        return 1;
+                    }
+                    else
+                    {
+                        // 404 - Country with specified name doesn't exist
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+        public async Task<List<Project>> GetAllProjects(string region_name)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region != null)
+                    {
+                        return region.Projects;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return null;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return null;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+            }
+        }
+
+        public async Task<Project> GetProjectInfo(string region_name, string project_name)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var region = await context.LoadAsync<RewardRegion>(region_name);
+                    if (region == null)
+                    {
+                        return null;
+                    }
+
+                    var project = region.Projects.FirstOrDefault(e => e.Project_name == project_name);
+                    if (project != null)
+                    {
+                        return project;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return null;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return null;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+            }
+        }
+
+        public async Task<int> ThrowTreeInBin(string region_name, Rgn project)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    Bin region = await context.LoadAsync<Bin>(region_name);
+                    if (region != null)
+                    {
+                        if (region.Projects != null)
+                        {
+                            region.Projects.Add(project);
+                            await context.SaveAsync(region);
+                            return 1;
+                        }
+                        else
+                        {
+                            region.Projects = new List<Rgn>();
+                            region.Projects.Add(project);
+                            await context.SaveAsync(region);
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        // 404 - Country with specified name doesn't exist
                         return -9;
                     }
                 }

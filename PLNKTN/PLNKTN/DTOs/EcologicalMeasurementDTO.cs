@@ -16,6 +16,5 @@ namespace PLNKTN.DTOs
         public Electronics Electronics { get; set; }
         public Clothing Clothing { get; set; }
         public Footwear Footwear { get; set; }
-
     }
 }
