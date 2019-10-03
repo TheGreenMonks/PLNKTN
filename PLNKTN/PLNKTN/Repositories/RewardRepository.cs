@@ -395,9 +395,19 @@ namespace PLNKTN.Repositories
                     Bin region = await context.LoadAsync<Bin>(region_name);
                     if (region != null)
                     {
-                        region.Projects.Add(project);
-                        await context.SaveAsync(region);
-                        return 1;
+                        if (region.Projects != null)
+                        {
+                            region.Projects.Add(project);
+                            await context.SaveAsync(region);
+                            return 1;
+                        }
+                        else
+                        {
+                            region.Projects = new List<Rgn>();
+                            region.Projects.Add(project);
+                            await context.SaveAsync(region);
+                            return 1;
+                        }
                     }
                     else
                     {
