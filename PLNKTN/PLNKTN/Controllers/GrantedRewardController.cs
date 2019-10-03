@@ -20,13 +20,6 @@ namespace PLNKTN.Controllers
             _userRepository = userRepository;
         }
 
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET api/values/5
         [HttpGet("GetUserGrantedRewards/{id}/{region_name}")]
         public async Task<IActionResult> Get(string id, string region_name)
@@ -82,18 +75,6 @@ namespace PLNKTN.Controllers
             {
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
