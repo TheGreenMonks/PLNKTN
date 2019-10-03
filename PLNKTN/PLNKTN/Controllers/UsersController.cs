@@ -16,17 +16,30 @@ namespace PLNKTN.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRewardRepository _rewardRepository;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
         {
             _userRepository = userRepository;
+            _rewardRepository = rewardRepository;
         }
 
         // GET: api/users
         [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "PLNKTN", "app is up and running" };
+        public async Task<IActionResult> Get()
+        { 
+            var users = await _userRepository.GetUsers();
+
+            if (users != null)
+            {
+                // return HTTP 200
+                return Ok(users.Count);
+            }
+            else
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound("List of Users does not exist.");
+            }
         }
 
         // GET api/users/test
@@ -63,6 +76,12 @@ namespace PLNKTN.Controllers
                 return BadRequest("User information formatted incorrectly.");
             }
 
+            // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
+            // list of rewards and challenges so, they can participate in reward and challenge completion.
+            var rewards = await _rewardRepository.GetAllRewards();
+            var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
+
+            // Create new user
             var user = new User()
             {
                 Id = userDto.Id,
@@ -76,11 +95,13 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = userDto.NumPeopleHousehold,
                 CarMPG = userDto.CarMPG,
                 ShareData = userDto.ShareData,
-                EcologicalFootprint = userDto.EcologicalFootprint,
+                // EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
-                RewardsUser = new List<RewardUser>()
+                UserRewards = userRewards,
+                GrantedRewards = new List<Bin>()
             };
 
+            // Save the new user to the DB
             var result = await _userRepository.CreateUser(user);
 
             if (result == 1)
@@ -99,8 +120,6 @@ namespace PLNKTN.Controllers
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
         }
-
-
 
         // PUT api/users/test
         [HttpPut]
@@ -124,7 +143,7 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = dto.NumPeopleHousehold,
                 CarMPG = dto.CarMPG,
                 ShareData = dto.ShareData,
-                EcologicalFootprint = dto.EcologicalFootprint,
+                //EcologicalFootprint = dto.EcologicalFootprint,
                 Country = dto.Country
             };
 
@@ -171,6 +190,46 @@ namespace PLNKTN.Controllers
             {
                 return BadRequest("An internal error occurred.  Please contact the system administrator.");
             }
+        }
+
+        //  Adds all reward and challenge data required by the user object to a 
+        internal static ICollection<UserReward> GenerateUserRewards(ICollection<Reward> rewards)
+        {
+            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
+
+            foreach (var _reward in rewards)
+            {
+                var userRewardChallenge = new List<UserRewardChallenge>();
+
+                foreach (var challenge in _reward.Challenges)
+                {
+                    userRewardChallenge.Add(new UserRewardChallenge
+                    {
+                        Id = challenge.Id,
+                        DateCompleted = null,
+                        Rule = new UserRewardChallengeRule
+                        {
+                            Category = challenge.Rule.Category,
+                            RestrictionType = challenge.Rule.RestrictionType,
+                            SubCategory = challenge.Rule.SubCategory,
+                            Time = challenge.Rule.Time
+                        },
+                        Status = UserRewardChallengeStatus.Incomplete
+                    });
+                }
+
+                var userReward = new UserReward
+                {
+                    Id = _reward.Id,
+                    Challenges = userRewardChallenge,
+                    DateCompleted = null,
+                    Status = UserRewardStatus.Incomplete
+                };
+
+                generatedUserRewards.Add(userReward);
+            }
+
+            return generatedUserRewards;
         }
     }
 }

@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace PLNKTN.Models
 {
-    [DynamoDBTable("Rewards")]
-    public class Reward
+    public class RewardChallenge
     {
-        [DynamoDBHashKey]
         public string Id { get; set; }
 
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public string ImageURL { get; set; }
 
@@ -20,22 +18,12 @@ namespace PLNKTN.Models
 
         public string Link { get; set; }
 
-        public RewardGridPosition GridPosition { get; set; }
-
         public string Text_When_Completed { get; set; }
 
         public string Text_When_Not_Completed { get; set; }
 
         public string Source { get; set; }
 
-        public List<RewardChallenge> Challenges { get; set; }
-
-        public string Country { get; set; }
-
-        public string Overview { get; set; }
-
-        public string Impact { get; set; }
-
-        public string Tree_species { get; set; }
+        public RewardChallengeRule Rule { get; set; }
     }
 }
