@@ -34,11 +34,12 @@ namespace PLNKTN.Repositories
         // Reward tasks
 
         Task<int> AddUserRewardToAllUsers(UserReward reward);
+        Task<int> UpdateUserRewardInAllUsers(UserReward reward);
         Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge);
+        Task<int> DeleteUserRewardFromAllUsers(string rewardId);
 
         //Granted Rewards
         Task<IList<Rgn>> GetUserGrantedReward(string userId, string region_name);
         Task<int> AddUserGrantedReward(string userId, Bin rewardRegion);
-
     }
 }

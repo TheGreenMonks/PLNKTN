@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLNKTN", "PLNKTN\PLNKTN.csproj", "{DF6645FA-D3F1-4466-87F3-7486B2566761}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rewards_Challenges_Calculation", "Rewards_Challenges_Calculation\Rewards_Challenges_Calculation.csproj", "{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicExecutionApp", "PeriodicExecutionApp\PeriodicExecutionApp.csproj", "{FDDF35D5-649D-4EE2-9022-07F23E80C6CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

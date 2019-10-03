@@ -13,5 +13,7 @@ namespace PLNKTN.Models
         public DateTime? DateCompleted { get; set; }
 
         public UserRewardStatus Status { get; set; }
+
+        public NotificationStatus NotificationStatus { get; set; }
     }
 }

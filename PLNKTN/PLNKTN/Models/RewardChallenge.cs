@@ -1,13 +1,10 @@
-﻿using Amazon.DynamoDBv2.DataModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PLNKTN.Models
 {
     public class RewardChallenge
     {
+        [Required]
         public string Id { get; set; }
 
         public string Name { get; set; }
@@ -24,6 +21,7 @@ namespace PLNKTN.Models
 
         public string Source { get; set; }
 
+        [Required]
         public RewardChallengeRule Rule { get; set; }
     }
 }

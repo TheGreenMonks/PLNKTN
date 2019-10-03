@@ -26,7 +26,7 @@ namespace PLNKTN.BusinessLogic
             }
 
             // Code to get pw from local file to keep it out of the code.
-            if (System.IO.File.Exists(pwFile))
+            if (File.Exists(pwFile))
             {
                 using (StreamReader stream = System.IO.File.OpenText(pwFile))
                 {

@@ -138,6 +138,7 @@ namespace PLNKTN.Controllers
             var ecologicalMeasurement = new EcologicalMeasurement
             {
                 Date_taken = dto.Date_taken,
+                EcologicalFootprint = dto.EcologicalFootprint,
                 Transport = dto.Transport,
                 Diet = dto.Diet,
                 Electronics = dto.Electronics,

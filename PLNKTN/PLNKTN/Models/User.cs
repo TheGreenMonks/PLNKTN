@@ -33,8 +33,6 @@ namespace PLNKTN.Models
 
         public bool? ShareData { get; set; }
 
-        public float? EcologicalFootprint { get; set; }
-
         public string Country { get; set; } = null;
 
         public List<UserReward> UserRewards { get; set; }

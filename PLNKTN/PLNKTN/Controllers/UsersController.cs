@@ -95,7 +95,6 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = userDto.NumPeopleHousehold,
                 CarMPG = userDto.CarMPG,
                 ShareData = userDto.ShareData,
-                // EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
                 UserRewards = userRewards,
                 GrantedRewards = new List<Bin>()
@@ -143,7 +142,6 @@ namespace PLNKTN.Controllers
                 NumPeopleHousehold = dto.NumPeopleHousehold,
                 CarMPG = dto.CarMPG,
                 ShareData = dto.ShareData,
-                //EcologicalFootprint = dto.EcologicalFootprint,
                 Country = dto.Country
             };
 
@@ -214,7 +212,8 @@ namespace PLNKTN.Controllers
                             SubCategory = challenge.Rule.SubCategory,
                             Time = challenge.Rule.Time
                         },
-                        Status = UserRewardChallengeStatus.Incomplete
+                        Status = UserRewardChallengeStatus.Incomplete,
+                        NotificationStatus = NotificationStatus.Not_Complete
                     });
                 }
 
@@ -223,7 +222,44 @@ namespace PLNKTN.Controllers
                     Id = _reward.Id,
                     Challenges = userRewardChallenge,
                     DateCompleted = null,
-                    Status = UserRewardStatus.Incomplete
+                    Status = UserRewardStatus.Incomplete,
+                    NotificationStatus = NotificationStatus.Not_Complete
+                };
+
+                generatedUserRewards.Add(userReward);
+            }
+
+            return generatedUserRewards;
+        }
+
+        //  Adds all reward and challenge data required by the user object to a 
+        internal static ICollection<UserReward> GenerateUpdateUserRewards(ICollection<Reward> rewards)
+        {
+            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
+
+            foreach (var _reward in rewards)
+            {
+                var userRewardChallenge = new List<UserRewardChallenge>();
+
+                foreach (var challenge in _reward.Challenges)
+                {
+                    userRewardChallenge.Add(new UserRewardChallenge
+                    {
+                        Id = challenge.Id,
+                        Rule = new UserRewardChallengeRule
+                        {
+                            Category = challenge.Rule.Category,
+                            RestrictionType = challenge.Rule.RestrictionType,
+                            SubCategory = challenge.Rule.SubCategory,
+                            Time = challenge.Rule.Time
+                        },
+                    });
+                }
+
+                var userReward = new UserReward
+                {
+                    Id = _reward.Id,
+                    Challenges = userRewardChallenge,
                 };
 
                 generatedUserRewards.Add(userReward);
