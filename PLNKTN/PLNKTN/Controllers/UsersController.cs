@@ -97,7 +97,8 @@ namespace PLNKTN.Controllers
                 ShareData = userDto.ShareData,
                 // EcologicalFootprint = userDto.EcologicalFootprint,
                 Country = userDto.Country,
-                UserRewards = userRewards
+                UserRewards = userRewards,
+                GrantedRewards = new List<Bin>()
             };
 
             // Save the new user to the DB

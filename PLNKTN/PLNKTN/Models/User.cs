@@ -39,7 +39,7 @@ namespace PLNKTN.Models
 
         public List<UserReward> UserRewards { get; set; }
 
-        public List<Bin> grantedRewards { get; set; }
+        public List<Bin> GrantedRewards { get; set; }
 
         public User()
         {

@@ -925,7 +925,7 @@ namespace PLNKTN.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IList<Rgn>> GetUserReward(string userId, string region_name)
+        public async Task<IList<Rgn>> GetUserGrantedReward(string userId, string region_name)
         {
             using (IDynamoDBContext context = _dbConnection.Context(_config))
             {
@@ -935,16 +935,23 @@ namespace PLNKTN.Repositories
 
                     if (user != null)
                     {
-
-                        Bin grantedRewards = user.grantedRewards.FirstOrDefault(r => r.Region_name == region_name);
-
-                        if (grantedRewards != null)
+                        if (user.GrantedRewards != null)
                         {
-                            return grantedRewards.Projects;
+                            Bin grantedRewards = user.GrantedRewards.FirstOrDefault(r => r.Region_name == region_name);
+
+                            if (grantedRewards != null)
+                            {
+                                return grantedRewards.Projects;
+                            }
+                            else
+                            {
+                                // 404 grantedReward list with region_name do not exist
+                                return null;
+                            }
                         }
                         else
                         {
-                            // 404 grantedReward list with region_name do not exist
+                            // 404 There are no grantedRewards yet
                             return null;
                         }
                     }
@@ -953,9 +960,6 @@ namespace PLNKTN.Repositories
                         // 404 - User with specified userId doesn't exist
                         return null;
                     }
-
-
-
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -1000,11 +1004,11 @@ namespace PLNKTN.Repositories
                     if (user != null)
                     {
                      
-                        Bin dbgrantedReward = user.grantedRewards.FirstOrDefault(r => r.Region_name == rewardRegion.Region_name);
+                        Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == rewardRegion.Region_name);
 
                         if (dbgrantedReward == null)
                         {
-                            user.grantedRewards.Add(rewardRegion);
+                            user.GrantedRewards.Add(rewardRegion);
                             await context.SaveAsync(user);
                             return 1;
                         }

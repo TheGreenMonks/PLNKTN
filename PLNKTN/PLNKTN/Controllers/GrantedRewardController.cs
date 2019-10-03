@@ -36,7 +36,9 @@ namespace PLNKTN.Controllers
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User ID information formatted incorrectly.");
             }
-            var granted = await _userRepository.GetUserReward(id, region_name);
+
+            var granted = await _userRepository.GetUserGrantedReward(id, region_name);
+
             if (granted != null)
             {
                 return Ok(granted);
@@ -45,7 +47,8 @@ namespace PLNKTN.Controllers
             else
             {
                 // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + id + "' does not have rewards yet.");
+                return NotFound("Either the User with ID '" + id + "' does not exist or this User does not have any " +
+                    "assigned Rewards in region '" + region_name + "' yet.");
             }
 
         }
