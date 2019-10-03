@@ -8,6 +8,7 @@ namespace PLNKTN.Models
     public class EcologicalMeasurement
     {
         public DateTime Date_taken { get; set; }
+        public float? EcologicalFootprint { get; set; }
         public Transport Transport { get; set; }
         public Diet Diet { get; set; }
         public Electronics Electronics { get; set; }

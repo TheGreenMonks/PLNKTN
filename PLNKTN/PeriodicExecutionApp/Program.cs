@@ -36,7 +36,8 @@ namespace PeriodicExecutionApp
         {
             HttpClient httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:44312/")
+                BaseAddress = new Uri("http://ec2-54-241-148-226.us-west-1.compute.amazonaws.com/")
+                // For LOCAL ONLY -> BaseAddress = new Uri("https://localhost:44312/")
             };
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

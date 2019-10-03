@@ -22,6 +22,8 @@ namespace PLNKTN.Repositories
         Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken);
 
         Task<int> AddUserRewardToAllUsers(UserReward reward);
+        Task<int> UpdateUserRewardInAllUsers(UserReward reward);
         Task<int> AddUserRewardChallenge(string userId, string rewardId, UserRewardChallenge challenge);
+        Task<int> DeleteUserRewardFromAllUsers(string rewardId);
     }
 }

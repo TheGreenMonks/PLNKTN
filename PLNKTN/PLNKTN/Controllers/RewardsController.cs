@@ -331,16 +331,42 @@ namespace PLNKTN.Controllers
 
         // GET: api/Rewards
         [HttpGet]
-        public string Get()
+        public async Task<IActionResult> Get()
         {
-            return "Not Implemented";
+            var result = await _rewardRepository.GetAllRewards();
+
+            if (result != null && result.Count > 0)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("No Rewards are present in the DB.");
+            }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id)
         {
-            return "Not Implemented";
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Reward information formatted incorrectly.");
+            }
+
+            var result = await _rewardRepository.GetReward(id);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("Reward with ID '" + id + "' does not exist.");
+            }
         }
 
         // POST api/Rewards
@@ -353,36 +379,18 @@ namespace PLNKTN.Controllers
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var user = new Reward()
-            {
-                Id = reward.Id,
-                Title = reward.Title,
-                ImageURL = reward.ImageURL,
-                Description = reward.Description,
-                Link = reward.Link,
-                GridPosition = reward.GridPosition,
-                Text_When_Completed = reward.Text_When_Completed,
-                Text_When_Not_Completed = reward.Text_When_Not_Completed,
-                Source = reward.Source,
-                Challenges = reward.Challenges,
-                Country = reward.Country,
-                Overview = reward.Overview,
-                Impact = reward.Impact,
-                Tree_species = reward.Tree_species
-            };
-
             var result = await _rewardRepository.CreateReward(reward);
-
-            // Generate a 'user reward' and add it to all users in the DB.
-            var rewards = new List<Reward>
-            {
-                reward
-            };
-            var userReward = UsersController.GenerateUserRewards(rewards);
-            await _userRepository.AddUserRewardToAllUsers(userReward.First());
 
             if (result == 1)
             {
+                // Generate a 'user reward' and add it to all users in the DB.
+                var rewards = new List<Reward>
+                {
+                    reward
+                };
+                var userReward = UsersController.GenerateUserRewards(rewards);
+                await _userRepository.AddUserRewardToAllUsers(userReward.First());
+
                 // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = reward.Id }, reward);
             }
@@ -408,35 +416,26 @@ namespace PLNKTN.Controllers
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var user = new Reward()
-            {
-                Id = reward.Id,
-                Title = reward.Title,
-                ImageURL = reward.ImageURL,
-                Description = reward.Description,
-                Link = reward.Link,
-                GridPosition = reward.GridPosition,
-                Text_When_Completed = reward.Text_When_Completed,
-                Text_When_Not_Completed = reward.Text_When_Not_Completed,
-                Source = reward.Source,
-                Challenges = reward.Challenges,
-                Country = reward.Country,
-                Overview = reward.Overview,
-                Impact = reward.Impact,
-                Tree_species = reward.Tree_species
-            };
-
             var result = await _rewardRepository.UpdateReward(reward);
 
             if (result == 1)
             {
-                // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = reward.Id }, reward);
+                // Generate a 'user reward' and update it in all users in the DB.
+                var rewards = new List<Reward>
+                {
+                    reward
+                };
+                // Make the user reward information ready for sending to the repository
+                var userReward = UsersController.GenerateUpdateUserRewards(rewards);
+                await _userRepository.UpdateUserRewardInAllUsers(userReward.First());
+
+                // return HTTP 200 Ok reward was updated.  PUT does not require object to be returned in HTTP body.
+                return Ok();
             }
-            else if (result == -10)
+            else if (result == -9)
             {
-                // return HTTP 409 Conflict as reward already exists in DB
-                return Conflict("Reward with ID '" + reward.Id + "' already exists.  Cannot create a duplicate.");
+                // return HTTP 404 as object cannot be found in DB
+                return NotFound("Reward with ID '" + reward.Id + "' does not exist.");
             }
             else
             {
@@ -445,10 +444,33 @@ namespace PLNKTN.Controllers
             }
         }
 
-        // DELETE api/Rewards
-        [HttpDelete]
-        public void Delete()
+        // DELETE api/Rewards/rewardId
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Reward information formatted incorrectly.");
+            }
+
+            var result = await _rewardRepository.DeleteReward(id);
+
+            if (result == 1)
+            {
+                await _userRepository.DeleteUserRewardFromAllUsers(id);
+                return Ok();
+            }
+            else if (result == -9)
+            {
+                // return HTTP 404 as rewards cannot be found in DB
+                return NotFound("Reward with ID '" + id + "' does not exist.");
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+            }
         }
     }
 }
