@@ -20,6 +20,19 @@ namespace PLNKTN.Controllers
 
             _rewardRepository = rewardRepository;
         }
+        [HttpGet("GetAllRegionNames")]
+        public async Task<IActionResult> Get()
+        {
+            var regionNames = await _rewardRepository.GetAllRegionNames();
+            if (regionNames != null)
+            {
+                return Ok(regionNames);
+            }
+            else
+            {
+                return NotFound("No Regions Found");
+            }
+        }
         // GET: api/countryname
         [HttpGet("GetAllProjects/region_name")]
         public async Task<IActionResult> Get(string region_name)

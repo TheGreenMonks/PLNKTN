@@ -18,6 +18,7 @@ namespace PLNKTN.Repositories
         Task<int> AddProject(string region_name, Project project);
         Task<List<Project>> GetAllProjects(string region_name);
         Task<Project> GetProjectInfo(string region_name, string project_name);
+        Task<List<string>> GetAllRegionNames();
 
         /***Bin***/
         Task<int> ThrowTreeInBin(string region_name, Rgn project);        
