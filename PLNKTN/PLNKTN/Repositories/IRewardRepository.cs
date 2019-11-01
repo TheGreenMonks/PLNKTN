@@ -18,6 +18,7 @@ namespace PLNKTN.Repositories
         /*** Functions for OneTreePlanted table ***/
         Task<int> CreateRegion(RewardRegion region);
         Task<int> AddProject(string region_name, Project project);
+        Task<List<string>> GetAllRegionNames();
         Task<List<Project>> GetAllProjects(string region_name);
         Task<Project> GetProjectInfo(string region_name, string project_name);
 

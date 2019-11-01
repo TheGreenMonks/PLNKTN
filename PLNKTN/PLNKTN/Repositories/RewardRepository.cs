@@ -381,6 +381,58 @@ namespace PLNKTN.Repositories
             }
         }
 
+        public async Task<List<string>> GetAllRegionNames()
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    // Define scan conditions
+                    var conditions = new List<ScanCondition>();
+
+                    // Gets all regions from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
+                    var regions = await context.ScanAsync<RewardRegion>(conditions).GetRemainingAsync();
+                    List<string> names = new List<string>();
+                    foreach (RewardRegion region in regions)
+                    {
+                        names.Add(region.Region_name);
+                    }
+                    return names.Count > 0 ? names : null;
+
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return null;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return null;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+            }
+        }
+
         public async Task<List<Project>> GetAllProjects(string region_name)
         {
             using (var context = _dbConnection.Context())
