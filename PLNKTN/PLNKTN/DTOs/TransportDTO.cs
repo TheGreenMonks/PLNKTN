@@ -8,5 +8,6 @@ namespace PLNKTN.DTOs
         public int Bus { get; set; }
         public int Flight { get; set; }
         public int Subway { get; set; }
+        public int Walking { get; set; }
     }
 }
