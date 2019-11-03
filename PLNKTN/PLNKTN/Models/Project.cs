@@ -10,5 +10,6 @@ namespace PLNKTN.Models
         public string Impact { get; set; }
         public string Tree_species { get; set; }
         public List<string> Images { get; set; }
+        public string url { get; set; }
     }
 }
