@@ -849,6 +849,7 @@ namespace PLNKTN.Repositories
                                 reward.DateCompleted = dbReward.DateCompleted;
                                 reward.NotificationStatus = dbReward.NotificationStatus;
                                 reward.Status = dbReward.Status;
+                                reward.IsRewardGranted = dbReward.IsRewardGranted;
 
                                 // Remove the old reward entry and add the new one and save
                                 user.UserRewards.Remove(dbReward);
@@ -1217,6 +1218,62 @@ namespace PLNKTN.Repositories
                     else
                     {
                         // 404 - User with specified userId doesn't exist
+                        return -9;
+                    }
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return -1;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return -1;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return -1;
+                }
+            }
+        }
+
+        public async Task<int> UpdateUserReward(string userId, UserReward model)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                try
+                {
+                    var user = await context.LoadAsync<User>(userId);
+
+                    if (user != null)
+                    {
+                        user.UserRewards.RemoveAll(ur => ur.Id == model.Id);
+                        user.UserRewards.Add(model);
+
+                        await context.SaveAsync(user);
+                        // Success
+                        return 1;
+                    }
+                    else
+                    {
+                        // Object not found in db
                         return -9;
                     }
                 }

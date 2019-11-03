@@ -223,7 +223,8 @@ namespace PLNKTN.Controllers
                     Challenges = userRewardChallenge,
                     DateCompleted = null,
                     Status = UserRewardStatus.Incomplete,
-                    NotificationStatus = NotificationStatus.Not_Complete
+                    NotificationStatus = NotificationStatus.Not_Complete,
+                    IsRewardGranted = false
                 };
 
                 generatedUserRewards.Add(userReward);
