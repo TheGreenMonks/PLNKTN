@@ -1,6 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime;
 using PLNKTN.Models;
 using System;
@@ -270,27 +269,13 @@ namespace PLNKTN.Repositories
                             // Remove old ecological measurement from DB User
                             user.EcologicalMeasurements.Remove(dbEcoMeasure);
 
-                            // Update DB updatedEcoMeasure with new values if not null
-                            if (updatedEcoMeasure.Diet != null)
-                            {
-                                dbEcoMeasure.Diet = updatedEcoMeasure.Diet;
-                            }
-                            if (updatedEcoMeasure.Clothing != null)
-                            {
-                                dbEcoMeasure.Clothing = updatedEcoMeasure.Clothing;
-                            }
-                            if (updatedEcoMeasure.Electronics != null)
-                            {
-                                dbEcoMeasure.Electronics = updatedEcoMeasure.Electronics;
-                            }
-                            if (updatedEcoMeasure.Footwear != null)
-                            {
-                                dbEcoMeasure.Footwear = updatedEcoMeasure.Footwear;
-                            }
-                            if (updatedEcoMeasure.Transport != null)
-                            {
-                                dbEcoMeasure.Transport = updatedEcoMeasure.Transport;
-                            }
+                            // Update DB updatedEcoMeasure with new values
+                            dbEcoMeasure.EcologicalFootprint = updatedEcoMeasure.EcologicalFootprint;
+                            dbEcoMeasure.Diet = updatedEcoMeasure.Diet;
+                            dbEcoMeasure.Clothing = updatedEcoMeasure.Clothing;
+                            dbEcoMeasure.Electronics = updatedEcoMeasure.Electronics;
+                            dbEcoMeasure.Footwear = updatedEcoMeasure.Footwear;
+                            dbEcoMeasure.Transport = updatedEcoMeasure.Transport;
 
                             user.EcologicalMeasurements.Add(dbEcoMeasure);
                             await context.SaveAsync<User>(user);
@@ -1198,7 +1183,7 @@ namespace PLNKTN.Repositories
 
                     if (user != null)
                     {
-                     
+
                         Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == rewardRegion.Region_name);
 
                         if (dbgrantedReward == null)
