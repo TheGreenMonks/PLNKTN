@@ -47,20 +47,20 @@ namespace PLNKTN.Controllers
         }
 
         // POST api/values
-        [HttpPost("PostGrantedReward/{id}")]
-        public async Task<IActionResult> Post(string id, [FromBody] Bin grantedReward)
+        [HttpPost("PostGrantedReward/{id}/{region_name}")]
+        public async Task<IActionResult> Post(string id, string region_name, [FromBody] Rgn project)
         {
-            if (grantedReward == null)
+            if (project == null)
             {
-                return BadRequest("granted reward formatted incorrectly.");
+                return BadRequest("project formatted incorrectly.");
             }
 
-            int result = await _userRepository.AddUserGrantedReward(id, grantedReward);
+            int result = await _userRepository.AddUserGrantedReward(id, region_name, project);
 
             if (result == 1)
             {
-                // return HTTP 201 Created with granted reward object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = id, region_name = grantedReward.Region_name}, grantedReward);
+                // return HTTP 201 Created with project object in body of return and a 'location' header with URL of newly created object
+                return CreatedAtAction("Get", new { id = id, region_name = region_name }, project);
             }
             else if (result == -7)
             {

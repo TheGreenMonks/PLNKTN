@@ -40,6 +40,6 @@ namespace PLNKTN.Repositories
 
         //Granted Rewards
         Task<IList<Rgn>> GetUserGrantedReward(string userId, string region_name);
-        Task<int> AddUserGrantedReward(string userId, Bin rewardRegion);
+        Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project);
     }
 }
