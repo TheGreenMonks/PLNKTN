@@ -3,12 +3,12 @@ namespace PLNKTN.DTOs
 {
     public class DietDTO
     {
-        public int PlantBased { get; set; }
-        public int Beef { get; set; }
-        public int Pork { get; set; }
-        public int Poultry { get; set; }
-        public int Egg { get; set; }
-        public int Dairy { get; set; }
-        public int Seafood { get; set; }
+        public float PlantBased { get; set; }
+        public float Beef { get; set; }
+        public float Pork { get; set; }
+        public float Poultry { get; set; }
+        public float Egg { get; set; }
+        public float Dairy { get; set; }
+        public float Seafood { get; set; }
     }
 }
