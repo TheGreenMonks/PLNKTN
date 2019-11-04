@@ -1187,7 +1187,7 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        public async Task<int> AddUserGrantedReward(string userId, Bin rewardRegion)
+        public async Task<int> AddUserGrantedReward(string userId, string region_name,Rgn project)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
@@ -1198,10 +1198,18 @@ namespace PLNKTN.Repositories
                     if (user != null)
                     {
                      
-                        Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == rewardRegion.Region_name);
+                        Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == region_name);
 
                         if (dbgrantedReward == null)
                         {
+                            List<Rgn> projects = new List<Rgn>();
+                            projects.Add(project);
+                            Bin rewardRegion = new Bin
+                            {
+                                Region_name = region_name,
+                                Projects = projects
+                            };
+                            rewardRegion.Count++;
                             user.GrantedRewards.Add(rewardRegion);
                             await context.SaveAsync(user);
                             return 1;
@@ -1210,6 +1218,11 @@ namespace PLNKTN.Repositories
                         {
                             // user already planted here(it is okay to plant again).  Increate count
                             dbgrantedReward.Count++;
+                            Rgn project_exist = dbgrantedReward.Projects.Find(x => x.Project_name == project.Project_name);
+                            if (project_exist != null)
+                            {
+                                dbgrantedReward.Projects.Add(project);
+                            }
                             await context.SaveAsync(user);
                             return -7;
                         }
