@@ -28,6 +28,9 @@ namespace PLNKTN.Repositories
         Task<int> AddCollective_EF(CollectiveEF cEF);
         Task<List<CollectiveEF>> GetAllCollective_EFs();
 
+        // UserReward Tasks
+        Task<int> UpdateUserReward(string userId, UserReward model);
+
         // Challenge tasks
         Task<int> AddCompletedChallengeUser(string userId, EcologicalMeasurement ecologicalMeasurement);
 

@@ -15,5 +15,7 @@ namespace PLNKTN.Models
         public UserRewardStatus Status { get; set; }
 
         public NotificationStatus NotificationStatus { get; set; }
+
+        public bool IsRewardGranted { get; set; }
     }
 }
