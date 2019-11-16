@@ -111,6 +111,11 @@ namespace PLNKTN.Controllers
              * and -> https://stackoverflow.com/questions/48631715/retrieving-all-items-in-a-table-with-dynamodb
              * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
              */
+
+            /* TODO
+             * As Diet is he only real category being tested all calculations are with floats bu tthis will need to be changed when
+             * other categories are included as they have properties of different types in them...
+             */
             
             var strChallenge = "Challenge";
             // Get all users from the DB who have NOT NULL Reward arrays
@@ -196,11 +201,11 @@ namespace PLNKTN.Controllers
                                     var _skipItemsCategory = ecoMeasurement.GetType().GetProperty(_category).GetValue(ecoMeasurement);
                                     var _skipItem = _skipItemsCategory.GetType().GetProperty(_subCategory).GetValue(_skipItemsCategory);
 
-                                    // Convert the retrieved value to an int.
-                                    var _skipItemAsInt = Convert.ToInt32(_skipItem);
+                                    // Convert the retrieved value to a float.
+                                    var _skipItemAsFloat = Convert.ToSingle(_skipItem);
 
                                     // Check if the user has skipped the item in this EF and increment if they have.
-                                    if (_skipItemAsInt == 0)
+                                    if (_skipItemAsFloat == 0)
                                     {
                                         skippedEnoughTimes++;
                                     }
@@ -229,12 +234,12 @@ namespace PLNKTN.Controllers
                                 var _countOtherSubCategoriesUsed = 0;
 
                                 // Create a dictionary to hold the list of property names and their values
-                                var properties = new Dictionary<string, int>();
+                                var properties = new Dictionary<string, float>();
 
                                 // Iterate over the list of sub categories and add their property names and values to dict.
                                 foreach (var _tempProps in _onlyThisItemsCategory.GetType().GetProperties())
                                 {
-                                    properties.Add(_tempProps.Name, (int)_tempProps.GetValue(_onlyThisItemsCategory));
+                                    properties.Add(_tempProps.Name, (float)_tempProps.GetValue(_onlyThisItemsCategory));
                                 }
 
                                 // Remove the subcategory that is only to be used in this challenge so it doesn't false flag and fail the challenge.
@@ -249,11 +254,11 @@ namespace PLNKTN.Controllers
                                     }
                                 }
 
-                                // Convert the retrieved value to an int.
-                                var _onlyThisItemAsInt = Convert.ToInt32(_onlyThisItem);
+                                // Convert the retrieved value to a float.
+                                var _onlyThisItemAsFloat = Convert.ToSingle(_onlyThisItem);
 
                                 // Check if the user has only used the 'only_use' item in this EF and increment if they have.
-                                if (_onlyThisItemAsInt > 0 && _countOtherSubCategoriesUsed == 0)
+                                if (_onlyThisItemAsFloat > 0 && _countOtherSubCategoriesUsed == 0)
                                 {
                                     onlyUsedEnoughtTimes++;
                                 }
@@ -316,7 +321,7 @@ namespace PLNKTN.Controllers
             // Iterate over the list of sub categories and add their property names and values to dict.
             foreach (var _tempProps in _itemsCategory.GetType().GetProperties())
             {
-                if ((int)_tempProps.GetValue(_itemsCategory) > 0)
+                if ((float)_tempProps.GetValue(_itemsCategory) > 0)
                 {
                     _activityDetected = true;
                     break;
