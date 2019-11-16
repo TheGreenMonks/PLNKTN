@@ -1192,9 +1192,9 @@ namespace PLNKTN.Repositories
                             Bin rewardRegion = new Bin
                             {
                                 Region_name = region_name,
-                                Projects = projects
+                                Projects = projects,
+                                Count = 1
                             };
-                            rewardRegion.Count++;
                             user.GrantedRewards.Add(rewardRegion);
                             await context.SaveAsync(user);
                             return 1;
