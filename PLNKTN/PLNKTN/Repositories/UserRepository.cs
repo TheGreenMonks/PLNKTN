@@ -1203,8 +1203,8 @@ namespace PLNKTN.Repositories
                         {
                             // user already planted here(it is okay to plant again).  Increate count
                             dbgrantedReward.Count++;
-                            Rgn project_exist = dbgrantedReward.Projects.Find(x => x.Project_name == project.Project_name);
-                            if (project_exist != null)
+                            Rgn project_exist = project_exist = dbgrantedReward.Projects.Find(x => x.Project_name == project.Project_name);
+                            if (project_exist == null)
                             {
                                 dbgrantedReward.Projects.Add(project);
                             }
