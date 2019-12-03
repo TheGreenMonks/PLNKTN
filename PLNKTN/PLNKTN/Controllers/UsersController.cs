@@ -210,7 +210,8 @@ namespace PLNKTN.Controllers
                             Category = challenge.Rule.Category,
                             RestrictionType = challenge.Rule.RestrictionType,
                             SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time
+                            Time = challenge.Rule.Time,
+                            AmountToConsume = challenge.Rule.AmountToConsume
                         },
                         Status = UserRewardChallengeStatus.Incomplete,
                         NotificationStatus = NotificationStatus.Not_Complete
@@ -252,7 +253,8 @@ namespace PLNKTN.Controllers
                             Category = challenge.Rule.Category,
                             RestrictionType = challenge.Rule.RestrictionType,
                             SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time
+                            Time = challenge.Rule.Time,
+                            AmountToConsume = challenge.Rule.AmountToConsume
                         },
                     });
                 }

@@ -14,7 +14,9 @@ namespace PLNKTN.Models
         [SubCategory]
         public string SubCategory { get; set; }
 
-        [EnumDataType(typeof(ChallengeType), ErrorMessage = "RestrictionType type value doesn't exist, must be - 0 = 'Skip', 1 = 'Only_This'.")]
+        [EnumDataType(typeof(ChallengeType), ErrorMessage = "RestrictionType type value doesn't exist, must be - 0 = 'Skip', 1 = 'Only_This' or 2 = 'Any'.")]
         public ChallengeType RestrictionType { get; set; }
+
+        public int AmountToConsume { get; set; }
     }
 }

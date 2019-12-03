@@ -10,12 +10,13 @@ namespace PLNKTN.BusinessLogic
             List<string> { "Plant_based", "Beef", "Pork", "Poultry", "Egg", "Dairy", "Seafood" };
 
         private readonly IList<string> _transportSubCategories = new
-            List<string> { "Bicycle", "Car", "Bus", "Flight", "Subway" };
+            List<string> { "Bicycle", "Car", "Bus", "Flight", "Subway", "Walking" };
 
         public override bool IsValid(object value)
         {
             StringBuilder _acceptedItems = new StringBuilder();
             _acceptedItems.AppendJoin(", ", _dietSubCategories);
+            _acceptedItems.Append(", ");
             _acceptedItems.AppendJoin(", ", _transportSubCategories);
             _acceptedItems.Append(".");
 
