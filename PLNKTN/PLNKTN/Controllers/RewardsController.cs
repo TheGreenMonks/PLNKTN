@@ -47,8 +47,8 @@ namespace PLNKTN.Controllers
             var strReward = "Reward";
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
-            // New List to hold all email messages generated
-            ICollection<string> emailMessages = new List<string>();
+            // Email helper to manage results email
+            IEmailHelper emailHelper = new EmailHelper();
 
             // Iterate over each user that has rewards in their DB record.
             foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
@@ -68,7 +68,7 @@ namespace PLNKTN.Controllers
                         _reward.Status = UserRewardStatus.Complete;
                         _reward.NotificationStatus = NotificationStatus.Not_Notified;
                         changesMade = true;
-                        emailMessages.Add(EmailHelper.EmailMessage(_user.Id, strReward, _reward.Id));
+                        emailHelper.AddEmailMessageLine(_user.Id, strReward, _reward.Id);
                     }
                 }
 
@@ -80,13 +80,8 @@ namespace PLNKTN.Controllers
                 }
             }
 
-            // If there are no item completions this time then confirm this in the email with a message.
-            if (emailMessages.Count == 0)
-            {
-                emailMessages.Add("No " + strReward + "s completed this time...\n");
-            }
-
-            EmailHelper.SendEmail(emailMessages, strReward);
+            // Send email with results of this method (Dexter has email originator address and recipients)
+            emailHelper.SendEmail(strReward);
         }
 
         #endregion
@@ -125,8 +120,8 @@ namespace PLNKTN.Controllers
             // Get all users from the DB who have NOT NULL Reward arrays
             var dbUsers = await _userRepository.GetAllUsers();
 
-            // New List to hold all email messages generated
-            ICollection<string> emailMessages = new List<string>();
+            // Email helper to manage results email
+            IEmailHelper emailHelper = new EmailHelper();
 
             // Iterate over each user that has rewards in their DB record.
             foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
@@ -310,7 +305,7 @@ namespace PLNKTN.Controllers
                             _challenge.NotificationStatus = NotificationStatus.Not_Notified;
                             _challenge.DateCompleted = DateTime.UtcNow;
                             changesMade = true;
-                            emailMessages.Add(EmailHelper.EmailMessage(_user.Id, strChallenge, _challenge.Id));
+                            emailHelper.AddEmailMessageLine(_user.Id, strChallenge, _challenge.Id);
                         }
 
                     }
@@ -325,13 +320,8 @@ namespace PLNKTN.Controllers
 
             }
 
-            // If there are no item completions this time then confirm this in the email with a message.
-            if (emailMessages.Count == 0)
-            {
-                emailMessages.Add("No " + strChallenge + "s completed this time...\n");
-            }
-
-            EmailHelper.SendEmail(emailMessages, strChallenge);
+            // Send email with results of this method (Dexter has email originator address and recipients)
+            emailHelper.SendEmail(strChallenge);
         }
 
         /*
