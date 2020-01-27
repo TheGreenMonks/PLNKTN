@@ -4,11 +4,10 @@ using Amazon.DynamoDBv2.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace PLNKTN.Repositories
+namespace PLNKTN.Persistence.EntityConfiguration
 {
     /* 
      * TODO
@@ -22,10 +21,10 @@ namespace PLNKTN.Repositories
     {
         public DBAdmin()
         {
-            initDbTables();
+            InitDbTables();
         }
 
-        private async void initDbTables()
+        private async void InitDbTables()
         {
             var client = new AmazonDynamoDBClient(RegionEndpoint.USWest1);
             var status = "";
@@ -57,7 +56,7 @@ namespace PLNKTN.Repositories
             } while (status != TableStatus.ACTIVE);
         }
 
-        private async Task<HttpStatusCode> createUserTable()
+        private async Task<HttpStatusCode> CreateUserTable()
         {
             AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
@@ -92,7 +91,7 @@ namespace PLNKTN.Repositories
             return response.HttpStatusCode;
         }
 
-        private async Task<HttpStatusCode> createRewardTable()
+        private async Task<HttpStatusCode> CreateRewardTable()
         {
             AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PLNKTN.Persistence;
 using PLNKTN.Repositories;
 
 namespace PLNKTN
@@ -24,7 +25,8 @@ namespace PLNKTN
             // Add dependency injection interfaces/classes
             services.AddScoped<IRewardRepository, RewardRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IDBConnection, DBConnection>();
+            services.AddScoped<IDbContextFactory, DbContextFactory>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

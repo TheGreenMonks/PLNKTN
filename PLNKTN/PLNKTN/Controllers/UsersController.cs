@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTN.BusinessLogic;
 using PLNKTN.DTOs;
 using PLNKTN.Models;
-using PLNKTN.Repositories;
+using PLNKTN.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,30 +16,26 @@ namespace PLNKTN.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRewardRepository _rewardRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
-            _rewardRepository = rewardRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/users
         [HttpGet]
         public async Task<IActionResult> Get()
         { 
-            var users = await _userRepository.GetUsers();
+            var result = await _unitOfWork.Repository<User>().GetAllAsync();
 
-            if (users != null)
+            if (result != null && result.Count > 0)
             {
-                // return HTTP 200
-                return Ok(users.Count);
+                return Ok(result);
             }
             else
             {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("List of Users does not exist.");
+                return NotFound("No users are present in the DB.");
             }
         }
 
@@ -48,21 +45,18 @@ namespace PLNKTN.Controllers
         {
             if (String.IsNullOrWhiteSpace(id))
             {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User ID information formatted incorrectly.");
+                return BadRequest("User information formatted incorrectly.");
             }
 
-            var user = await _userRepository.GetUser(id);
+            User result = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
-            if (user != null)
+            if (result != null)
             {
-                // return HTTP 200
-                return Ok(user);
+                return Ok(result);
             }
             else
             {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + id + "' does not exist.");
+                return NotFound("User does not exist.");
             }
         }
 
@@ -72,14 +66,13 @@ namespace PLNKTN.Controllers
         {
             if (userDto == null)
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User information formatted incorrectly.");
             }
 
             // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
             // list of rewards and challenges so, they can participate in reward and challenge completion.
-            var rewards = await _rewardRepository.GetAllRewards();
-            var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
+            IList<Reward> rewards = await _unitOfWork.Repository<Reward>().GetAllAsync();
+            List<UserReward> userRewards = (List<UserReward>)UserRewards.GenerateUserRewards(rewards);
 
             // Create new user
             var user = new User()
@@ -100,24 +93,11 @@ namespace PLNKTN.Controllers
                 GrantedRewards = new List<Bin>()
             };
 
-            // Save the new user to the DB
-            var result = await _userRepository.CreateUser(user);
+            BatchWrite<User> batch = _unitOfWork.Repository<User>().Insert(user);
+            await _unitOfWork.Commit(new BatchWrite[] { batch });
 
-            if (result == 1)
-            {
-                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = userDto.Id }, user);
-            }
-            else if (result == -10)
-            {
-                // return HTTP 409 Conflict as user already exists in DB
-                return Conflict("User with ID '" + userDto.Id + "' already exists.  Cannot create a duplicate.");
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
+            return CreatedAtAction("Get", new { id = user.Id }, user);
         }
 
         // PUT api/users/test
@@ -126,7 +106,6 @@ namespace PLNKTN.Controllers
         {
             if (dto == null)
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User information formatted incorrectly.");
             }
 
@@ -145,24 +124,10 @@ namespace PLNKTN.Controllers
                 Country = dto.Country
             };
 
-            var result = await _userRepository.UpdateUser(user);
+            BatchWrite<User> batch = _unitOfWork.Repository<User>().Update(user);
+            await _unitOfWork.Commit(new BatchWrite[] { batch });
 
-            if (result == 1)
-            {
-                // return HTTP 200 Ok user was updated.  PUT does not require user to be returned in HTTP body.
-                // Not done to save bandwidth.
-                return Ok();
-            }
-            else if (result == -9)
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + dto.Id + "' does not exist.");
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            return Ok();
         }
 
         // DELETE api/users/test
@@ -174,101 +139,10 @@ namespace PLNKTN.Controllers
                 return BadRequest("User information formatted incorrectly.");
             }
 
-            var userDeleted = await _userRepository.DeleteUser(id);
+            BatchWrite<User> batch = _unitOfWork.Repository<User>().DeleteById(id);
+            await _unitOfWork.Commit(new BatchWrite[] { batch });
 
-            if (userDeleted > 0)
-            {
-                return Ok("user with ID '" + id + "' deleted.");
-            }
-            else if (userDeleted == -9)
-            {
-                return NotFound("No user with ID '" + id + "' available to be deleted.");
-            }
-            else
-            {
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
-        }
-
-        //  Adds all reward and challenge data required by the user object to a 
-        internal static ICollection<UserReward> GenerateUserRewards(ICollection<Reward> rewards)
-        {
-            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
-
-            foreach (var _reward in rewards)
-            {
-                var userRewardChallenge = new List<UserRewardChallenge>();
-
-                foreach (var challenge in _reward.Challenges)
-                {
-                    userRewardChallenge.Add(new UserRewardChallenge
-                    {
-                        Id = challenge.Id,
-                        DateCompleted = null,
-                        Rule = new UserRewardChallengeRule
-                        {
-                            Category = challenge.Rule.Category,
-                            RestrictionType = challenge.Rule.RestrictionType,
-                            SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time,
-                            AmountToConsume = challenge.Rule.AmountToConsume
-                        },
-                        Status = UserRewardChallengeStatus.Incomplete,
-                        NotificationStatus = NotificationStatus.Not_Complete
-                    });
-                }
-
-                var userReward = new UserReward
-                {
-                    Id = _reward.Id,
-                    Challenges = userRewardChallenge,
-                    DateCompleted = null,
-                    Status = UserRewardStatus.Incomplete,
-                    NotificationStatus = NotificationStatus.Not_Complete,
-                    IsRewardGranted = false
-                };
-
-                generatedUserRewards.Add(userReward);
-            }
-
-            return generatedUserRewards;
-        }
-
-        //  Adds all reward and challenge data required by the user object to a 
-        internal static ICollection<UserReward> GenerateUpdateUserRewards(ICollection<Reward> rewards)
-        {
-            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
-
-            foreach (var _reward in rewards)
-            {
-                var userRewardChallenge = new List<UserRewardChallenge>();
-
-                foreach (var challenge in _reward.Challenges)
-                {
-                    userRewardChallenge.Add(new UserRewardChallenge
-                    {
-                        Id = challenge.Id,
-                        Rule = new UserRewardChallengeRule
-                        {
-                            Category = challenge.Rule.Category,
-                            RestrictionType = challenge.Rule.RestrictionType,
-                            SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time,
-                            AmountToConsume = challenge.Rule.AmountToConsume
-                        },
-                    });
-                }
-
-                var userReward = new UserReward
-                {
-                    Id = _reward.Id,
-                    Challenges = userRewardChallenge,
-                };
-
-                generatedUserRewards.Add(userReward);
-            }
-
-            return generatedUserRewards;
+            return Ok("user with ID '" + id + "' deleted.");
         }
     }
 }

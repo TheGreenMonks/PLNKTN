@@ -1,20 +1,19 @@
-﻿using PLNKTN.Models;
-using System;
+﻿using Amazon.DynamoDBv2.DataModel;
+using PLNKTN.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace PLNKTN.Repositories
+namespace PLNKTN.Persistence.Repositories
 {
     public interface IRewardRepository
     {
         // General Reward tasks
-        Task<int> CreateReward(Reward reward);
-        Task<int> UpdateReward(Reward reward);
-        Task<ICollection<Reward>> GetAllRewards();
-        Task<Reward> GetReward(string id);
-        Task<int> DeleteReward(string id);
-      
+        BatchWrite<Reward> Insert(Reward reward, BatchWrite<Reward> batchWrite = null);
+        Task<IList<Reward>> GetAllAsync();
+        Task<Reward> GetByIdAsync(string id);
+        BatchWrite<Reward> Update(Reward reward, BatchWrite<Reward> batchWrite = null);
+        BatchWrite<Reward> DeleteById(string id, BatchWrite<Reward> batchWrite = null);
+
         /*** Functions for OneTreePlanted table ***/
         Task<int> CreateRegion(RewardRegion region);
         Task<int> AddProject(string region_name, Project project);

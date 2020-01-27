@@ -1,15 +1,15 @@
-﻿using PLNKTN.Models;
+﻿using Amazon.DynamoDBv2.DataModel;
+using PLNKTN.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace PLNKTN.Repositories
+namespace PLNKTN.Persistence.Repositories
 {
     public interface IUserRepository
     {
         // General User tasks
-        Task<int> CreateUser(User user);
+        public BatchWrite<User> Insert(User user, BatchWrite<User> batchWrite = null);
         Task<int> UpdateUser(User user);
         Task<User> GetUser(string userId);
         Task<int> DeleteUser(string userId);

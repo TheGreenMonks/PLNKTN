@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTN.BusinessLogic;
 using PLNKTN.Models;
-using PLNKTN.Repositories;
+using PLNKTN.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PLNKTN.Controllers
 {
@@ -13,13 +14,11 @@ namespace PLNKTN.Controllers
     [ApiController]
     public class RewardsController : ControllerBase
     {
-        private readonly IRewardRepository _rewardRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RewardsController(IRewardRepository rewardRepository, IUserRepository userRepository)
+        public RewardsController(IUnitOfWork unitOfWork)
         {
-            _rewardRepository = rewardRepository;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         #region Calculate Reward Completion
@@ -27,59 +26,18 @@ namespace PLNKTN.Controllers
         [AcceptVerbs("CalcRewards")]
         public async void CalculateUserRewardCompletion()
         {
-            /* Algorithm
-             * Foreach User check each Reward's Challenge status to see if the User has completed all Challenges.  If all Challenges in a
-             * Reward are complete then set the status of the UserReward to complete and set the date of completion.
-             * 
-             * TODO - Efficiency Improvements -- 1. Only get the required fields from the db (i.e. eco measurments aren't needed)
-             */
-
-            // Get Users from DB
-
-            /* TODO
-             * This action will need to be paginated and parallelised as the max transfer size is 1MB, which will will be exceed quickly.
-             * this functionality will enable multiple app threads to work on crunching the data via multiple 1MB requests
-             * Reference -> https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html
-             * and -> https://stackoverflow.com/questions/48631715/retrieving-all-items-in-a-table-with-dynamodb
-             * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
-             */
-            
-            var strReward = "Reward";
-            // Get all users from the DB who have NOT NULL Reward arrays
-            var dbUsers = await _userRepository.GetAllUsers();
-            // Email helper to manage results email
             IEmailHelper emailHelper = new EmailHelper();
+            ICollection<User> users = await _unitOfWork.Repository<User>().GetAllAsync();
 
-            // Iterate over each user that has rewards in their DB record.
-            foreach (var _user in dbUsers.Where(u => u.UserRewards != null))
+            foreach (var _user in users)
             {
-                // Flag to indicate if changes to challenge status have been made
-                var changesMade = false;
+                User updatedUser = RewardCalculation.CalculateUserRewardCompletion(_user, ref emailHelper);
 
-                // Iterate over all incomplete rewards.
-                foreach (var _reward in _user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
+                if (updatedUser != null)
                 {
-                    var incompleteChallenges = _reward.Challenges.Where(c => c.Status != UserRewardChallengeStatus.Complete).ToList();
-
-                    // if all challenges are complete then set the reward status to complete
-                    if (incompleteChallenges.Count() == 0)
-                    {
-                        _reward.DateCompleted = DateTime.UtcNow;
-                        _reward.Status = UserRewardStatus.Complete;
-                        _reward.NotificationStatus = NotificationStatus.Not_Notified;
-                        changesMade = true;
-                        emailHelper.AddEmailMessageLine(_user.Id, strReward, _reward.Id);
-                    }
-                }
-
-                // Save changes to DB (removes eco emasurements as they don't all need to be sent back to the server.
-                if (changesMade)
-                {
-                    _user.EcologicalMeasurements = null;
-                    await _userRepository.UpdateUser(_user);
+                    users.
                 }
             }
-
             // Send email with results of this method (Dexter has email originator address and recipients)
             emailHelper.SendEmail(strReward);
         }
@@ -359,7 +317,7 @@ namespace PLNKTN.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _rewardRepository.GetAllRewards();
+            var result = await _unitOfWork.Repository<Reward>().GetAllAsync();
 
             if (result != null && result.Count > 0)
             {
@@ -367,7 +325,6 @@ namespace PLNKTN.Controllers
             }
             else
             {
-                // return HTTP 404 as rewards cannot be found in DB
                 return NotFound("No Rewards are present in the DB.");
             }
         }
@@ -378,11 +335,10 @@ namespace PLNKTN.Controllers
         {
             if (String.IsNullOrWhiteSpace(id))
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var result = await _rewardRepository.GetReward(id);
+            Reward result = await _unitOfWork.Repository<Reward>().GetByIdAsync(id);
 
             if (result != null)
             {
@@ -390,8 +346,7 @@ namespace PLNKTN.Controllers
             }
             else
             {
-                // return HTTP 404 as rewards cannot be found in DB
-                return NotFound("Reward with ID '" + id + "' does not exist.");
+                return NotFound("Reward does not exist.");
             }
         }
 
@@ -401,35 +356,18 @@ namespace PLNKTN.Controllers
         {
             if (reward == null)
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var result = await _rewardRepository.CreateReward(reward);
+            var batchReward = _unitOfWork.Repository<Reward>().Insert(reward);
+            var userReward = UserRewards.GenerateUserReward(reward);
+            IList<User> users = await _unitOfWork.Repository<User>().GetAllAsync();
+            ICollection<User> updatedUsers = UserRewards.AddUserRewardToAllUsers(userReward, users);
+            BatchWrite<User> batchUsers = _unitOfWork.Repository<User>().Update(updatedUsers);
 
-            if (result == 1)
-            {
-                // Generate a 'user reward' and add it to all users in the DB.
-                var rewards = new List<Reward>
-                {
-                    reward
-                };
-                var userReward = UsersController.GenerateUserRewards(rewards);
-                await _userRepository.AddUserRewardToAllUsers(userReward.First());
+            await _unitOfWork.Commit(new BatchWrite[] { batchReward, batchUsers });
 
-                // return HTTP 201 Created with reward object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = reward.Id }, reward);
-            }
-            else if (result == -10)
-            {
-                // return HTTP 409 Conflict as reward already exists in DB
-                return Conflict("Reward with ID '" + reward.Id + "' already exists.  Cannot create a duplicate.");
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            return CreatedAtAction("Get", new { id = reward.Id }, reward);
         }
 
         // PUT api/Rewards
@@ -438,36 +376,18 @@ namespace PLNKTN.Controllers
         {
             if (reward == null)
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var result = await _rewardRepository.UpdateReward(reward);
+            BatchWrite<Reward> batchReward = _unitOfWork.Repository<Reward>().Update(reward);
+            var userReward = UserRewards.GenerateUpdatedUserReward(reward);
+            IList<User> users = await _unitOfWork.Repository<User>().GetAllAsync();
+            ICollection<User> updatedUsers = UserRewards.UpdateUserRewardInAllUsers(userReward, users);
+            BatchWrite<User> batchUsers = _unitOfWork.Repository<User>().Update(updatedUsers);
 
-            if (result == 1)
-            {
-                // Generate a 'user reward' and update it in all users in the DB.
-                var rewards = new List<Reward>
-                {
-                    reward
-                };
-                // Make the user reward information ready for sending to the repository
-                var userReward = UsersController.GenerateUpdateUserRewards(rewards);
-                await _userRepository.UpdateUserRewardInAllUsers(userReward.First());
+            await _unitOfWork.Commit(new BatchWrite[] { batchReward, batchUsers });
 
-                // return HTTP 200 Ok reward was updated.  PUT does not require object to be returned in HTTP body.
-                return Ok();
-            }
-            else if (result == -9)
-            {
-                // return HTTP 404 as object cannot be found in DB
-                return NotFound("Reward with ID '" + reward.Id + "' does not exist.");
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            return Ok();
         }
 
         // DELETE api/Rewards/rewardId
@@ -476,27 +396,17 @@ namespace PLNKTN.Controllers
         {
             if (String.IsNullOrWhiteSpace(id))
             {
-                // return HTTP 400 badrequest as something is wrong
                 return BadRequest("Reward information formatted incorrectly.");
             }
 
-            var result = await _rewardRepository.DeleteReward(id);
+            BatchWrite<Reward> batchReward = _unitOfWork.Repository<Reward>().DeleteById(id);
+            IList<User> users = await _unitOfWork.Repository<User>().GetAllAsync();
+            ICollection<User> updatedUsers = UserRewards.DeleteUserRewardFromAllUsers(id, users);
+            BatchWrite<User> batchUsers = _unitOfWork.Repository<User>().Update(updatedUsers);
 
-            if (result == 1)
-            {
-                await _userRepository.DeleteUserRewardFromAllUsers(id);
-                return Ok();
-            }
-            else if (result == -9)
-            {
-                // return HTTP 404 as rewards cannot be found in DB
-                return NotFound("Reward with ID '" + id + "' does not exist.");
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            await _unitOfWork.Commit(new BatchWrite[] { batchReward, batchUsers });
+
+            return Ok();
         }
     }
 }
