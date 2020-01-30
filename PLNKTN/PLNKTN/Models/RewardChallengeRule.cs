@@ -16,5 +16,7 @@ namespace PLNKTN.Models
 
         [EnumDataType(typeof(ChallengeType), ErrorMessage = "RestrictionType type value doesn't exist, must be - 0 = 'Skip', 1 = 'Only_This'.")]
         public ChallengeType RestrictionType { get; set; }
+
+        public int AmountToConsume { get; set; }
     }
 }
