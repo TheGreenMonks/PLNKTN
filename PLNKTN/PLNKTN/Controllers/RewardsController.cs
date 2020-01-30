@@ -187,7 +187,7 @@ namespace PLNKTN.Controllers
                              */
                             var _fullDateRange = false;
                             var challengeStart = DateTime.UtcNow.AddDays(-offset);
-                            var ecoMeasurementsOfInterest = _user.EcologicalMeasurements.Where(e => e.Date_taken.Date > challengeStart.Date).ToList();
+                            var ecoMeasurementsOfInterest = _user.EcologicalMeasurements.Where(e => e.Date_taken.Date >= challengeStart.Date).ToList();
                             if (ecoMeasurementsOfInterest.Count >= _time)
                                 _fullDateRange = true;
 
