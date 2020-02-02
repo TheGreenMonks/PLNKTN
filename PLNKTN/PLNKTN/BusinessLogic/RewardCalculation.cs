@@ -1,14 +1,12 @@
 ﻿using PLNKTN.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PLNKTN.BusinessLogic
 {
     public class RewardCalculation
     {
-        public static User CalculateUserRewardCompletion(User user, ref IEmailHelper emailHelper)
+        internal static User CalculateUserRewardCompletion(User user, ref IEmailHelper emailHelper)
         {
             /* Algorithm
              * Foreach User check each Reward's Challenge status to see if the User has completed all Challenges.  If all Challenges in a
@@ -25,30 +23,34 @@ namespace PLNKTN.BusinessLogic
              * and -> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-query-scan.html
              */
 
-            var strReward = "Reward";
-                // Flag to indicate if changes to challenge status have been made
-                var changesMade = false;
+            //var strReward = "Reward";
+            // Flag to indicate if changes to challenge status have been made
+            var changesMade = false;
 
-                // Iterate over all incomplete rewards.
-                foreach (var _reward in user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
+            // Iterate over all incomplete rewards.
+            foreach (var _reward in user.UserRewards.Where(ur => ur.Status != UserRewardStatus.Complete))
+            {
+                int incompleteChallenges = _reward.Challenges.Where(c => c.Status != UserRewardChallengeStatus.Complete).Count();
+
+                // if all challenges are complete then set the reward status to complete
+                if (incompleteChallenges == 0)
                 {
-                    var incompleteChallenges = _reward.Challenges.Where(c => c.Status != UserRewardChallengeStatus.Complete).ToList();
-
-                    // if all challenges are complete then set the reward status to complete
-                    if (incompleteChallenges.Count() == 0)
-                    {
-                        _reward.DateCompleted = DateTime.UtcNow;
-                        _reward.Status = UserRewardStatus.Complete;
-                        _reward.NotificationStatus = NotificationStatus.Not_Notified;
-                        changesMade = true;
-                        emailHelper.AddEmailMessageLine(user.Id, strReward, _reward.Id);
-                    }
+                    _reward.DateCompleted = DateTime.UtcNow;
+                    _reward.Status = UserRewardStatus.Complete;
+                    _reward.NotificationStatus = NotificationStatus.Not_Notified;
+                    changesMade = true;
+                    emailHelper.AddEmailMessageLine(user.Id, "Reward", _reward.Id);
                 }
+            }
 
-                if (changesMade)
-                {
-                    return user;
-                }
+            if (changesMade)
+            {
+                return user;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
