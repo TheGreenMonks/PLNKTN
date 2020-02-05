@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTN.DTOs;
 using PLNKTN.Models;
+using PLNKTN.Persistence;
 using PLNKTN.Repositories;
 
 namespace PLNKTN.Controllers
@@ -14,11 +15,11 @@ namespace PLNKTN.Controllers
     [ApiController]
     public class EcologicalMeasurementsController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EcologicalMeasurementsController(IUserRepository userRepository)
+        public EcologicalMeasurementsController(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/EcologicalMeasurements/5
@@ -30,8 +31,8 @@ namespace PLNKTN.Controllers
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User ID information formatted incorrectly.");
             }
-            var user = await _userRepository.GetUser(id);
 
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
             if (user != null)
             {
@@ -54,7 +55,8 @@ namespace PLNKTN.Controllers
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User ID information formatted incorrectly.");
             }
-            var user = await _userRepository.GetUser(id);
+
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
             if (user != null)
             {
@@ -63,6 +65,7 @@ namespace PLNKTN.Controllers
                     delegate (EcologicalMeasurement em) {
                         return DateTime.Equals(em.Date_taken, date);
                     });
+
                 if (ecologicalMeasure != null)
                 {
                     return Ok(ecologicalMeasure);
@@ -100,7 +103,7 @@ namespace PLNKTN.Controllers
                 Footwear = dto.Footwear
             };
 
-            int result = await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+            int result = await _unitOfWork.Repository<User>().AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
 
             if (result == 1)
             {  
@@ -164,34 +167,5 @@ namespace PLNKTN.Controllers
             }
 
         }
-        // DELETE: api/ApiWithActions/5
-        //[HttpDelete]
-        //public async Task<IActionResult> Delete(EcologicalMeasurementDeleteDTO dto)
-        //{
-        //    if (dto == null)
-        //    {
-        //        return BadRequest("Measurement information formatted incorrectly.");
-        //    }
-
-        //    var result = await _userRepository.DeleteEcologicalMeasurement(dto.UserId, dto.Date_taken);
-
-        //    if (result > 0)
-        //    {
-        //        return Ok(result + " measurement(s) deleted.");
-        //    }
-        //    else if (result == 0)
-        //    {
-        //        return NotFound("No measurement(s) on date " + dto.Date_taken.ToShortDateString() + " available to be deleted.");
-        //    }
-        //    else if (result == -9)
-        //    {
-        //        // return HTTP 404 as user cannot be found in DB
-        //        return NotFound("User with ID '" + dto.UserId + "' does not exist.");
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("An internal error occurred.  Please contact the system administrator.");
-        //    }
-        //}
     }
 }
