@@ -41,19 +41,28 @@ namespace PeriodicExecutionApp
             _httpClient.BaseAddress = new Uri(_serverUri);
             // For LOCAL ONLY -> 
             // _httpClientBaseAddress = new Uri(_localUri);
-
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // Create a custom HTTP request message and use it to call the API method
-            var customMethod = new HttpMethod(httpRequestVerb);
-            var requestMessage = new HttpRequestMessage(customMethod, apiURL);
-            HttpResponseMessage res = await _httpClient.SendAsync(requestMessage);
-            res.EnsureSuccessStatusCode();
-            if (res.IsSuccessStatusCode)
+            HttpMethod customMethod = new HttpMethod(httpRequestVerb);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(customMethod, apiURL);
+
+            try
             {
-                var apiResponse = await res.Content.ReadAsStringAsync();
-                Console.WriteLine(CreateAPIOutputMsg(apiURL, apiCallName, apiResponse, res.StatusCode.ToString()));
+                HttpResponseMessage webApiResponse = await _httpClient.SendAsync(requestMessage);
+                webApiResponse.EnsureSuccessStatusCode();
+
+                if (webApiResponse.IsSuccessStatusCode)
+                {
+                    string apiResponse = await webApiResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine(CreateAPIOutputMsg(apiURL, apiCallName, apiResponse, webApiResponse.StatusCode.ToString()));
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // TODO - Implement logging
+                throw;
             }
         }
 
