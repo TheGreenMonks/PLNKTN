@@ -25,7 +25,7 @@ namespace PLNKTN.Controllers
         #region Calculate Reward Completion
 
         [AcceptVerbs("CalcRewards")]
-        public async void CalculateUserRewardCompletion()
+        public async Task<IActionResult> CalculateUserRewardCompletion()
         {
             /* Algorithm
              * Foreach User check each Reward's Challenge status to see if the User has completed all Challenges.  If all Challenges in a
@@ -87,6 +87,8 @@ namespace PLNKTN.Controllers
             }
 
             EmailHelper.SendEmail(emailMessages, strReward);
+
+            return Ok("All User Reward status' re-calculated.");
         }
 
         #endregion
@@ -94,7 +96,7 @@ namespace PLNKTN.Controllers
         #region Calculate Challenge Completion
 
         [AcceptVerbs("CalcChallenges")]
-        public async void CalculateUserChallengeCompletion()
+        public async Task<IActionResult> CalculateUserChallengeCompletion()
         {
             /* Algorithm
              * Foreach User check each Reward and Challenge to see if User has already completed it.  If not then check if they have 
@@ -332,6 +334,8 @@ namespace PLNKTN.Controllers
             }
 
             EmailHelper.SendEmail(emailMessages, strChallenge);
+
+            return Ok("All User Challenge status' re-calculated.");
         }
 
         /*
