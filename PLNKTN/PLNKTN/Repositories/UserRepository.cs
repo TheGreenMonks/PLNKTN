@@ -1,5 +1,7 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime;
 using PLNKTN.Models;
 using System;
@@ -26,6 +28,8 @@ namespace PLNKTN.Repositories
                 IgnoreNullValues = true
             };
         }
+
+        #region Repository Functions
 
         public async Task<int> CreateUser(User user)
         {
@@ -1306,5 +1310,76 @@ namespace PLNKTN.Repositories
                 }
             }
         }
+
+        #endregion
+
+        #region Index Queries
+
+        public string GetUserByEmail(string email)
+        {
+            using (AmazonDynamoDBClient client = new AmazonDynamoDBClient())
+            {
+                try
+                {
+                    QueryRequest queryRequest = new QueryRequest
+                    {
+                        TableName = "Users",
+                        IndexName = "UserByEmail",
+                        ScanIndexForward = true
+                    };
+                    
+                    string keyConditionExpression;
+                    Dictionary<string, AttributeValue> expressionAttributeValues = new Dictionary<string, AttributeValue>();
+
+                    keyConditionExpression = "Email = :v_email";
+                    expressionAttributeValues.Add(":v_email", new AttributeValue
+                    {
+                        S = email
+                    });
+
+                    queryRequest.KeyConditionExpression = keyConditionExpression;
+                    queryRequest.ExpressionAttributeValues = expressionAttributeValues;
+
+                    var result = client.QueryAsync(queryRequest).Result;
+                    var items = result.Items;
+
+                    var userId = items.Single()["Id"].S;
+
+                    return userId;
+                }
+                catch (AmazonServiceException ase)
+                {
+                    Debug.WriteLine("Could not complete operation");
+                    Debug.WriteLine("Error Message:  " + ase.Message);
+                    Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
+                    Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
+                    Debug.WriteLine("Error Type:     " + ase.ErrorType);
+                    Debug.WriteLine("Request ID:     " + ase.RequestId);
+                    return null;
+                }
+                catch (AmazonClientException ace)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + ace.Message);
+                    return null;
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.WriteLine("Context obj for DynamoDB set to null");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Internal error occurred communicating with DynamoDB");
+                    Debug.WriteLine("Error Message:  " + e.Message);
+                    Debug.WriteLine("Inner Exception:  " + e.InnerException);
+                    return null;
+                }
+            }
+        }
+
+        #endregion
     }
 }
