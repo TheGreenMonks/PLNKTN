@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTN.BusinessLogic;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
 using System;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PLNKTN.Controllers
@@ -53,8 +55,12 @@ namespace PLNKTN.Controllers
             }
 
             User user = await _userRepository.GetUser(userId);
-            user.SecureCode = String.Join("", rndNumbers);
+
+            string secureCodeTemp = String.Join("", rndNumbers);
+
+            user.SecureCode = GetHashString(secureCodeTemp);
             user.SecureCodeExpires = secureCodeExpiration;
+            EmailHelper.SendEmailSecureCode(secureCodeTemp, userEmail);
 
             var result = await _userRepository.UpdateUser(user);
 
@@ -70,6 +76,52 @@ namespace PLNKTN.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "An internal error occurred.  Please contact the system administrator.");
             }
+        }
+
+        [HttpGet("{userEmail}")]
+        public async Task<IActionResult> Get(string userEmail, [FromBody] string secureCode)
+        {
+            string userId = _userRepository.GetUserIdByEmail(userEmail);
+
+            if (String.IsNullOrWhiteSpace(secureCode) || String.IsNullOrWhiteSpace(userId))
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return BadRequest("Information incorrect.");
+            }
+
+            var user = await _userRepository.GetUser(userId);
+            //int dateComparison = DateTime.Compare(user.SecureCodeExpires.Value, DateTime.UtcNow);
+            string storedSecureCode = GetHashString(secureCode);
+
+            if (DateTime.Compare(user.SecureCodeExpires.Value, DateTime.UtcNow) > 0 && 
+                String.Equals(user.SecureCode, storedSecureCode, StringComparison.OrdinalIgnoreCase))
+            {
+                // Reset secure code so that it is not unnecessarily exposed
+                user.SecureCode = null;
+                // return HTTP 200
+                return Ok(user);
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
+                return StatusCode(StatusCodes.Status400BadRequest,
+                    "An internal error occurred.  Please contact the system administrator.");
+            }
+        }
+
+        private byte[] GetHash(string inputString)
+        {
+            using (HashAlgorithm algorithm = SHA256.Create())
+                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+        }
+
+        private string GetHashString(string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in GetHash(inputString))
+                sb.Append(b.ToString("X2"));
+
+            return sb.ToString();
         }
     }
 }
