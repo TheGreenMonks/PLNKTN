@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using Amazon;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
@@ -1177,7 +1178,7 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        public async Task<int> AddUserGrantedReward(string userId, string region_name,Rgn project)
+        public async Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
@@ -1186,7 +1187,7 @@ namespace PLNKTN.Repositories
                     User user = await context.LoadAsync<User>(userId);
 
                     if (user != null)
-                    {                    
+                    {
                         Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == region_name);
 
                         if (dbgrantedReward == null)
@@ -1315,9 +1316,13 @@ namespace PLNKTN.Repositories
 
         #region Index Queries
 
-        public string GetUserByEmail(string email)
+        public string GetUserIdByEmail(string email)
         {
-            using (AmazonDynamoDBClient client = new AmazonDynamoDBClient())
+            AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
+            // This client will access the US West 1 region (N Cali).
+            clientConfig.RegionEndpoint = RegionEndpoint.USWest1;
+
+            using (AmazonDynamoDBClient client = new AmazonDynamoDBClient(clientConfig))
             {
                 try
                 {
@@ -1327,7 +1332,7 @@ namespace PLNKTN.Repositories
                         IndexName = "UserByEmail",
                         ScanIndexForward = true
                     };
-                    
+
                     string keyConditionExpression;
                     Dictionary<string, AttributeValue> expressionAttributeValues = new Dictionary<string, AttributeValue>();
 

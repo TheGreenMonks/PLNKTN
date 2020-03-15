@@ -1,7 +1,6 @@
 ﻿using PLNKTN.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PLNKTN.Repositories
@@ -46,6 +45,6 @@ namespace PLNKTN.Repositories
         Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project);
 
         // Index Queries
-        string GetUserByEmail(string email);
+        string GetUserIdByEmail(string email);
     }
 }
