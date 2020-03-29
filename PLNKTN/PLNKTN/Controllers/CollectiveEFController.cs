@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,7 +19,7 @@ namespace PLNKTN.Controllers
             _userRepository = userRepository;
         }
 
-        // GET: api/values
+        // GET: api/CollectiveEF
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -28,38 +28,42 @@ namespace PLNKTN.Controllers
             if (collective_EF != null)
             {
                 return Ok(collective_EF);
-            } else
+            }
+            else
             {
                 return NotFound("No collective EFs have been calculated yet.");
             }
         }
 
-        // GET api/values/5
+        // GET api/CollectiveEF/2020-03-26T00:01:00.000Z
         [HttpGet("{date}")]
         public async Task<IActionResult> Get(DateTime date)
         {
             var collective_EF = await _userRepository.GetCollective_EF(date);
+
             if (collective_EF != null)
             {
                 return Ok(collective_EF);
-            } else
+            }
+            else
             {
-                return  NotFound("No collective EFs have been calculated yet.");
+                return NotFound("No collective EFs have been calculated yet.");
             }
         }
 
-        // POST api/values
-        [HttpPost("{date}")]
-        public async Task<IActionResult> Post(DateTime date)
+        // POST api/CollectiveEF
+        [HttpPost]
+        public async Task<IActionResult> Post()
         {
+            DateTime timestamp = DateTime.UtcNow.AddDays(-1);
             CollectiveEF cEF = null;
-            float collective_EF = await Compute_Collective_EFAsync(date);
+            float collective_EF = await Compute_Collective_EFAsync(timestamp);
 
             if (collective_EF != -1)
             {
                 cEF = new CollectiveEF()
                 {
-                    Date_taken = date,
+                    Date_taken = timestamp,
                     Collective_EF = collective_EF
                 };
 
@@ -67,7 +71,7 @@ namespace PLNKTN.Controllers
 
                 if (result == 1)
                 {
-                    return Ok("Collective EF has been calculated and saved to the DB for today date!!");
+                    return Ok();
                 }
                 else if (result == -7)
                 {
@@ -77,25 +81,13 @@ namespace PLNKTN.Controllers
                 {
                     return StatusCode(500, "Internal server error.  Please contact the administrator.");
                 }
-            } else
+            }
+            else
             {
-                return NotFound("Currently there are no Ecological Footprints recorded by any Users on '" + date.Date.ToShortDateString() + "'.");
+                return NotFound("No Ecological Footprints recorded by Users on '" + timestamp.Date.ToShortDateString() + "'.");
             }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        { 
-            /*** NOT NEEDED   ****/
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            /*** NOT NEEDED   ****/
-        }
         /*Function below are added new*/
         /*** HELPER FUNCTION TO COMPUTE THE COLLECTIVE_EF ***/
         private async Task<float> Compute_Collective_EFAsync(DateTime date)
