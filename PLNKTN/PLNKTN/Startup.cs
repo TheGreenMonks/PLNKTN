@@ -25,6 +25,7 @@ namespace PLNKTN
             services.AddScoped<IRewardRepository, RewardRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDBConnection, DBConnection>();
+            services.AddScoped<ICollectiveEFRepository, CollectiveEFRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

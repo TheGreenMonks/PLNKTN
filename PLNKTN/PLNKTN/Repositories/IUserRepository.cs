@@ -24,9 +24,9 @@ namespace PLNKTN.Repositories
 
         Task<List<User>> GetUsers();
         /*Function below are added new*/
-        Task<CollectiveEF> GetCollective_EF(DateTime date_taken);
-        Task<int> AddCollective_EF(CollectiveEF cEF);
-        Task<List<CollectiveEF>> GetAllCollective_EFs();
+        //Task<CollectiveEF> GetCollective_EF(DateTime date_taken);
+        //Task<int> AddCollective_EF(CollectiveEF cEF);
+        //Task<List<CollectiveEF>> GetAllCollective_EFs();
 
         // UserReward Tasks
         Task<int> UpdateUserReward(string userId, UserReward model);
