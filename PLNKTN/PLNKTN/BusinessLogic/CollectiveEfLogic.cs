@@ -26,23 +26,19 @@ namespace PLNKTN.BusinessLogic
 
             foreach (var user in userList.Where(u => u.EcologicalMeasurements.Count > 0))
             {
-                var latestEfEntryDate = user.EcologicalMeasurements.Max(e => e.Date_taken.Date);
+                // Check if user has an EM for calculationDate and if not get all EMs from before this date.
+                // The latest dated EM will then be used in the calculation.
+                var emsInQuestion = user.EcologicalMeasurements.Where(em => em.Date_taken.Date == calculationDate.Date
+                                                                        || em.Date_taken.Date < calculationDate.Date);
 
-                if (DateTime.Equals(calculationDate, latestEfEntryDate))
+                if (emsInQuestion.Count() != 0)
                 {
-                    var userEf = user.EcologicalMeasurements.Single(x => x.Date_taken.Date == calculationDate.Date);
+                    var latestEfEntryDate = emsInQuestion.Max(e => e.Date_taken.Date);
+                    var userEf = user.EcologicalMeasurements.Single(x => x.Date_taken.Date == latestEfEntryDate.Date);
                     totalCollectiveEf += userEf.EcologicalFootprint;
                     count++;
                 }
-                else
-                {
-                    var userEf = user.EcologicalMeasurements.SingleOrDefault(x => x.Date_taken.Date == latestEfEntryDate.Date);
-                    totalCollectiveEf += userEf.EcologicalFootprint;
-                    count++;
-                }
-
             }
-
             return (float)totalCollectiveEf / count;
         }
     }

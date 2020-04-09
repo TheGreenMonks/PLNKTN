@@ -47,18 +47,18 @@ namespace PLNKTN.Controllers
         }
 
         // POST api/CollectiveEF
-        [HttpPost]
-        public async Task<IActionResult> Post()
+        [HttpPost("{date}")]
+        public async Task<IActionResult> Post(DateTime date)
         {
-            DateTime timeStamp = DateTime.UtcNow.AddDays(-1).Date;
+            DateTime dayToCalculate = date.AddDays(-1);
 
-            if (await _collectiveEFRepository.GetById(timeStamp) != null)
+            if (await _collectiveEFRepository.GetById(dayToCalculate) != null)
             {
                 return Conflict("A Collective EF with that date already exists.");
             }
 
             var users = await _userRepository.GetUsers();
-            CollectiveEF collectiveEf = CollectiveEfLogic.GenerateCollectiveEF(timeStamp, users);
+            CollectiveEF collectiveEf = CollectiveEfLogic.GenerateCollectiveEF(dayToCalculate, users);
 
             _collectiveEFRepository.Create(collectiveEf);
             return Ok();
