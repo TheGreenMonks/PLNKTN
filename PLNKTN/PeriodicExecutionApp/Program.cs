@@ -12,6 +12,7 @@ namespace PeriodicExecutionApp
         private static string _serverUri { get; } = "http://ec2-54-241-148-226.us-west-1.compute.amazonaws.com/";
         private static string _localUri { get; } = "https://localhost:44312/";
         private static string _rewardsControllerUri { get; } = "api/Rewards";
+        private static string _collectiveEFControllerUri { get; } = "api/CollectiveEF";
         private static string _newLine { get; } = Environment.NewLine;
         private static HttpClient _httpClient { get; set; } = new HttpClient();
 
@@ -29,14 +30,28 @@ namespace PeriodicExecutionApp
             calcChallenges.Wait();
             Console.WriteLine(_newLine + "Challenge calculations complete!");
 
+            Task calcCollectiveEF = ExecuteAPICall("POST", _collectiveEFControllerUri, "CollectiveEF POST()", DateTime.UtcNow);
+            Console.WriteLine(_newLine + "Calculating collective ecological footprint...");
+
             // Waits 20s for DynamoDb to synchronise any writes from the previous call.  Shouldn't be needed as consistent read is set
             // however this doesn't seem to be working.  20s is the AWS stipulated period of time.
             Console.WriteLine(_newLine + "Waiting 20 seconds...");
             Thread.Sleep(20000);
 
-            
+            Task calcRewards = ExecuteAPICall("CalcRewards", _rewardsControllerUri, "CalculateUserRewardCompletion()");
+            Console.WriteLine(_newLine + "Calculating reward completion...");
+            calcRewards.Wait();
+            Console.WriteLine(_newLine + "Reward calculations complete!");
 
-            ExecuteAPICall("CalcRewards", _rewardsControllerUri, "CalculateUserRewardCompletion()").Wait();
+            if (calcCollectiveEF.Status == TaskStatus.Running)
+            {
+                calcCollectiveEF.Wait();
+                Console.WriteLine(_newLine + "Collective ecological footprint calculation now complete!");
+            }
+            else
+            {
+                Console.WriteLine(_newLine + "Collective ecological footprint calculation complete!");
+            }
 
             // TODO - Implement logging to record web API return values
             Thread.Sleep(10000);
@@ -46,7 +61,7 @@ namespace PeriodicExecutionApp
         {
             httpClient.BaseAddress = new Uri(_serverUri);
             // For LOCAL ONLY -> 
-            // httpClient.BaseAddress = new Uri(_localUri);
+            //httpClient.BaseAddress = new Uri(_localUri);
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             return httpClient;
@@ -54,7 +69,7 @@ namespace PeriodicExecutionApp
 
         /// <summary>
         /// Uses a specified URL, method name and HTTP verb to call a Web API method where it will then
-        /// check the status code.  If the code is success 
+        /// check the status code.
         /// </summary>
         /// <param name="httpRequestVerb">The HTTP verb to be called.  Can be custom</param>
         /// <param name="apiURL">The URL or the API to be called</param>
@@ -69,13 +84,39 @@ namespace PeriodicExecutionApp
             try
             {
                 HttpResponseMessage webApiResponse = await _httpClient.SendAsync(requestMessage);
-                webApiResponse.EnsureSuccessStatusCode();
+                ManageApiResponse(apiURL, apiCallName, webApiResponse);
+            }
+            catch (HttpRequestException ex)
+            {
+                // TODO - Implement logging
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                // TODO - Implement logging
+                throw new InvalidOperationException("An error has occurred during execution of " + apiCallName + " method.", ex);
+            }
+        }
 
-                if (webApiResponse.IsSuccessStatusCode)
-                {
-                    string apiResponse = await webApiResponse.Content.ReadAsStringAsync();
-                    Console.WriteLine(CreateAPIOutputMsg(apiURL, apiCallName, apiResponse, webApiResponse.StatusCode.ToString()));
-                }
+        /// <summary>
+        /// Uses a specified URL, method name, HTTP verb and parameter to call a Web API method where it will then
+        /// check the status code.
+        /// </summary>
+        /// <param name="httpRequestVerb">The HTTP verb to be called.  Can be custom</param>
+        /// <param name="apiURL">The URL or the API to be called</param>
+        /// <param name="apiCallName">The method name in the specified API to be called</param>
+        /// <param name="date">The date to be sent to the API Call</param>
+        /// <returns>Task operation</returns>
+        private static async Task ExecuteAPICall(string httpRequestVerb, string apiURL, string apiCallName, DateTime date)
+        {
+            // Create a custom HTTP request message and use it to call the API method
+            HttpMethod customMethod = new HttpMethod(httpRequestVerb);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(customMethod, apiURL + "/" + date.ToString("O"));
+
+            try
+            {
+                HttpResponseMessage webApiResponse = await _httpClient.SendAsync(requestMessage);
+                ManageApiResponse(apiURL, apiCallName, webApiResponse);
             }
             catch (HttpRequestException ex)
             {
@@ -112,13 +153,22 @@ namespace PeriodicExecutionApp
         /// </summary>
         /// <param name="apiURL">URL of the called API</param>
         /// <param name="apiCallName">The method name in the specified API to be called</param>
-        /// <param name="apiResponse">Response message received from the API</param>
-        /// <param name="statusCode">Status code received from teh API</param>
-        /// <returns>String object with informational message</returns>
-        private static string CreateAPIOutputMsg(string apiURL, string apiCallName, string apiResponse, string statusCode)
+        /// <param name="statusCode">Status code received from the API</param>
+        /// <param name="webApiResponse">Response object received from API</param>
+        private static void ManageApiResponse(string apiURL, string apiCallName, HttpResponseMessage webApiResponse)
         {
-            StringBuilder sb = new StringBuilder();
+            string apiResponse;
 
+            if (webApiResponse.IsSuccessStatusCode)
+            {
+                apiResponse = webApiResponse.Content.ReadAsStringAsync().Result;
+            }
+            else
+            {
+                apiResponse = webApiResponse.Content.ReadAsStringAsync().Result;
+            }
+
+            StringBuilder sb = new StringBuilder();
             sb.Append("The API method '");
             sb.Append(apiCallName);
             sb.Append("' at location '");
@@ -129,9 +179,9 @@ namespace PeriodicExecutionApp
             sb.Append(apiResponse);
             sb.Append(_newLine);
             sb.Append("API HTTP Response: ");
-            sb.Append(statusCode);
+            sb.Append(webApiResponse.StatusCode.ToString());
 
-            return sb.ToString();
+            Console.WriteLine(sb.ToString());
         }
     }
 }
