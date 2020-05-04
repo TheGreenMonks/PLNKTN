@@ -183,6 +183,16 @@ namespace PLNKTN.Repositories
             }
         }
 
+        public int GetUserCount(string userCountId)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                AppTotalUsers userCount = context.LoadAsync<AppTotalUsers>(userCountId).Result;
+                return userCount.UserRecordCount;
+            }
+
+        }
+
         public async Task<int> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement)
         {
             using (IDynamoDBContext context = _dbConnection.Context())

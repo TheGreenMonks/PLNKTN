@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PLNKTN.DTOs;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,6 +16,7 @@ namespace PLNKTN.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IRewardRepository _rewardRepository;
+        private readonly string _userCountId = "UserCount";
 
         public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
         {
@@ -26,20 +26,10 @@ namespace PLNKTN.Controllers
 
         // GET: api/users
         [HttpGet]
-        public async Task<IActionResult> Get()
-        { 
-            var users = await _userRepository.GetUsers();
-
-            if (users != null)
-            {
-                // return HTTP 200
-                return Ok(users.Count);
-            }
-            else
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("List of Users does not exist.");
-            }
+        public IActionResult Get()
+        {
+            var userCount = _userRepository.GetUserCount(_userCountId);
+            return Ok(userCount);
         }
 
         // GET api/users/test

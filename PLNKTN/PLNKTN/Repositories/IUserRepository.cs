@@ -13,6 +13,7 @@ namespace PLNKTN.Repositories
         Task<User> GetUser(string userId);
         Task<int> DeleteUser(string userId);
         Task<IList<User>> GetAllUsers();
+        int GetUserCount(string userCountId);
 
         // Ecological Measurement tasks
         Task<int> AddEcologicalMeasurement(string userId, EcologicalMeasurement ecologicalMeasurement);
