@@ -1,7 +1,6 @@
 ﻿using PLNKTN.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PLNKTN.Repositories
@@ -23,10 +22,6 @@ namespace PLNKTN.Repositories
         Task<int> DeleteEcologicalMeasurement(string userId, DateTime date_taken);
 
         Task<List<User>> GetUsers();
-        /*Function below are added new*/
-        //Task<CollectiveEF> GetCollective_EF(DateTime date_taken);
-        //Task<int> AddCollective_EF(CollectiveEF cEF);
-        //Task<List<CollectiveEF>> GetAllCollective_EFs();
 
         // UserReward Tasks
         Task<int> UpdateUserReward(string userId, UserReward model);
@@ -43,6 +38,7 @@ namespace PLNKTN.Repositories
 
         //Granted Rewards
         Task<IList<Rgn>> GetUserGrantedReward(string userId, string region_name);
-        Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project);
+        Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project, string treeCountId);
+        int GetTotalTreesPlantedCount(string treeCountId);
     }
 }

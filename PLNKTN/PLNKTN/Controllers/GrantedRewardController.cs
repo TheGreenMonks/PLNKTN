@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PLNKTN.Models;
 using PLNKTN.Repositories;
+using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,13 +12,20 @@ namespace PLNKTN.Controllers
     public class GrantedRewardController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly string _appTotalTreesPlantedId = "AppTotalTreesPlanted";
 
         public GrantedRewardController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        // GET api/values/5
+        [HttpGet]
+        public IActionResult Get()
+        {
+            int totalTreesPlanted = _userRepository.GetTotalTreesPlantedCount(_appTotalTreesPlantedId);
+            return Ok(totalTreesPlanted);
+        }
+
         [HttpGet("GetUserGrantedRewards/{id}/{region_name}")]
         public async Task<IActionResult> Get(string id, string region_name)
         {
@@ -35,7 +40,7 @@ namespace PLNKTN.Controllers
             if (granted != null)
             {
                 return Ok(granted);
-                
+
             }
             else
             {
@@ -43,7 +48,6 @@ namespace PLNKTN.Controllers
                 return NotFound("Either the User with ID '" + id + "' does not exist or this User does not have any " +
                     "assigned Rewards in region '" + region_name + "' yet.");
             }
-
         }
 
         // POST api/values
@@ -55,12 +59,12 @@ namespace PLNKTN.Controllers
                 return BadRequest("project formatted incorrectly.");
             }
 
-            int result = await _userRepository.AddUserGrantedReward(id, region_name, project);
+            int result = await _userRepository.AddUserGrantedReward(id, region_name, project, _appTotalTreesPlantedId);
 
             if (result == 1)
             {
                 // return HTTP 201 Created with project object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = id, region_name = region_name }, project);
+                return CreatedAtAction("Get", new { id, region_name }, project);
             }
             else if (result == -7)
             {

@@ -1016,14 +1016,14 @@ namespace PLNKTN.Repositories
             }
         }
 
-        public async Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project)
+        public async Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project, string treeCountId)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
                 try
                 {
                     User user = await context.LoadAsync<User>(userId);
-                    AppTotalTreesPlanted treeCount = await context.LoadAsync<AppTotalTreesPlanted>("AppTotalTreesPlanted");
+                    AppTotalTreesPlanted treeCount = await context.LoadAsync<AppTotalTreesPlanted>(treeCountId);
 
                     if (user != null)
                     {
@@ -1154,6 +1154,15 @@ namespace PLNKTN.Repositories
                     Debug.WriteLine("Inner Exception:  " + e.InnerException);
                     return -1;
                 }
+            }
+        }
+
+        public int GetTotalTreesPlantedCount(string treeCountId)
+        {
+            using (var context = _dbConnection.Context())
+            {
+                AppTotalTreesPlanted treeCount = context.LoadAsync<AppTotalTreesPlanted>(treeCountId).Result;
+                return treeCount.TreesCount;
             }
         }
     }
