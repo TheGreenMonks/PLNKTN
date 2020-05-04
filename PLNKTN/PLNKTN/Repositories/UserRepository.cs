@@ -432,56 +432,6 @@ namespace PLNKTN.Repositories
             }
         }
 
-
-        //public async Task<CollectiveEF> GetCollective_EF(DateTime date_taken)
-        //{
-        //    using (var context = _dbConnection.Context())
-        //    {
-        //        try
-        //        {
-        //            // Define scan conditions
-        //            var conditions = new List<ScanCondition>();
-
-        //            // Gets items from table.  .GetRemainingAsync() is placeholder until sequential or parallel ops are programmed in.
-        //            var collective_EF = await context.ScanAsync<CollectiveEF>(conditions).GetRemainingAsync();
-
-        //            var result = collective_EF.FindAll(cf => cf.Date_taken.Date == date_taken.Date);
-
-        //            return result.Count > 0 ? result[0] : null;
-        //        }
-        //        catch (AmazonServiceException ase)
-        //        {
-        //            Debug.WriteLine("Could not complete operation");
-        //            Debug.WriteLine("Error Message:  " + ase.Message);
-        //            Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
-        //            Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
-        //            Debug.WriteLine("Error Type:     " + ase.ErrorType);
-        //            Debug.WriteLine("Request ID:     " + ase.RequestId);
-        //            return null;
-        //        }
-        //        catch (AmazonClientException ace)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + ace.Message);
-        //            return null;
-        //        }
-        //        catch (NullReferenceException e)
-        //        {
-        //            Debug.WriteLine("Context obj for DynamoDB set to null");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return null;
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return null;
-        //        }
-        //    }
-        //}
-
         public async Task<List<User>> GetUsers()
         {
             using (var context = _dbConnection.Context())
@@ -531,111 +481,6 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        ///*Function below are added new*/
-        //public async Task<List<CollectiveEF>> GetAllCollective_EFs()
-        //{
-        //    using (var context = _dbConnection.Context())
-        //    {
-        //        try
-        //        {
-        //            var conditions = new List<ScanCondition>();
-
-        //            List<CollectiveEF> collectiveEFs = await context.ScanAsync<CollectiveEF>(conditions).GetRemainingAsync();
-
-        //            if (collectiveEFs != null)
-        //            {
-        //                return collectiveEFs;
-        //            }
-        //            else
-        //            {
-        //                return null;
-        //            }
-        //        }
-        //        catch (AmazonServiceException ase)
-        //        {
-        //            Debug.WriteLine("Could not complete operation");
-        //            Debug.WriteLine("Error Message:  " + ase.Message);
-        //            Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
-        //            Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
-        //            Debug.WriteLine("Error Type:     " + ase.ErrorType);
-        //            Debug.WriteLine("Request ID:     " + ase.RequestId);
-        //            return null;
-        //        }
-        //        catch (AmazonClientException ace)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + ace.Message);
-        //            return null;
-        //        }
-        //        catch (NullReferenceException e)
-        //        {
-        //            Debug.WriteLine("Context obj for DynamoDB set to null");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return null;
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return null;
-        //        }
-        //    }
-
-        //}
-        //public async Task<int> AddCollective_EF(CollectiveEF cEF)
-        //{
-        //    using (IDynamoDBContext context = _dbConnection.Context())
-        //    {
-        //        try
-        //        {
-        //            var alreadyHasCEF = await GetCollective_EF(cEF.Date_taken);
-
-        //            if (alreadyHasCEF == null)
-        //            {
-        //                await context.SaveAsync(cEF);
-        //                return 1;
-        //            }
-        //            else
-        //            {
-        //                // item already exists
-        //                return -7;
-        //            }
-        //        }
-        //        catch (AmazonServiceException ase)
-        //        {
-        //            Debug.WriteLine("Could not complete operation");
-        //            Debug.WriteLine("Error Message:  " + ase.Message);
-        //            Debug.WriteLine("HTTP Status:    " + ase.StatusCode);
-        //            Debug.WriteLine("AWS Error Code: " + ase.ErrorCode);
-        //            Debug.WriteLine("Error Type:     " + ase.ErrorType);
-        //            Debug.WriteLine("Request ID:     " + ase.RequestId);
-        //            return -1;
-        //        }
-        //        catch (AmazonClientException ace)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + ace.Message);
-        //            return -1;
-        //        }
-        //        catch (NullReferenceException e)
-        //        {
-        //            Debug.WriteLine("Context obj for DynamoDB set to null");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return -1;
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.WriteLine("Internal error occurred communicating with DynamoDB");
-        //            Debug.WriteLine("Error Message:  " + e.Message);
-        //            Debug.WriteLine("Inner Exception:  " + e.InnerException);
-        //            return -1;
-        //        }
-        //    }
-        //}
-
 
         public async Task<IList<User>> GetAllUsers()
         {
@@ -1063,9 +908,6 @@ namespace PLNKTN.Repositories
                         // 404 - User with specified userId doesn't exist
                         return -9;
                     }
-
-
-
                 }
                 catch (AmazonServiceException ase)
                 {
@@ -1173,22 +1015,26 @@ namespace PLNKTN.Repositories
                 }
             }
         }
-        public async Task<int> AddUserGrantedReward(string userId, string region_name,Rgn project)
+
+        public async Task<int> AddUserGrantedReward(string userId, string region_name, Rgn project)
         {
             using (IDynamoDBContext context = _dbConnection.Context())
             {
                 try
                 {
                     User user = await context.LoadAsync<User>(userId);
+                    AppTotalTreesPlanted treeCount = await context.LoadAsync<AppTotalTreesPlanted>("AppTotalTreesPlanted");
 
                     if (user != null)
-                    {                    
+                    {
                         Bin dbgrantedReward = user.GrantedRewards.FirstOrDefault(r => r.Region_name == region_name);
 
                         if (dbgrantedReward == null)
                         {
-                            List<Rgn> projects = new List<Rgn>();
-                            projects.Add(project);
+                            List<Rgn> projects = new List<Rgn>
+                            {
+                                project
+                            };
                             Bin rewardRegion = new Bin
                             {
                                 Region_name = region_name,
@@ -1197,6 +1043,8 @@ namespace PLNKTN.Repositories
                             };
                             user.GrantedRewards.Add(rewardRegion);
                             await context.SaveAsync(user);
+                            treeCount.TreesCount++;
+                            await context.SaveAsync(treeCount);
                             return 1;
                         }
                         else
@@ -1209,6 +1057,8 @@ namespace PLNKTN.Repositories
                                 dbgrantedReward.Projects.Add(project);
                             }
                             await context.SaveAsync(user);
+                            treeCount.TreesCount++;
+                            await context.SaveAsync(treeCount);
                             return -7;
                         }
                     }
