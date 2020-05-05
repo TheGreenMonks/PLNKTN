@@ -1,18 +1,10 @@
 ﻿using System;
-using Amazon.DynamoDBv2.DataModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 
 namespace PLNKTN.Models
 {
-    [DynamoDBTable("Users")]
-    public class User
+    public class User : UsersTableEntry
     {
-        [DynamoDBHashKey]
-        public string Id { get; set; }
-
         public string First_name { get; set; }
 
         public string Last_name { get; set; }
