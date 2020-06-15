@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLNKTNv2", "PLNKTNv2\PLNKTNv2.csproj", "{8AE3788D-5C85-4B97-BEE7-78BE6EF1BFC1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLNKTNv2.Tests", "PLNKTNv2.Tests\PLNKTNv2.Tests.csproj", "{04B92341-E3D6-4925-94EE-B01975F6D27C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AE3788D-5C85-4B97-BEE7-78BE6EF1BFC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE3788D-5C85-4B97-BEE7-78BE6EF1BFC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE3788D-5C85-4B97-BEE7-78BE6EF1BFC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE3788D-5C85-4B97-BEE7-78BE6EF1BFC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04B92341-E3D6-4925-94EE-B01975F6D27C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B92341-E3D6-4925-94EE-B01975F6D27C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B92341-E3D6-4925-94EE-B01975F6D27C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B92341-E3D6-4925-94EE-B01975F6D27C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F797BEA-4A1C-4014-B414-EA8DFFE60A95}
+	EndGlobalSection
+EndGlobal
