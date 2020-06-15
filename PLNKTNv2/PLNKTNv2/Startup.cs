@@ -1,21 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using PLNKTNv2.BusinessLogic.Authentication;
 
 namespace PLNKTNv2
 {
     public class Startup
     {
         public const string AppS3BucketKey = "AppS3Bucket";
+
+        // TODO: Need to be added as env vars
+        private readonly string _cognitoAuthority = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_yt7xxSRrl";
+        private readonly string _cognitoAudience = "4s9n3lg2ptogi5o4pj899332kj";
 
         public Startup(IConfiguration configuration)
         {
@@ -27,6 +26,21 @@ namespace PLNKTNv2
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add JWT Authentication and Policy based Authorisation
+            services.AddAuthentication("Bearer").AddJwtBearer(options =>
+            {
+                options.Audience = _cognitoAudience;
+                options.Authority = _cognitoAuthority;
+            });
+
+            // Add custom authorization handlers
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EndUser", policy => policy.Requirements.Add(new CustomRoleRequirement("EndUser")));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, CustomRoleAuthorizationHandler>();
+
             services.AddControllers();
 
             // Add S3 to the ASP.NET Core dependency injection framework.
@@ -45,6 +59,7 @@ namespace PLNKTNv2
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
