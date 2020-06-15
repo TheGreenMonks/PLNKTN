@@ -1,0 +1,35 @@
+﻿version: 0.2
+
+phases:
+  #install:
+    #runtime-versions:
+      #dotnet: 3.1
+    #commands:
+      #- echo Nothing to do in install
+  pre_build:
+    commands:
+      - echo Installing dependencies - `pwd`
+      - cd PLNKTNv2/PLNKTNv2
+      - dotnet restore PLNKTNv2.csproj
+      - dotnet tool update -g Amazon.Lambda.Tools
+      - echo Dependencies install completed `date`
+  build:
+    commands:
+      - echo Starting unit tests `date` in `pwd`
+      - cd ..
+      - dotnet test PLNKTNv2.Tests/PLNKTNv2.Tests.csproj
+      - echo unit tests completed `date`
+
+      - echo Starting build `date` in `pwd`
+      - cd PLNKTNv2
+      - dotnet-lambda package-ci --s3-bucket plnktnv2 --output-template updated-serverless.template
+      - echo build completed `date`
+  #post_build:
+   # commands:
+    #  - echo Starting unit tests `date` in `pwd`
+     # - dotnet test
+      #- echo unit tests completed `date`
+artifacts:
+  files:
+    ./PLNKTNv2/PLNKTNv2/updated-serverless.template
+  discard-paths: yes
