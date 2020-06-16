@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PLNKTNv2.Repositories;
 using PLNKTNv2.BusinessLogic.Authentication;
 
 namespace PLNKTNv2
@@ -33,18 +34,23 @@ namespace PLNKTNv2
                 options.Authority = _cognitoAuthority;
             });
 
-            // Add custom authorization handlers
+            // Add custom authorization handlers with DI code
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("EndUser", policy => policy.Requirements.Add(new CustomRoleRequirement("EndUser")));
             });
-
             services.AddSingleton<IAuthorizationHandler, CustomRoleAuthorizationHandler>();
 
             services.AddControllers();
 
             // Add S3 to the ASP.NET Core dependency injection framework.
             services.AddAWSService<Amazon.S3.IAmazonS3>();
+
+            // Add custom DI code
+            services.AddTransient<IDBConnection, DBConnection>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IRewardRepository, RewardRepository>();
+            services.AddTransient<ICollectiveEFRepository, CollectiveEFRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

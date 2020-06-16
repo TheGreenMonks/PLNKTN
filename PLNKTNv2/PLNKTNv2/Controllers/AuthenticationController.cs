@@ -42,6 +42,7 @@ namespace PLNKTNv2.Controllers
             };
             request.UserAttributes.Add(customRoleAttribute);
 
+            // TODO: Client needs to ensure user is signed up and confirmed successfully
             var response = await cognito.SignUpAsync(request);
 
             var confResponse = await cognito.AdminConfirmSignUpAsync(new AdminConfirmSignUpRequest

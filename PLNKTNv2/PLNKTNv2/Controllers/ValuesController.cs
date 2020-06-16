@@ -14,11 +14,11 @@ namespace PLNKTNv2.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
+/*        // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public int Get(int id)
         {
-            return "value";
+            return id;
         }
 
         // POST api/values
@@ -37,6 +37,6 @@ namespace PLNKTNv2.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-        }
+        }*/
     }
 }
