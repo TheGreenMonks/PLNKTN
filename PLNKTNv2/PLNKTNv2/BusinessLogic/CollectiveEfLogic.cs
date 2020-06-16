@@ -9,7 +9,8 @@ namespace PLNKTNv2.BusinessLogic
     {
         public static CollectiveEF GenerateCollectiveEF(DateTime timeStamp, IList<User> userList)
         {
-            float collectiveEfResult = ComputeCollectiveEFAsync(timeStamp, userList);
+            var usersOnly = GetUserEntities(userList);
+            float collectiveEfResult = ComputeCollectiveEFAsync(timeStamp, usersOnly);
             CollectiveEF collectiveEf = new CollectiveEF()
             {
                 Date_taken = timeStamp,
@@ -19,7 +20,7 @@ namespace PLNKTNv2.BusinessLogic
             return collectiveEf;
         }
 
-        private static float ComputeCollectiveEFAsync(DateTime calculationDate, IList<User> userList)
+        private static float ComputeCollectiveEFAsync(DateTime calculationDate, IEnumerable<User> userList)
         {
             float? totalCollectiveEf = 0;
             int count = 0;
@@ -40,6 +41,11 @@ namespace PLNKTNv2.BusinessLogic
                 }
             }
             return (float)totalCollectiveEf / count;
+        }
+
+        private static IEnumerable<User> GetUserEntities(IList<User> userList)
+        {
+            return userList.Where(u => u.EcologicalMeasurements != null);
         }
     }
 }
