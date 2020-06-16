@@ -8,7 +8,6 @@ namespace PLNKTNv2.Controllers
     public class ValuesController : ControllerBase
     {
         // GET api/values
-        [Authorize]
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -16,7 +15,6 @@ namespace PLNKTNv2.Controllers
         }
 
         // GET api/values/5
-        [Authorize(Policy = "EndUser")]
         [HttpGet("{id}")]
         public string Get(int id)
         {
