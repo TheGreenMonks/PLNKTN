@@ -52,6 +52,7 @@ namespace PLNKTNv2
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IRewardRepository, RewardRepository>();
             services.AddTransient<ICollectiveEFRepository, CollectiveEFRepository>();
+            services.AddTransient<IAccount, Account>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

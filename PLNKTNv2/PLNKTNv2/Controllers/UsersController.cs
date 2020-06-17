@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTNv2.BusinessLogic.Authentication;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using PLNKTNv2.Repositories;
@@ -7,35 +8,39 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace PLNKTNv2.Controllers
 {
+    /// <summary>
+    /// The Users Controller holds methods to retrieve and manipulate data held about users in the database on AWS.
+    /// </summary>
     [Authorize(Policy = "EndUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IAccount _account;
         private readonly IRewardRepository _rewardRepository;
-        private readonly string _userCountId = "UserCount";
         private readonly IUserRepository _userRepository;
-
-        public UsersController(IUserRepository userRepository, IRewardRepository rewardRepository)
+        public UsersController(
+            IUserRepository userRepository,
+            IRewardRepository rewardRepository,
+            IAccount account
+            )
         {
             _userRepository = userRepository;
             _rewardRepository = rewardRepository;
+            _account = account;
         }
 
-        // DELETE api/users/test
+        /// <summary>
+        /// DELETE method to remove a user and their associated data from the database.
+        /// </summary>
+        /// <param name="id">The <c>string</c> id of the user to be removed.</param>
+        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code.</returns>
         [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteByIdAsync(string id)
         {
-            if (String.IsNullOrWhiteSpace(id))
-            {
-                return BadRequest("User information formatted incorrectly.");
-            }
-
             var userDeleted = await _userRepository.DeleteUser(id);
 
             if (userDeleted > 0)
@@ -53,29 +58,19 @@ namespace PLNKTNv2.Controllers
         }
 
         // GET: api/users
-        [HttpGet("Count")]
-        public IActionResult GetUserCount()
-        {
-            var userCount = _userRepository.GetUserCount(_userCountId);
-            return Ok(userCount);
-        }
 
-        // GET api/users/test
+        /// <summary>
+        /// Get all user data from the database by Id (user Id retrieved fron JWT token).
+        /// </summary>
+        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code and user details in body.</returns>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetByIdAsync()
         {
-            /*if (String.IsNullOrWhiteSpace(id))
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User ID information formatted incorrectly.");
-            }*/
-            var id = User.FindFirst("cognito:username")?.Value;
-
+            var id = _account.GetAccountId(this.User);
             var user = await _userRepository.GetUser(id);
 
             if (user != null)
             {
-                // return HTTP 200
                 return Ok(user);
             }
             else
@@ -85,16 +80,24 @@ namespace PLNKTNv2.Controllers
             }
         }
 
-        // POST api/users
+        /// <summary>
+        /// Get the total number of users in the database.
+        /// </summary>
+        /// <returns><c>IActionResult</c> HTTP response with HTTP codeand user count as int in body.</returns>
+        [HttpGet("Count")]
+        public IActionResult GetUserCount()
+        {
+            var userCount = _userRepository.GetUserCount("UserCount");
+            return Ok(userCount);
+        }
+        /// <summary>
+        /// POST method to insert new user into the database.
+        /// </summary>
+        /// <param name="userDto">DTO representation of a user entry for user creation.</param>
+        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code.</returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserDetailsDTO userDto)
         {
-            if (userDto == null)
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User information formatted incorrectly.");
-            }
-
             // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
             // list of rewards and challenges so, they can participate in reward and challenge completion.
             var rewards = await _rewardRepository.GetAllRewards();
@@ -143,12 +146,6 @@ namespace PLNKTNv2.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UserDetailsDTO dto)
         {
-            if (dto == null)
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User information formatted incorrectly.");
-            }
-
             var user = new User()
             {
                 Id = dto.Id,
