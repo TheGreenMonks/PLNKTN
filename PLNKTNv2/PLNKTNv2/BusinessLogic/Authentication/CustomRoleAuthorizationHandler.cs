@@ -24,7 +24,7 @@ namespace PLNKTNv2.BusinessLogic.Authentication
             }
 
             // Validate the role received from JWT is same as specified in _customVariable
-            if (customRole == requirement.CustomRole)
+            if (customRole.Contains(requirement.CustomRole))
             {
                 // Mark the requirement as satisfied
                 context.Succeed(requirement);

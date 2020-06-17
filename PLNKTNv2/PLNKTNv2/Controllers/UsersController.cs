@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using PLNKTNv2.Repositories;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace PLNKTNv2.Controllers
 {
+    [Authorize(Policy = "EndUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -25,6 +27,7 @@ namespace PLNKTNv2.Controllers
         }
 
         // DELETE api/users/test
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -50,22 +53,23 @@ namespace PLNKTNv2.Controllers
         }
 
         // GET: api/users
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("Count")]
+        public IActionResult GetUserCount()
         {
             var userCount = _userRepository.GetUserCount(_userCountId);
             return Ok(userCount);
         }
 
         // GET api/users/test
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            if (String.IsNullOrWhiteSpace(id))
+            /*if (String.IsNullOrWhiteSpace(id))
             {
                 // return HTTP 400 badrequest as something is wrong
                 return BadRequest("User ID information formatted incorrectly.");
-            }
+            }*/
+            var id = User.FindFirst("cognito:username")?.Value;
 
             var user = await _userRepository.GetUser(id);
 

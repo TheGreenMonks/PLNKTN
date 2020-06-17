@@ -1,12 +1,14 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.Models.Dtos;
 using System.Threading.Tasks;
 
 namespace PLNKTNv2.Controllers
 {
+    [AllowAnonymous]
     [Route("api")]
     [ApiController]
     public class AuthenticationController : ControllerBase

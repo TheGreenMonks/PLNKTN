@@ -38,6 +38,7 @@ namespace PLNKTNv2
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("EndUser", policy => policy.Requirements.Add(new CustomRoleRequirement("EndUser")));
+                options.AddPolicy("Admin", policy => policy.Requirements.Add(new CustomRoleRequirement("Admin")));
             });
             services.AddSingleton<IAuthorizationHandler, CustomRoleAuthorizationHandler>();
 
