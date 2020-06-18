@@ -21,6 +21,14 @@ namespace PLNKTNv2.Controllers
         private readonly IAccount _account;
         private readonly IRewardRepository _rewardRepository;
         private readonly IUserRepository _userRepository;
+
+
+        /// <summary>
+        /// Constructor to create UsersController with DI assets.
+        /// </summary>
+        /// <param name="userRepository">Repository provides database access to User information.</param>
+        /// <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
+        /// <param name="account">Prvides access to authenticated user data.</param>
         public UsersController(
             IUserRepository userRepository,
             IRewardRepository rewardRepository,
@@ -36,7 +44,7 @@ namespace PLNKTNv2.Controllers
         /// DELETE method to remove a user and their associated data from the database.
         /// </summary>
         /// <param name="id">The <c>string</c> id of the user to be removed.</param>
-        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code.</returns>
+        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
         [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync(string id)
@@ -57,12 +65,10 @@ namespace PLNKTNv2.Controllers
             }
         }
 
-        // GET: api/users
-
         /// <summary>
         /// Get all user data from the database by Id (user Id retrieved fron JWT token).
         /// </summary>
-        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code and user details in body.</returns>
+        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
         [HttpGet]
         public async Task<IActionResult> GetByIdAsync()
         {
@@ -94,7 +100,7 @@ namespace PLNKTNv2.Controllers
         /// POST method to insert new user into the database.
         /// </summary>
         /// <param name="userDto">DTO representation of a user entry for user creation.</param>
-        /// <returns><c>Task<IActionResult></c> HTTP response with HTTP code.</returns>
+        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserDetailsDTO userDto)
         {
@@ -142,7 +148,11 @@ namespace PLNKTNv2.Controllers
             }
         }
 
-        // PUT api/users/test
+        /// <summary>
+        /// PUT replaces current user data with that provided in the request's HTTP body.
+        /// </summary>
+        /// <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UserDetailsDTO dto)
         {

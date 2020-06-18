@@ -12,6 +12,7 @@ namespace PLNKTNv2
 {
     public class Startup
     {
+        // TODO:  Why is this public?  Is it needed?  No it's part of S3ProxyController.
         public const string AppS3BucketKey = "AppS3Bucket";
 
         // TODO: Need to be added as env vars
