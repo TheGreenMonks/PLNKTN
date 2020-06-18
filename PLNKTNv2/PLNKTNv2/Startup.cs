@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 using PLNKTNv2.Repositories;
 using PLNKTNv2.BusinessLogic.Authentication;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
+using System;
 
 namespace PLNKTNv2
 {
@@ -50,6 +53,11 @@ namespace PLNKTNv2
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "PLNKTN API", Version = "v2" });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             // Add S3 to the ASP.NET Core dependency injection framework.

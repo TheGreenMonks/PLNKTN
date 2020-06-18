@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.BusinessLogic.Authentication;
 using PLNKTNv2.Models;
@@ -14,6 +15,7 @@ namespace PLNKTNv2.Controllers
     /// The Users Controller holds methods to retrieve and manipulate data held about users in the database on AWS.
     /// </summary>
     [Authorize(Policy = "EndUser")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -44,8 +46,14 @@ namespace PLNKTNv2.Controllers
         /// DELETE method to remove a user and their associated data from the database.
         /// </summary>
         /// <param name="id">The <c>string</c> id of the user to be removed.</param>
-        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+        /// <returns></returns>
+        /// <response code="200">Item removed from the database successfully.</response>
+        /// <response code="404">Item not found in the database.</response>
+        /// <response code="400">Poorly formed request.</response>
         [Authorize(Policy = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync(string id)
         {
@@ -53,15 +61,15 @@ namespace PLNKTNv2.Controllers
 
             if (userDeleted > 0)
             {
-                return Ok("user with ID '" + id + "' deleted.");
+                return Ok();
             }
             else if (userDeleted == -9)
             {
-                return NotFound("No user with ID '" + id + "' available to be deleted.");
+                return NotFound();
             }
             else
             {
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+                return BadRequest();
             }
         }
 
@@ -69,7 +77,13 @@ namespace PLNKTNv2.Controllers
         /// Get all user data from the database by Id (user Id retrieved fron JWT token).
         /// </summary>
         /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
+        /// <response code="200">Returns authenticated user data.</response>
+        /// <response code="404">Item not found in the database.</response>
+        /// <response code="400">Poorly formed request.</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByIdAsync()
         {
             var id = _account.GetAccountId(this.User);
@@ -81,27 +95,35 @@ namespace PLNKTNv2.Controllers
             }
             else
             {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + id + "' does not exist.");
+                return NotFound();
             }
         }
 
         /// <summary>
         /// Get the total number of users in the database.
         /// </summary>
-        /// <returns><c>IActionResult</c> HTTP response with HTTP codeand user count as int in body.</returns>
+        /// <returns><c>IActionResult</c> HTTP response with HTTP code and user count as int in body.</returns>
+        /// <response code="200">Returns number of users in the database.</response>
         [HttpGet("Count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         public IActionResult GetUserCount()
         {
             var userCount = _userRepository.GetUserCount("UserCount");
             return Ok(userCount);
         }
+
         /// <summary>
-        /// POST method to insert new user into the database.
+        /// POST method to create new user in the database.
         /// </summary>
         /// <param name="userDto">DTO representation of a user entry for user creation.</param>
         /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+        /// <response code="201">Returns newly created item.</response>
+        /// <response code="409">Item already exists in database.</response>
+        /// <response code="400">Poorly formed request.</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(User))]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] UserDetailsDTO userDto)
         {
             // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
@@ -133,18 +155,15 @@ namespace PLNKTNv2.Controllers
 
             if (result == 1)
             {
-                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = userDto.Id }, user);
             }
             else if (result == -10)
             {
-                // return HTTP 409 Conflict as user already exists in DB
-                return Conflict("User with ID '" + userDto.Id + "' already exists.  Cannot create a duplicate.");
+                return Conflict();
             }
             else
             {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+                return BadRequest();
             }
         }
 
@@ -153,7 +172,13 @@ namespace PLNKTNv2.Controllers
         /// </summary>
         /// <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
         /// <returns></returns>
+        /// <response code="200">Item updated in the database successfully.</response>
+        /// <response code="404">Item not found in database.</response>
+        /// <response code="400">Poorly formed request.</response>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put([FromBody] UserDetailsDTO dto)
         {
             var user = new User()
@@ -175,19 +200,15 @@ namespace PLNKTNv2.Controllers
 
             if (result == 1)
             {
-                // return HTTP 200 Ok user was updated.  PUT does not require user to be returned in HTTP body.
-                // Not done to save bandwidth.
                 return Ok();
             }
             else if (result == -9)
             {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + dto.Id + "' does not exist.");
+                return NotFound();
             }
             else
             {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
+                return BadRequest();
             }
         }
 

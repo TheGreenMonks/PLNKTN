@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PLNKTNv2</name>
+    </assembly>
+    <members>
+        <member name="T:PLNKTNv2.BusinessLogic.Authentication.Account">
+            <summary>
+            Contains all methods for data retrieval and manipulation of a User's authentication and
+            authorisation information (JWT token).
+            </summary>
+        </member>
+        <member name="M:PLNKTNv2.BusinessLogic.Authentication.Account.GetAccountId(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Get the AWS Cognito user name (Id) of the current authenticated user.
+            </summary>
+            <param name="user">The ClaimsPrinciple implementation for JWT Bearer</param>
+            <returns>Cognito user name as string</returns>
+        </member>
+        <member name="T:PLNKTNv2.BusinessLogic.Authentication.IAccount">
+            <summary>
+            Interface defining all methods for data retrieval and manipulation of a User's authentication and
+            authorisation information.
+            </summary>
+        </member>
+        <member name="M:PLNKTNv2.BusinessLogic.Authentication.IAccount.GetAccountId(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Get the user name (Id) of the current authenticated user.
+            </summary>
+            <param name="user">The ClaimsPrinciple implementation for a user</param>
+            <returns>User name as string</returns>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Delete(System.String)">
+            *
+        </member>
+        <member name="T:PLNKTNv2.Controllers.S3ProxyController">
+            <summary>
+            ASP.NET Core controller acting as a S3 Proxy.
+            </summary>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.UsersController">
+            <summary>
+            The Users Controller holds methods to retrieve and manipulate data held about users in the database on AWS.
+            </summary>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.#ctor(PLNKTNv2.Repositories.IUserRepository,PLNKTNv2.Repositories.IRewardRepository,PLNKTNv2.BusinessLogic.Authentication.IAccount)">
+            <summary>
+            Constructor to create UsersController with DI assets.
+            </summary>
+            <param name="userRepository">Repository provides database access to User information.</param>
+            <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
+            <param name="account">Prvides access to authenticated user data.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.DeleteByIdAsync(System.String)">
+            <summary>
+            DELETE method to remove a user and their associated data from the database.
+            </summary>
+            <param name="id">The <c>string</c> id of the user to be removed.</param>
+            <returns></returns>
+            <response code="200">Item removed from the database successfully.</response>
+            <response code="404">Item not found in the database.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.GetByIdAsync">
+            <summary>
+            Get all user data from the database by Id (user Id retrieved fron JWT token).
+            </summary>
+            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
+            <response code="200">Returns authenticated user data.</response>
+            <response code="404">Item not found in the database.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.GetUserCount">
+            <summary>
+            Get the total number of users in the database.
+            </summary>
+            <returns><c>IActionResult</c> HTTP response with HTTP code and user count as int in body.</returns>
+            <response code="200">Returns number of users in the database.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.Post(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
+            <summary>
+            POST method to create new user in the database.
+            </summary>
+            <param name="userDto">DTO representation of a user entry for user creation.</param>
+            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="409">Item already exists in database.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.Put(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
+            <summary>
+            PUT replaces current user data with that provided in the request's HTTP body.
+            </summary>
+            <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
+            <returns></returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="409">Item not found in database.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="T:PLNKTNv2.LambdaEntryPoint">
+            <summary>
+            This class extends from APIGatewayProxyFunction which contains the method FunctionHandlerAsync which is the 
+            actual Lambda function entry point. The Lambda handler field should be set to
+            
+            PLNKTNv2::PLNKTNv2.LambdaEntryPoint::FunctionHandlerAsync
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:PLNKTNv2.LambdaEntryPoint.Init(Microsoft.AspNetCore.Hosting.IWebHostBuilder)" -->
+        <member name="M:PLNKTNv2.LambdaEntryPoint.Init(Microsoft.Extensions.Hosting.IHostBuilder)">
+            <summary>
+            Use this override to customize the services registered with the IHostBuilder. 
+            
+            It is recommended not to call ConfigureWebHostDefaults to configure the IWebHostBuilder inside this method.
+            Instead customize the IWebHostBuilder in the Init(IWebHostBuilder) overload.
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="T:PLNKTNv2.LocalEntryPoint">
+            <summary>
+            The Main function can be used to run the ASP.NET Core application locally using the Kestrel webserver.
+            </summary>
+        </member>
+    </members>
+</doc>
