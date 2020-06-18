@@ -30,7 +30,7 @@ namespace PLNKTNv2.Controllers
         /// </summary>
         /// <param name="userRepository">Repository provides database access to User information.</param>
         /// <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
-        /// <param name="account">Prvides access to authenticated user data.</param>
+        /// <param name="account">Provides access to authenticated user data.</param>
         public UsersController(
             IUserRepository userRepository,
             IRewardRepository rewardRepository,
