@@ -94,7 +94,7 @@
             <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
             <returns></returns>
             <response code="200">Item updated in the database successfully.</response>
-            <response code="409">Item not found in database.</response>
+            <response code="404">Item not found in database.</response>
             <response code="400">Poorly formed request.</response>
         </member>
         <member name="T:PLNKTNv2.LambdaEntryPoint">
