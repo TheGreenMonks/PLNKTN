@@ -8,6 +8,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>C:\Users\Dexter\source\repos\TheGreenMonks\PLNKTN\PLNKTNv2\PLNKTNv2\PLNKTNv2.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\Dexter\source\repos\TheGreenMonks\PLNKTN\PLNKTNv2\PLNKTNv2\PLNKTNv2.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.3.109.50" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.106.18" />
