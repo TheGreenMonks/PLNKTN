@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PLNKTNv2.Repositories;
 using PLNKTNv2.BusinessLogic.Authentication;
+using Microsoft.OpenApi.Models;
 
 namespace PLNKTNv2
 {
@@ -44,6 +45,12 @@ namespace PLNKTNv2
 
             services.AddControllers();
 
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "PLNKTN API", Version = "v2" });
+            });
+
             // Add S3 to the ASP.NET Core dependency injection framework.
             services.AddAWSService<Amazon.S3.IAmazonS3>();
 
@@ -62,6 +69,16 @@ namespace PLNKTNv2
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "PLNKTN API v2");
+            });
 
             app.UseHttpsRedirection();
 
