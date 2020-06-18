@@ -86,7 +86,7 @@ namespace PLNKTNv2
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v2/swagger.json", "PLNKTN API v2");
+                c.SwaggerEndpoint("../swagger/v2/swagger.json", "PLNKTN API v2");
             });
 
             app.UseHttpsRedirection();
