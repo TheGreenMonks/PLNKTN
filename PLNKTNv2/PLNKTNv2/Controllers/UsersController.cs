@@ -14,6 +14,9 @@ namespace PLNKTNv2.Controllers
     /// <summary>
     /// The Users Controller holds methods to retrieve and manipulate data held about users in the database on AWS.
     /// </summary>
+    /// <remarks>
+    /// All functions require the user to be authenticated with JWT token before they will execute.
+    /// </remarks>
     [Authorize(Policy = "EndUser")]
     [Produces("application/json")]
     [Route("api/[controller]")]
@@ -23,7 +26,6 @@ namespace PLNKTNv2.Controllers
         private readonly IAccount _account;
         private readonly IRewardRepository _rewardRepository;
         private readonly IUserRepository _userRepository;
-
 
         /// <summary>
         /// Constructor to create UsersController with DI assets.
@@ -45,6 +47,9 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// DELETE method to remove a user and their associated data from the database.
         /// </summary>
+        /// <remarks>
+        /// Special administration priviledges required to execute this function.
+        /// </remarks>
         /// <param name="id">The <c>string</c> id of the user to be removed.</param>
         /// <returns></returns>
         /// <response code="200">Item removed from the database successfully.</response>
@@ -76,6 +81,9 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// Get all user data from the database by Id (user Id retrieved fron JWT token).
         /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with end user credentials.
+        /// </remarks>
         /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
         /// <response code="200">Returns authenticated user data.</response>
         /// <response code="404">Item not found in the database.</response>
@@ -102,6 +110,9 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// Get the total number of users in the database.
         /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with end user credentials.
+        /// </remarks>
         /// <returns><c>IActionResult</c> HTTP response with HTTP code and user count as int in body.</returns>
         /// <response code="200">Returns number of users in the database.</response>
         [HttpGet("Count")]
@@ -115,6 +126,11 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// POST method to create new user in the database.
         /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with end user credentials. Id of the user to be created
+        /// is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and 
+        /// the User Id stored in the DB must match.
+        /// </remarks>
         /// <param name="userDto">DTO representation of a user entry for user creation.</param>
         /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
         /// <response code="201">Returns newly created item.</response>
@@ -128,13 +144,14 @@ namespace PLNKTNv2.Controllers
         {
             // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
             // list of rewards and challenges so, they can participate in reward and challenge completion.
+            var id = _account.GetAccountId(this.User);
             var rewards = await _rewardRepository.GetAllRewards();
             var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
 
             // Create new user
             var user = new User()
             {
-                Id = userDto.Id,
+                Id = id,
                 First_name = userDto.First_name,
                 Last_name = userDto.Last_name,
                 Created_at = DateTime.UtcNow,
@@ -155,7 +172,7 @@ namespace PLNKTNv2.Controllers
 
             if (result == 1)
             {
-                return CreatedAtAction("Get", new { id = userDto.Id }, user);
+                return CreatedAtAction("Get", new { id }, user);
             }
             else if (result == -10)
             {
@@ -170,6 +187,10 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// PUT replaces current user data with that provided in the request's HTTP body.
         /// </summary>
+        /// <remarks>
+        /// User must be logged in with end user credentials to execute. Partial user information can be sent. 
+        /// The function replaces any data that is send in the request body and ignores any fields that are not present.
+        /// </remarks>
         /// <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
         /// <returns></returns>
         /// <response code="200">Item updated in the database successfully.</response>
@@ -181,9 +202,11 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put([FromBody] UserDetailsDTO dto)
         {
+            var id = _account.GetAccountId(this.User);
+
             var user = new User()
             {
-                Id = dto.Id,
+                Id = id,
                 First_name = dto.First_name,
                 Last_name = dto.Last_name,
                 Created_at = dto.Created_at,
@@ -208,6 +231,46 @@ namespace PLNKTNv2.Controllers
             }
             else
             {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// PUT updates a user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+        /// </summary>
+        /// <remarks>
+        /// User must be logged in with end user credentials to execute. The full userReward unit of information must be sent. 
+        /// This includes all of the challenge infomration that is not being updated. The function basically removes the user
+        /// reward and replaces it.
+        /// </remarks>
+        /// <param name="model"></param>
+        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+        /// <response code="200">Item updated in the database successfully.</response>
+        /// <response code="404">Item not found in database.</response>
+        /// <response code="400">Poorly formed request.</response>
+        [HttpPut("Rewards")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Put([FromBody] UserReward model)
+        {
+            var id = _account.GetAccountId(this.User);
+            int result = await _userRepository.UpdateUserReward(id, model);
+
+            if (result == 1)
+            {
+                // return HTTP 200 Ok item was updated.  PUT does not require the item to be returned in HTTP body.
+                // Not done to save bandwidth.
+                return Ok();
+            }
+            else if (result == -9)
+            {
+                // return HTTP 404 as user cannot be found in DB
+                return NotFound();
+            }
+            else
+            {
+                // return HTTP 400 badrequest as something is wrong
                 return BadRequest();
             }
         }

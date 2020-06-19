@@ -42,6 +42,9 @@
             <summary>
             The Users Controller holds methods to retrieve and manipulate data held about users in the database on AWS.
             </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
         </member>
         <member name="M:PLNKTNv2.Controllers.UsersController.#ctor(PLNKTNv2.Repositories.IUserRepository,PLNKTNv2.Repositories.IRewardRepository,PLNKTNv2.BusinessLogic.Authentication.IAccount)">
             <summary>
@@ -49,12 +52,15 @@
             </summary>
             <param name="userRepository">Repository provides database access to User information.</param>
             <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
-            <param name="account">Prvides access to authenticated user data.</param>
+            <param name="account">Provides access to authenticated user data.</param>
         </member>
         <member name="M:PLNKTNv2.Controllers.UsersController.DeleteByIdAsync(System.String)">
             <summary>
             DELETE method to remove a user and their associated data from the database.
             </summary>
+            <remarks>
+            Special administration priviledges required to execute this function.
+            </remarks>
             <param name="id">The <c>string</c> id of the user to be removed.</param>
             <returns></returns>
             <response code="200">Item removed from the database successfully.</response>
@@ -65,6 +71,9 @@
             <summary>
             Get all user data from the database by Id (user Id retrieved fron JWT token).
             </summary>
+            <remarks>
+            Requires user to be logged in with end user credentials.
+            </remarks>
             <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
             <response code="200">Returns authenticated user data.</response>
             <response code="404">Item not found in the database.</response>
@@ -74,6 +83,9 @@
             <summary>
             Get the total number of users in the database.
             </summary>
+            <remarks>
+            Requires user to be logged in with end user credentials.
+            </remarks>
             <returns><c>IActionResult</c> HTTP response with HTTP code and user count as int in body.</returns>
             <response code="200">Returns number of users in the database.</response>
         </member>
@@ -81,6 +93,11 @@
             <summary>
             POST method to create new user in the database.
             </summary>
+            <remarks>
+            Requires user to be logged in with end user credentials. Id of the user to be created
+            is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and 
+            the User Id stored in the DB must match.
+            </remarks>
             <param name="userDto">DTO representation of a user entry for user creation.</param>
             <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
             <response code="201">Returns newly created item.</response>
@@ -91,8 +108,27 @@
             <summary>
             PUT replaces current user data with that provided in the request's HTTP body.
             </summary>
+            <remarks>
+            User must be logged in with end user credentials to execute. Partial user information can be sent. 
+            The function replaces any data that is send in the request body and ignores any fields that are not present.
+            </remarks>
             <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
             <returns></returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="404">Item not found in database.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.UsersController.Put(PLNKTNv2.Models.UserReward)">
+            <summary>
+            PUT updates a user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+            </summary>
+            <remarks>
+            User must be logged in with end user credentials to execute. The full userReward unit of information must be sent. 
+            This includes all of the challenge infomration that is not being updated. The function basically removes the user
+            reward and replaces it.
+            </remarks>
+            <param name="model"></param>
+            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
             <response code="200">Item updated in the database successfully.</response>
             <response code="404">Item not found in database.</response>
             <response code="400">Poorly formed request.</response>
