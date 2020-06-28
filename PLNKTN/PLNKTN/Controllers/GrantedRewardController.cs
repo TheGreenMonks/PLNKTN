@@ -14,10 +14,12 @@ namespace PLNKTN.Controllers
     public class GrantedRewardController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRewardRepository _rewardRepository;
 
         public GrantedRewardController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
+            _rewardRepository = rewardRepository;
         }
 
         // GET api/values/5
@@ -59,11 +61,13 @@ namespace PLNKTN.Controllers
 
             if (result == 1)
             {
+                await _rewardRepository.ThrowTreeInBin(region_name, project);
                 // return HTTP 201 Created with project object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = id, region_name = region_name }, project);
             }
             else if (result == -7)
             {
+                await _rewardRepository.ThrowTreeInBin(region_name, project);
                 return Ok("User already planted in this area. It is ok to plant again. Region count has been incremented");
             }
             else if (result == -9)
