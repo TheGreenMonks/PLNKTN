@@ -16,7 +16,7 @@ namespace PLNKTN.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IRewardRepository _rewardRepository;
 
-        public GrantedRewardController(IUserRepository userRepository)
+        public GrantedRewardController(IUserRepository userRepository, IRewardRepository rewardRepository)
         {
             _userRepository = userRepository;
             _rewardRepository = rewardRepository;
@@ -58,19 +58,17 @@ namespace PLNKTN.Controllers
             }
 
             int result = await _userRepository.AddUserGrantedReward(id, region_name, project);
-
-            if (result == 1)
+            int res = await _rewardRepository.ThrowTreeInBin(region_name, project);
+            if (result == 1 && res == 1)
             {
-                await _rewardRepository.ThrowTreeInBin(region_name, project);
                 // return HTTP 201 Created with project object in body of return and a 'location' header with URL of newly created object
                 return CreatedAtAction("Get", new { id = id, region_name = region_name }, project);
             }
-            else if (result == -7)
+            else if (result == -7 && res == 1)
             {
-                await _rewardRepository.ThrowTreeInBin(region_name, project);
                 return Ok("User already planted in this area. It is ok to plant again. Region count has been incremented");
             }
-            else if (result == -9)
+            else if (result == -9 && res == -9)
             {
                 // return HTTP 404 as user cannot be found in DB
                 return NotFound("User with ID '" + id + "' does not exist.");
