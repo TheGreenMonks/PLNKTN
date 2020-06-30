@@ -30,7 +30,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<string>> Register(UserAuthDto user)
+        public async Task<IActionResult> Register(UserAuthDto user)
         {
             var cognito = new AmazonCognitoIdentityProviderClient(_region);
 
@@ -76,7 +76,7 @@ namespace PLNKTNv2.Controllers
         /// <response code="400">Poorly formed request.</response>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminInitiateAuthResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet]
+        [HttpPost]
         [Route("signin")]
         public async Task<IActionResult> SignIn(UserAuthDto user)
         {
