@@ -30,13 +30,398 @@
             <param name="user">The ClaimsPrinciple implementation for a user</param>
             <returns>User name as string</returns>
         </member>
-        <member name="M:PLNKTNv2.Controllers.RewardsController.Delete(System.String)">
-            *
-        </member>
-        <member name="T:PLNKTNv2.Controllers.S3ProxyController">
+        <member name="M:PLNKTNv2.Controllers.AuthenticationController.Register(PLNKTNv2.Models.Dtos.UserAuthDto)">
             <summary>
-            ASP.NET Core controller acting as a S3 Proxy.
+            Register a user for the service with a valid username and password.
             </summary>
+            <param name="user">The <c>UserAuthDto</c> with username, password and valid email address of user to register.</param>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns authentication data.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.AuthenticationController.SignIn(PLNKTNv2.Models.Dtos.UserAuthDto)">
+            <summary>
+            Sign a user into the service via a valid username and password.
+            </summary>
+            <param name="user">The <c>UserAuthDto</c> with username and password of user to sign in.</param>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns authentication data.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.BinController">
+            <summary>
+            The Bin Controller holds methods to retrieve and manipulate data held about trees that have been planted by users.
+            The 'Bin' is a separate data store used to notify the One Tree Planted organisation how many trees
+            have been awarded and where. The table will be trawled periodically for trees planted and cleared when
+            the data is sent to OTP.  This prevents duplicate tree planting requests going to OTP.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.BinController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IBinService)">
+            <summary>
+            Constructor to create EcologicalMeasurementsController with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+            <param name="account">Provides access to authenticated user data.</param>
+            <param name="binService">Provides business logic for processing data related to Bin items.</param>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.CollectiveEFController">
+            <summary>
+            The Collective Ecological Footprint Controller holds methods to retrieve and manipulate data held about user's EFs
+            in the database on AWS.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.CollectiveEFController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.ICollectiveEfService)">
+            <summary>
+            Constructor to create CollectiveEFController with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+            <param name="collectiveEfService">Provides business logic for processing data related to Collective Ecological Footprints.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.CollectiveEFController.Get">
+            <summary>
+            Get all CollectiveEFs and their data from the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns list of CollectiveEFs data.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.CollectiveEFController.Get(System.DateTime)">
+            <summary>
+            Get a CollectiveEF from the database by date.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns CollectiveEF data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.CollectiveEFController.Post(System.DateTime)">
+            <summary>
+            Create new CollectiveEF in the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <param name="date">The date and time the CollectiveEF is to be calculated for.</param>
+            <returns><c>IActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="409">Item already exists.</response>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.EcologicalMeasurementsController">
+            <summary>
+            The Ecological Measurements Controller holds methods to retrieve and manipulate data held about user's EMs
+            in the database on AWS.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.EcologicalMeasurementsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IEcologicalMeasurementService)">
+            <summary>
+            Constructor to create EcologicalMeasurementsController with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+            <param name="account">Provides access to authenticated user data.</param>
+            <param name="ecologicalMeasurementService">Provides business logic for processing data related to Ecological Measurements.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.EcologicalMeasurementsController.Get">
+            <summary>
+            Get all ecological measurements for logged in user.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns list of ecological measurements data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">User not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.EcologicalMeasurementsController.Get(System.DateTime)">
+            <summary>
+            Get an ecological measurement for logged in user from the database by date.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns ecological measurement data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.EcologicalMeasurementsController.Post(PLNKTNv2.Models.Dtos.EcologicalMeasurementDTO)">
+            <summary>
+            Create new Ecological Measurement for logged in user in the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <param name="dto">Ecological Measurement entry (plus user Id) for Ecological Measurement creation.</param>
+            <returns><c>IActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="409">Item already exists.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.EcologicalMeasurementsController.Patch(PLNKTNv2.Models.Dtos.EcologicalMeasurementDTO)">
+            <summary>
+            Replaces whole Ecological Measurement data with that provided in the request's HTTP body.
+            </summary>
+            <remarks>
+            User must be logged in with credentials to execute. Full EcologicalMeasurement information must be sent.
+            </remarks>
+            <param name="dto">Representation of EcologicalMeasurement object with fields that can be manipulated by this request.</param>
+            <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found in the database.</response>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.GrantedRewardsController">
+            <summary>
+            The GrantedRewards Controller holds methods to retrieve and manipulate data held about a user's Granted Rewards
+            in the database on AWS.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IGrantedRewardService)">
+            <summary>
+            Constructor to create GrantedRewardsController with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+            <param name="account">Provides access to authenticated user data.</param>
+            <param name="grantedRewardService">Provides business logic for processing data related to granted rewards.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.Get(System.String)">
+            <summary>
+            Get a user's granted reward from the database by Id.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns granted reward data for logged in user.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.GetAll">
+            <summary>
+            Get all granted rewards for a user from the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns list of granted rewards data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.GetCount">
+            <summary>
+            Get total number of trees planted by all users in the application.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns object with count of total trees planted.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.Post(PLNKTNv2.Models.Dtos.UserGrantedRewardDto)">
+            <summary>
+            Create new granted reward for logged in user in the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials. Multiple trees can be planted in
+            the same region and same project, therefore calling this function multiple times with the same data will have
+            a knock on effect of planting multiple trees for the user.
+            </remarks>
+            <param name="grantedRewardDto">Object with region name and project info to be added for the user.</param>
+            <returns><c>IActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.RewardRegionsController">
+            <summary>
+            The RewardRegionsController holds methods to retrieve and manipulate data held about the
+            reward regions in the database on AWS.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Services.IRewardRegionService)">
+            <summary>
+            Constructor to create Controller with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and the generic repository.</param>
+            <param name="rewardRegionService">Provides business logic for processing data related to reward regions.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Delete(System.String,PLNKTNv2.Models.Project)">
+            <summary>
+            Remove a reward region from the database.
+            </summary>
+            <remarks>
+            Special administration priviledges required to execute this function.
+            </remarks>
+            <param name="id">The <c>string</c> id of the reward region where the proejct is to be removed.</param>
+            <param name="project">The specific <c>Project</c> instance to be removed for a region.</param>
+            <returns><c>ActionResult</c> with appropriate code</returns>
+            <response code="200">Item removed from the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Get">
+            <summary>
+            Get all reward regions and their data from the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns list of reward region data.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Get(System.String)">
+            <summary>
+            Get a reward region from the database by Id.
+            </summary>
+            <remarks>
+            Requires user to be logged in with credentials.
+            </remarks>
+            <param name="id">The <c>string</c> id of the reward region to retrieve.</param>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns reward region data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Post(PLNKTNv2.Models.RewardRegion)">
+            <summary>
+            Create new reward region in the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <param name="region">Reward region entry for reward region creation.</param>
+            <returns><c>IActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="409">Item already exists.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Put(PLNKTNv2.Models.RewardRegion)">
+            <summary>
+            Replaces whole reward region data with that provided in the request's HTTP body.
+            </summary>
+            <remarks>
+            User must be logged in with special administrative credentials to execute. Full reward region information must be sent.
+            </remarks>
+            <param name="region">Representation of reward region object with fields that can be manipulated by this request.</param>
+            <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found in the database.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardRegionsController.Put(System.String,PLNKTNv2.Models.Project)">
+            <summary>
+            Replaces a reward region's project data with that provided in the request's HTTP body.
+            </summary>
+            <remarks>
+            User must be logged in with special administrative credentials to execute. Full reward region project information must be sent.
+            </remarks>
+            <param name="id">The ID ('region_name') of the reward region where the project is to be updated.</param>
+            <param name="project">Representation of reward region project object with fields that can be manipulated by this request.</param>
+            <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found in the database.</response>
+        </member>
+        <member name="T:PLNKTNv2.Controllers.RewardsController">
+            <summary>
+            The Rewards Controller holds methods to retrieve and manipulate data held about rewards in the database on AWS.
+            </summary>
+            <remarks>
+            All functions require the user to be authenticated with JWT token and special credentials before they will execute.
+            </remarks>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Services.IUserService)">
+            <summary>
+            Constructor to create Controller with DI assets.
+            </summary>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and the generic repository.</param>
+            <param name="userService">Provides business logic for processing data related to users.</param>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Delete(System.String)">
+            <summary>
+            Remove a reward and its associated data from the database.
+            </summary>
+            <remarks>
+            Calling this function will also remove all UserRewards related to this reward from all users in the DB.
+            Special administration priviledges required to execute this function.
+            </remarks>
+            <param name="id">The <c>string</c> id of the reward to be removed.</param>
+            <returns><c>ActionResult</c> with appropriate code</returns>
+            <response code="200">Item removed from the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Get">
+            <summary>
+            Get all rewards from the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns rewards data.</response>
+            <response code="400">Poorly formed request.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Get(System.String)">
+            <summary>
+            Get a reward from the database by Id.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+            <response code="200">Returns reward data.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Post(PLNKTNv2.Models.Reward)">
+            <summary>
+            Create new reward in the database.
+            </summary>
+            <remarks>
+            Requires user to be logged in with special administrative credentials.
+            </remarks>
+            <param name="reward">Reward entry for reward creation.</param>
+            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+            <response code="201">Returns newly created item.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="409">Item already exists.</response>
+        </member>
+        <member name="M:PLNKTNv2.Controllers.RewardsController.Put(PLNKTNv2.Models.Reward)">
+            <summary>
+            Replaces reward data with that provided in the request's HTTP body.
+            </summary>
+            <remarks>
+            User must be logged in with special administrative credentials to execute. Full reward information must be sent.
+            </remarks>
+            <param name="reward">Representation of reward object with fields that can be manipulated by this request.</param>
+            <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
+            <response code="200">Item updated in the database successfully.</response>
+            <response code="400">Poorly formed request.</response>
+            <response code="404">Item not found in the database.</response>
         </member>
         <member name="T:PLNKTNv2.Controllers.UsersController">
             <summary>
@@ -46,35 +431,34 @@
             All functions require the user to be authenticated with JWT token before they will execute.
             </remarks>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.#ctor(PLNKTNv2.Repositories.IUserRepository,PLNKTNv2.Repositories.IRewardRepository,PLNKTNv2.BusinessLogic.Authentication.IAccount)">
+        <member name="M:PLNKTNv2.Controllers.UsersController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IUserService)">
             <summary>
-            Constructor to create UsersController with DI assets.
+            Constructor to create Controller with DI assets.
             </summary>
-            <param name="userRepository">Repository provides database access to User information.</param>
-            <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
+            <param name="unitOfWork">Abstraction layer between the controller and DB Context and the generic repository.</param>
             <param name="account">Provides access to authenticated user data.</param>
+            <param name="userService">Provides business logic for processing data related to users.</param>
         </member>
         <member name="M:PLNKTNv2.Controllers.UsersController.DeleteByIdAsync(System.String)">
             <summary>
-            DELETE method to remove a user and their associated data from the database.
+            DELETE method to remove a user and its associated data from the database.
             </summary>
             <remarks>
             Special administration priviledges required to execute this function.
             </remarks>
             <param name="id">The <c>string</c> id of the user to be removed.</param>
-            <returns></returns>
+            <returns><c>ActionResult</c> with appropriate code</returns>
             <response code="200">Item removed from the database successfully.</response>
-            <response code="404">Item not found in the database.</response>
             <response code="400">Poorly formed request.</response>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.GetByIdAsync">
+        <member name="M:PLNKTNv2.Controllers.UsersController.Get">
             <summary>
             Get all user data from the database by Id (user Id retrieved fron JWT token).
             </summary>
             <remarks>
             Requires user to be logged in with end user credentials.
             </remarks>
-            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
+            <returns><c>ActionResult</c> with appropriate code</returns>
             <response code="200">Returns authenticated user data.</response>
             <response code="404">Item not found in the database.</response>
             <response code="400">Poorly formed request.</response>
@@ -91,44 +475,43 @@
         </member>
         <member name="M:PLNKTNv2.Controllers.UsersController.Post(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
             <summary>
-            POST method to create new user in the database.
+            Create new user in the database.
             </summary>
             <remarks>
             Requires user to be logged in with end user credentials. Id of the user to be created
-            is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and 
+            is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and
             the User Id stored in the DB must match.
             </remarks>
             <param name="userDto">DTO representation of a user entry for user creation.</param>
             <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
             <response code="201">Returns newly created item.</response>
-            <response code="409">Item already exists in database.</response>
             <response code="400">Poorly formed request.</response>
+            <response code="409">Item already exists.</response>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.Put(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
+        <member name="M:PLNKTNv2.Controllers.UsersController.Patch(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
             <summary>
-            PUT replaces current user data with that provided in the request's HTTP body.
+            Replaces current user data with that provided in the request's HTTP body.
             </summary>
             <remarks>
-            User must be logged in with end user credentials to execute. Partial user information can be sent. 
+            User must be logged in with end user credentials to execute. Partial user information can be sent.
             The function replaces any data that is send in the request body and ignores any fields that are not present.
             </remarks>
             <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
             <returns></returns>
             <response code="200">Item updated in the database successfully.</response>
-            <response code="404">Item not found in database.</response>
             <response code="400">Poorly formed request.</response>
         </member>
         <member name="M:PLNKTNv2.Controllers.UsersController.Put(PLNKTNv2.Models.UserReward)">
             <summary>
-            PUT updates a user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+            Uupdates a complete user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
             </summary>
             <remarks>
-            User must be logged in with end user credentials to execute. The full userReward unit of information must be sent. 
+            User must be logged in with end user credentials to execute. The full userReward unit of information must be sent.
             This includes all of the challenge infomration that is not being updated. The function basically removes the user
             reward and replaces it.
             </remarks>
             <param name="model"></param>
-            <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+            <returns><c>Task ActionResult </c> HTTP response with HTTP code.</returns>
             <response code="200">Item updated in the database successfully.</response>
             <response code="404">Item not found in database.</response>
             <response code="400">Poorly formed request.</response>
@@ -141,7 +524,13 @@
             PLNKTNv2::PLNKTNv2.LambdaEntryPoint::FunctionHandlerAsync
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:PLNKTNv2.LambdaEntryPoint.Init(Microsoft.AspNetCore.Hosting.IWebHostBuilder)" -->
+        <member name="M:PLNKTNv2.LambdaEntryPoint.Init(Microsoft.AspNetCore.Hosting.IWebHostBuilder)">
+            <summary>
+            The builder has configuration, logging and Amazon API Gateway already configured. The startup class
+            needs to be configured in this method using the UseStartup() method.
+            </summary>
+            <param name="builder"></param>
+        </member>
         <member name="M:PLNKTNv2.LambdaEntryPoint.Init(Microsoft.Extensions.Hosting.IHostBuilder)">
             <summary>
             Use this override to customize the services registered with the IHostBuilder. 
@@ -155,6 +544,57 @@
             <summary>
             The Main function can be used to run the ASP.NET Core application locally using the Kestrel webserver.
             </summary>
+        </member>
+        <member name="T:PLNKTNv2.Persistence.Repositories.Implementation.DbContextFactory">
+            <summary>
+            A Factory class to create a <c>DynamoDbContext</c> instance.  On creation it will check if the system has the
+            AWS SDK profile store where i can get credentials for the DB.  If this fails it will try a custom reversionary
+            mode we created to allow Mac users to remotely login to the DB.  Finally it will assume the code is running
+            on an EC2 instance and create a DB context for that environment that can access the DB.
+            </summary>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.DeleteByIdAsync(System.String)">
+            <summary>
+            Removes entity T from the table.
+            </summary>
+            <param name="id">Entity Hash Key to remove.</param>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.GetAllAsync">
+            <summary>
+            Return all objects in table T.  Performs Scan operation.  Use sparingly.
+            </summary>
+            <returns>A <c>List/<T/></c> entities within table T.</returns>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.GetByIdAsync(System.String)">
+            <summary>
+            Return single object by its ID
+            </summary>
+            <param name="id"><c>string</c> representation of object Hash Key</param>
+            <returns>The entity with the corresponding ID.</returns>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.InsertAsync(`0)">
+            <summary>
+            Insert entity T into its corresponding table.
+            </summary>
+            <param name="entity">The entity to insert to the table.</param>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.InsertAsync(System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Insert entities T into its table.
+            </summary>
+            <param name="entities">Entities to be inserted.</param>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.UpdateAllAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Update list of entities T with new data.
+            </summary>
+            <param name="entities">Enumerable entity list with updated data to to insert/replace in the table.</param>
+        </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.UpdateAsync(`0)">
+            <summary>
+            Update entity T with new data.
+            </summary>
+            <param name="entity">Entity with updated data to to insert/replace in the table.</param>
         </member>
     </members>
 </doc>

@@ -1,10 +1,8 @@
-﻿using System;
-namespace PLNKTNv2.Models
+﻿namespace PLNKTNv2.Models
 {
-    public class Rgn
+    public class UserGrantedRewardProject
     {
         public string Project_name { set; get; }
         public string Tree_species { get; set; }
-      
     }
 }

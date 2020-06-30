@@ -8,3 +8,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Correcting this will require disruptive changes to mobile client.", Scope = "member", Target = "~P:PLNKTNv2.Models.RewardGridPosition.y")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Correcting this will require disruptive changes to mobile client.", Scope = "member", Target = "~P:PLNKTNv2.Models.RewardGridPosition.x")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Correcting this will require disruptive changes to mobile client.", Scope = "member", Target = "~P:PLNKTNv2.Models.Project.url")]
+[assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:PLNKTNv2.BusinessLogic.Helpers.EmailLogic.messageLines")]

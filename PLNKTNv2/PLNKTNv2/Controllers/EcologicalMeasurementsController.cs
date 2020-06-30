@@ -1,91 +1,127 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PLNKTNv2.BusinessLogic.Authentication;
+using PLNKTNv2.BusinessLogic.Services;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
-using PLNKTNv2.Repositories;
+using PLNKTNv2.Persistence;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PLNKTNv2.Controllers
 {
+    /// <summary>
+    /// The Ecological Measurements Controller holds methods to retrieve and manipulate data held about user's EMs
+    /// in the database on AWS.
+    /// </summary>
+    /// <remarks>
+    /// All functions require the user to be authenticated with JWT token before they will execute.
+    /// </remarks>
+    [Authorize(Policy = "EndUser")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class EcologicalMeasurementsController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAccount _account;
+        private readonly IEcologicalMeasurementService _ecologicalMeasurementService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EcologicalMeasurementsController(IUserRepository userRepository)
+        /// <summary>
+        /// Constructor to create EcologicalMeasurementsController with DI assets.
+        /// </summary>
+        /// <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+        /// <param name="account">Provides access to authenticated user data.</param>
+        /// <param name="ecologicalMeasurementService">Provides business logic for processing data related to Ecological Measurements.</param>
+        public EcologicalMeasurementsController(
+            IUnitOfWork unitOfWork,
+            IAccount account,
+            IEcologicalMeasurementService ecologicalMeasurementService
+            )
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+            _account = account;
+            _ecologicalMeasurementService = ecologicalMeasurementService;
         }
 
-        // GET: api/EcologicalMeasurements/5
-        [HttpGet("GetMeasurements/{id}")]
-        public async Task<IActionResult> Get(string id)
+        /// <summary>
+        /// Get all ecological measurements for logged in user.
+        /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with credentials.
+        /// </remarks>
+        /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+        /// <response code="200">Returns list of ecological measurements data.</response>
+        /// <response code="400">Poorly formed request.</response>
+        /// <response code="404">User not found.</response>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<EcologicalMeasurement>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            if (String.IsNullOrWhiteSpace(id))
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User ID information formatted incorrectly.");
-            }
-            var user = await _userRepository.GetUser(id);
+            string id = _account.GetAccountId(this.User);
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
             if (user != null)
             {
-                // return HTTP 200
                 return Ok(user.EcologicalMeasurements);
             }
-            else
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + id + "' does not exist.");
-            }
+            return NotFound("User not found.");
         }
 
-        // GET: api/EcologicalMeasurements/5/date
-        [HttpGet("GetMeasure/{id}/{date}")]
-        public async Task<IActionResult> Get(string id, DateTime date)
+        /// <summary>
+        /// Get an ecological measurement for logged in user from the database by date.
+        /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with credentials.
+        /// </remarks>
+        /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+        /// <response code="200">Returns ecological measurement data.</response>
+        /// <response code="400">Poorly formed request.</response>
+        /// <response code="404">Item not found.</response>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EcologicalMeasurement))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("{date}")]
+        public async Task<IActionResult> Get(DateTime date)
         {
-            if (String.IsNullOrWhiteSpace(id))
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("User ID information formatted incorrectly.");
-            }
-            var user = await _userRepository.GetUser(id);
+            string id = _account.GetAccountId(this.User);
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
             if (user != null)
             {
-                // return HTTP 200
-                var ecologicalMeasure = user.EcologicalMeasurements.Find(
-                    delegate (EcologicalMeasurement em)
-                    {
-                        return DateTime.Equals(em.Date_taken, date);
-                    });
-                if (ecologicalMeasure != null)
+                EcologicalMeasurement tempEm = _ecologicalMeasurementService.GetEcologicalMeasurement(user, date);
+                if (tempEm != null)
                 {
-                    return Ok(ecologicalMeasure);
+                    return Ok(tempEm);
                 }
-                else
-                {
-                    // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
-                    return NotFound("User with ID '" + id + "' does not have ecological measure on " + date);
-                }
+                return NotFound("Ecological Measurement not found.");
             }
-            else
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + id + "' does not exist.");
-            }
+            return NotFound("User not found.");
         }
 
-        // POST: api/EcologicalMeasurements
+        /// <summary>
+        /// Create new Ecological Measurement for logged in user in the database.
+        /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with special administrative credentials.
+        /// </remarks>
+        /// <param name="dto">Ecological Measurement entry (plus user Id) for Ecological Measurement creation.</param>
+        /// <returns><c>IActionResult</c> HTTP response with HTTP code.</returns>
+        /// <response code="201">Returns newly created item.</response>
+        /// <response code="400">Poorly formed request.</response>
+        /// <response code="409">Item already exists.</response>
+        /// <response code="404">Item not found.</response>
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(EcologicalMeasurement))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] EcologicalMeasurementDTO dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("Measurement information formatted incorrectly.");
-            }
-
             var ecologicalMeasurement = new EcologicalMeasurement
             {
                 Date_taken = dto.Date_taken,
@@ -97,40 +133,39 @@ namespace PLNKTNv2.Controllers
                 Footwear = dto.Footwear
             };
 
-            int result = await _userRepository.AddEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+            string id = _account.GetAccountId(this.User);
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
-            if (result == 1)
+            if (user != null)
             {
-                /***  HERE MIGHT CAL Collective_EF ***/
-
-                // return HTTP 201 Created with user object in body of return and a 'location' header with URL of newly created object
-                return CreatedAtAction("Get", new { id = dto.UserId, date = dto.Date_taken }, ecologicalMeasurement);
+                Status status = _ecologicalMeasurementService.InsertEcologicalMeasurement(user, ecologicalMeasurement);
+                if (status.Equals(Status.CREATED_AT))
+                {
+                    await _unitOfWork.Repository<User>().UpdateAsync(user);
+                    return CreatedAtAction("Get", new { date = dto.Date_taken }, ecologicalMeasurement);
+                }
+                return Conflict("Ecological Measurement already exists.");
             }
-            else if (result == -7)
-            {
-                // return HTTP 409 as ecologicalMeasure with date already exists - conflict
-                return Conflict("User with ID '" + dto.UserId + "' already has an ecological measure on " + dto.Date_taken);
-            }
-            else if (result == -9)
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
-            }
-            else
-            {
-                return BadRequest("An internal error occurred.  Please contact the system administrator.");
-            }
+            return NotFound("User not found.");
         }
 
-        // PUT: api/EcologicalMeasurements
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] EcologicalMeasurementDTO dto)
+        /// <summary>
+        /// Replaces whole Ecological Measurement data with that provided in the request's HTTP body.
+        /// </summary>
+        /// <remarks>
+        /// User must be logged in with credentials to execute. Full EcologicalMeasurement information must be sent.
+        /// </remarks>
+        /// <param name="dto">Representation of EcologicalMeasurement object with fields that can be manipulated by this request.</param>
+        /// <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
+        /// <response code="200">Item updated in the database successfully.</response>
+        /// <response code="400">Poorly formed request.</response>
+        /// <response code="404">Item not found in the database.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromBody] EcologicalMeasurementDTO dto)
         {
-            if (dto == null)
-            {
-                return BadRequest("Measurement information formatted incorrectly.");
-            }
-
             var ecologicalMeasurement = new EcologicalMeasurement
             {
                 Date_taken = dto.Date_taken,
@@ -142,22 +177,20 @@ namespace PLNKTNv2.Controllers
                 Footwear = dto.Footwear
             };
 
-            var result = await _userRepository.UpdateEcologicalMeasurement(dto.UserId, ecologicalMeasurement);
+            string id = _account.GetAccountId(this.User);
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
-            if (result == 1)
+            if (user != null)
             {
-                return Ok();
+                Status status = _ecologicalMeasurementService.UpdateEcologicalMeasurement(user, ecologicalMeasurement);
+                if (status.Equals(Status.OK))
+                {
+                    await _unitOfWork.Repository<User>().UpdateAsync(user);
+                    return Ok();
+                }
+                return NotFound("Ecological Measurement not found.");
             }
-            else if (result == -8)
-            {
-                // return HTTP 404 as ecologicalMeasure with date cannot be found in DB
-                return NotFound("User with ID '" + dto.UserId + "' does not have ecological measure on " + dto.Date_taken);
-            }
-            else
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound("User with ID '" + dto.UserId + "' does not exist.");
-            }
+            return NotFound("User not found.");
         }
     }
 }

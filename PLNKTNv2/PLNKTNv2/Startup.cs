@@ -4,12 +4,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PLNKTNv2.Repositories;
 using PLNKTNv2.BusinessLogic.Authentication;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
+using PLNKTNv2.BusinessLogic.Helpers;
+using PLNKTNv2.BusinessLogic;
+using PLNKTNv2.Persistence.Repositories;
+using PLNKTNv2.Persistence.Repositories.Implementation;
+using PLNKTNv2.Persistence;
+using PLNKTNv2.BusinessLogic.Services;
+using PLNKTNv2.BusinessLogic.Services.Implementation;
+using PLNKTNv2.BusinessLogic.Helpers.Implementation;
 
 namespace PLNKTNv2
 {
@@ -64,11 +71,20 @@ namespace PLNKTNv2
             services.AddAWSService<Amazon.S3.IAmazonS3>();
 
             // Add custom DI code
-            services.AddTransient<IDBConnection, DBConnection>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IRewardRepository, RewardRepository>();
-            services.AddTransient<ICollectiveEFRepository, CollectiveEFRepository>();
+            // Persistence
+            services.AddTransient<IDbContextFactory, DbContextFactory>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            // Services
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRewardRegionService, RewardRegionService>();
+            services.AddTransient<IGrantedRewardService, GrantedRewardService>();
+            services.AddTransient<IEcologicalMeasurementService, EcologicalMeasurementService>();
+            services.AddTransient<ICollectiveEfService, CollectiveEfService>();
+
+            // Business Logic
             services.AddTransient<IAccount, Account>();
+            services.AddTransient<IMessenger, Email>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

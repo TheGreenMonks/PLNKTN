@@ -20,7 +20,7 @@ namespace PLNKTNv2.Tests
     {
 
 
-        [Fact]
+/*        [Fact]
         public async Task TestGet()
         {
             var lambdaFunction = new LambdaEntryPoint();
@@ -34,7 +34,7 @@ namespace PLNKTNv2.Tests
             Assert.Equal("[\"value1\",\"value2\"]", response.Body);
             Assert.True(response.MultiValueHeaders.ContainsKey("Content-Type"));
             Assert.Equal("application/json; charset=utf-8", response.MultiValueHeaders["Content-Type"][0]);
-        }
+        }*/
 
 
     }

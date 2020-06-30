@@ -1,40 +1,56 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PLNKTNv2.BusinessLogic.Authentication;
+using PLNKTNv2.BusinessLogic.Services;
 using PLNKTNv2.Models;
-using PLNKTNv2.Repositories;
+using PLNKTNv2.Persistence;
 using System.Threading.Tasks;
 
 namespace PLNKTNv2.Controllers
 {
+    /// <summary>
+    /// The Bin Controller holds methods to retrieve and manipulate data held about trees that have been planted by users.
+    /// The 'Bin' is a separate data store used to notify the One Tree Planted organisation how many trees
+    /// have been awarded and where. The table will be trawled periodically for trees planted and cleared when
+    /// the data is sent to OTP.  This prevents duplicate tree planting requests going to OTP.
+    /// </summary>
+    /// <remarks>
+    /// All functions require the user to be authenticated with JWT token before they will execute.
+    /// </remarks>
+    [Authorize(Policy = "EndUser")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
-    public class DumpsterController : Controller
+    [ApiController]
+    public class BinController : Controller
     {
-        private readonly IRewardRepository _rewardRepository;
+        private readonly IAccount _account;
+        private readonly IBinService _binService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DumpsterController(IRewardRepository rewardRepository)
+        /// <summary>
+        /// Constructor to create EcologicalMeasurementsController with DI assets.
+        /// </summary>
+        /// <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
+        /// <param name="account">Provides access to authenticated user data.</param>
+        /// <param name="binService">Provides business logic for processing data related to Bin items.</param>
+        public BinController(
+            IUnitOfWork unitOfWork,
+            IAccount account,
+            IBinService binService
+            )
         {
-            _rewardRepository = rewardRepository;
+            _unitOfWork = unitOfWork;
+            _account = account;
+            _binService = binService;
         }
 
         // PUT api/values/5
-        [HttpPut("ThrowTreeInBin/{region_name}")]
-        public async Task<IActionResult> Put(string region_name, [FromBody] Rgn project)
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromBody] Bin bin)
         {
-            if (region_name == null)
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest("Country information formatted incorrectly.");
-            }
-
-            var result = await _rewardRepository.ThrowTreeInBin(region_name, project);
-
-            if (result == 1)
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound("Country with name '" + region_name + "' does not exist.");
-            }
+            Bin dbBin = await _unitOfWork.Repository<Bin>().GetByIdAsync(bin.Region_name);
+            Status result = _binService.InsertUserTreeToBin(bin.Projects[0], dbBin);
+            return Ok();
         }
     }
 }

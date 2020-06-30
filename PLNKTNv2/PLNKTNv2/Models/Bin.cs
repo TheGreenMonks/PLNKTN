@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Amazon.DynamoDBv2.DataModel;
 using System.Collections.Generic;
+
 namespace PLNKTNv2.Models
 {
+    [DynamoDBTable("Bin")]
     public class Bin
     {
-        public string Region_name { set; get; }
-        public List<Rgn> Projects { set; get; }
         public int Count { get; set; } = 0;
+
+        public IList<UserGrantedRewardProject> Projects { set; get; }
+
+        [DynamoDBHashKey]
+        public string Region_name { get; set; }
     }
 }

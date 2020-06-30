@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.BusinessLogic.Authentication;
+using PLNKTNv2.BusinessLogic.Services;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
-using PLNKTNv2.Repositories;
+using PLNKTNv2.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,58 +25,40 @@ namespace PLNKTNv2.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IAccount _account;
-        private readonly IRewardRepository _rewardRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserService _userService;
 
         /// <summary>
-        /// Constructor to create UsersController with DI assets.
+        /// Constructor to create Controller with DI assets.
         /// </summary>
-        /// <param name="userRepository">Repository provides database access to User information.</param>
-        /// <param name="rewardRepository">Repository provides database access to Reward and Challenge information.</param>
+        /// <param name="unitOfWork">Abstraction layer between the controller and DB Context and the generic repository.</param>
         /// <param name="account">Provides access to authenticated user data.</param>
-        public UsersController(
-            IUserRepository userRepository,
-            IRewardRepository rewardRepository,
-            IAccount account
-            )
+        /// <param name="userService">Provides business logic for processing data related to users.</param>
+        public UsersController(IUnitOfWork unitOfWork, IAccount account, IUserService userService)
         {
-            _userRepository = userRepository;
-            _rewardRepository = rewardRepository;
+            _unitOfWork = unitOfWork;
             _account = account;
+            _userService = userService;
         }
 
         /// <summary>
-        /// DELETE method to remove a user and their associated data from the database.
+        /// DELETE method to remove a user and its associated data from the database.
         /// </summary>
         /// <remarks>
         /// Special administration priviledges required to execute this function.
         /// </remarks>
         /// <param name="id">The <c>string</c> id of the user to be removed.</param>
-        /// <returns></returns>
+        /// <returns><c>ActionResult</c> with appropriate code</returns>
         /// <response code="200">Item removed from the database successfully.</response>
-        /// <response code="404">Item not found in the database.</response>
         /// <response code="400">Poorly formed request.</response>
         [Authorize(Policy = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync(string id)
         {
-            var userDeleted = await _userRepository.DeleteUser(id);
-
-            if (userDeleted > 0)
-            {
-                return Ok();
-            }
-            else if (userDeleted == -9)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            await _unitOfWork.Repository<User>().DeleteByIdAsync(id);
+            return Ok();
         }
 
         /// <summary>
@@ -84,7 +67,7 @@ namespace PLNKTNv2.Controllers
         /// <remarks>
         /// Requires user to be logged in with end user credentials.
         /// </remarks>
-        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code and user details in body.</returns>
+        /// <returns><c>ActionResult</c> with appropriate code</returns>
         /// <response code="200">Returns authenticated user data.</response>
         /// <response code="404">Item not found in the database.</response>
         /// <response code="400">Poorly formed request.</response>
@@ -92,14 +75,14 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByIdAsync()
+        public async Task<IActionResult> Get()
         {
-            var id = _account.GetAccountId(this.User);
-            var user = await _userRepository.GetUser(id);
+            string id = _account.GetAccountId(this.User);
+            User result = await _unitOfWork.Repository<User>().GetByIdAsync(id);
 
-            if (user != null)
+            if (result != null)
             {
-                return Ok(user);
+                return Ok(result);
             }
             else
             {
@@ -117,90 +100,61 @@ namespace PLNKTNv2.Controllers
         /// <response code="200">Returns number of users in the database.</response>
         [HttpGet("Count")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
-        public IActionResult GetUserCount()
+        public async Task<IActionResult> GetUserCount()
         {
-            var userCount = _userRepository.GetUserCount("UserCount");
-            return Ok(userCount);
+            AppTotalUsers totalUserRow = await _unitOfWork.Repository<AppTotalUsers>().GetByIdAsync("UserCount");
+            return Ok(totalUserRow.UserRecordCount);
         }
 
         /// <summary>
-        /// POST method to create new user in the database.
+        /// Create new user in the database.
         /// </summary>
         /// <remarks>
         /// Requires user to be logged in with end user credentials. Id of the user to be created
-        /// is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and 
+        /// is retrieved from the JWT token of the currenly logged in user as the Cognito user Id and
         /// the User Id stored in the DB must match.
         /// </remarks>
         /// <param name="userDto">DTO representation of a user entry for user creation.</param>
         /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
         /// <response code="201">Returns newly created item.</response>
-        /// <response code="409">Item already exists in database.</response>
         /// <response code="400">Poorly formed request.</response>
+        /// <response code="409">Item already exists.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(User))]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Post([FromBody] UserDetailsDTO userDto)
         {
-            // Generate the 'user rewards' for this new 'user' ready for insertion to the DB so, that the user has a complete
-            // list of rewards and challenges so, they can participate in reward and challenge completion.
-            var id = _account.GetAccountId(this.User);
-            var rewards = await _rewardRepository.GetAllRewards();
-            var userRewards = (List<UserReward>)GenerateUserRewards(rewards);
+            string id = _account.GetAccountId(this.User);
 
-            // Create new user
-            var user = new User()
-            {
-                Id = id,
-                First_name = userDto.First_name,
-                Last_name = userDto.Last_name,
-                Created_at = DateTime.UtcNow,
-                Email = userDto.Email,
-                Level = userDto.Level,
-                EcologicalMeasurements = new List<EcologicalMeasurement>(),
-                LivingSpace = userDto.LivingSpace,
-                NumPeopleHousehold = userDto.NumPeopleHousehold,
-                CarMPG = userDto.CarMPG,
-                ShareData = userDto.ShareData,
-                Country = userDto.Country,
-                UserRewards = userRewards,
-                GrantedRewards = new List<Bin>()
-            };
-
-            // Save the new user to the DB
-            var result = await _userRepository.CreateUser(user);
-
-            if (result == 1)
-            {
-                return CreatedAtAction("Get", new { id }, user);
-            }
-            else if (result == -10)
+            var exists = await _unitOfWork.Repository<Reward>().GetByIdAsync(id);
+            if (exists != null)
             {
                 return Conflict();
             }
-            else
-            {
-                return BadRequest();
-            }
+
+            ICollection<Reward> rewards = (ICollection<Reward>) await _unitOfWork.Repository<Reward>().GetAllAsync();
+            User user = _userService.CreateUser(rewards, userDto, id);
+
+            await _unitOfWork.Repository<User>().InsertAsync(user);
+            return CreatedAtAction("Get", user);
         }
 
         /// <summary>
-        /// PUT replaces current user data with that provided in the request's HTTP body.
+        /// Replaces current user data with that provided in the request's HTTP body.
         /// </summary>
         /// <remarks>
-        /// User must be logged in with end user credentials to execute. Partial user information can be sent. 
+        /// User must be logged in with end user credentials to execute. Partial user information can be sent.
         /// The function replaces any data that is send in the request body and ignores any fields that are not present.
         /// </remarks>
         /// <param name="dto">Partial representation of user object with fields that can be manipulated by this request.</param>
         /// <returns></returns>
         /// <response code="200">Item updated in the database successfully.</response>
-        /// <response code="404">Item not found in database.</response>
         /// <response code="400">Poorly formed request.</response>
-        [HttpPut]
+        [HttpPatch]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put([FromBody] UserDetailsDTO dto)
+        public async Task<IActionResult> Patch([FromBody] UserDetailsDTO dto)
         {
             var id = _account.GetAccountId(this.User);
 
@@ -219,32 +173,20 @@ namespace PLNKTNv2.Controllers
                 Country = dto.Country
             };
 
-            var result = await _userRepository.UpdateUser(user);
-
-            if (result == 1)
-            {
-                return Ok();
-            }
-            else if (result == -9)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            await _unitOfWork.Repository<User>().UpdateAsync(user);
+            return Ok();
         }
 
         /// <summary>
-        /// PUT updates a user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+        /// Uupdates a complete user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
         /// </summary>
         /// <remarks>
-        /// User must be logged in with end user credentials to execute. The full userReward unit of information must be sent. 
+        /// User must be logged in with end user credentials to execute. The full userReward unit of information must be sent.
         /// This includes all of the challenge infomration that is not being updated. The function basically removes the user
         /// reward and replaces it.
         /// </remarks>
         /// <param name="model"></param>
-        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+        /// <returns><c>Task ActionResult </c> HTTP response with HTTP code.</returns>
         /// <response code="200">Item updated in the database successfully.</response>
         /// <response code="404">Item not found in database.</response>
         /// <response code="400">Poorly formed request.</response>
@@ -255,105 +197,15 @@ namespace PLNKTNv2.Controllers
         public async Task<IActionResult> Put([FromBody] UserReward model)
         {
             var id = _account.GetAccountId(this.User);
-            int result = await _userRepository.UpdateUserReward(id, model);
+            User user = _unitOfWork.Repository<User>().GetByIdAsync(id).Result;
 
-            if (result == 1)
+            if (user != null)
             {
-                // return HTTP 200 Ok item was updated.  PUT does not require the item to be returned in HTTP body.
-                // Not done to save bandwidth.
+                _userService.UpdateUserReward(user, model);
+                await _unitOfWork.Repository<User>().UpdateAsync(user);
                 return Ok();
             }
-            else if (result == -9)
-            {
-                // return HTTP 404 as user cannot be found in DB
-                return NotFound();
-            }
-            else
-            {
-                // return HTTP 400 badrequest as something is wrong
-                return BadRequest();
-            }
-        }
-
-        //  Adds all reward and challenge data required by the user object to a
-        internal static ICollection<UserReward> GenerateUpdateUserRewards(ICollection<Reward> rewards)
-        {
-            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
-
-            foreach (var _reward in rewards)
-            {
-                var userRewardChallenge = new List<UserRewardChallenge>();
-
-                foreach (var challenge in _reward.Challenges)
-                {
-                    userRewardChallenge.Add(new UserRewardChallenge
-                    {
-                        Id = challenge.Id,
-                        Rule = new UserRewardChallengeRule
-                        {
-                            Category = challenge.Rule.Category,
-                            RestrictionType = challenge.Rule.RestrictionType,
-                            SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time,
-                            AmountToConsume = challenge.Rule.AmountToConsume
-                        },
-                    });
-                }
-
-                var userReward = new UserReward
-                {
-                    Id = _reward.Id,
-                    Challenges = userRewardChallenge,
-                };
-
-                generatedUserRewards.Add(userReward);
-            }
-
-            return generatedUserRewards;
-        }
-
-        //  Adds all reward and challenge data required by the user object to a
-        internal static ICollection<UserReward> GenerateUserRewards(ICollection<Reward> rewards)
-        {
-            ICollection<UserReward> generatedUserRewards = new List<UserReward>();
-
-            foreach (var _reward in rewards)
-            {
-                var userRewardChallenge = new List<UserRewardChallenge>();
-
-                foreach (var challenge in _reward.Challenges)
-                {
-                    userRewardChallenge.Add(new UserRewardChallenge
-                    {
-                        Id = challenge.Id,
-                        DateCompleted = null,
-                        Rule = new UserRewardChallengeRule
-                        {
-                            Category = challenge.Rule.Category,
-                            RestrictionType = challenge.Rule.RestrictionType,
-                            SubCategory = challenge.Rule.SubCategory,
-                            Time = challenge.Rule.Time,
-                            AmountToConsume = challenge.Rule.AmountToConsume
-                        },
-                        Status = UserRewardChallengeStatus.Incomplete,
-                        NotificationStatus = NotificationStatus.Not_Complete
-                    });
-                }
-
-                var userReward = new UserReward
-                {
-                    Id = _reward.Id,
-                    Challenges = userRewardChallenge,
-                    DateCompleted = null,
-                    Status = UserRewardStatus.Incomplete,
-                    NotificationStatus = NotificationStatus.Not_Complete,
-                    IsRewardGranted = false
-                };
-
-                generatedUserRewards.Add(userReward);
-            }
-
-            return generatedUserRewards;
+            return NotFound("User not found.");
         }
     }
 }

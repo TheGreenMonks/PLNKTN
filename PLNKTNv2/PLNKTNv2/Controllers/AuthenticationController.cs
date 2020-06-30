@@ -2,6 +2,7 @@
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.Models.Dtos;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace PLNKTNv2.Controllers
 {
     [AllowAnonymous]
     [Route("api")]
+    [Produces("application/json")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -17,6 +19,15 @@ namespace PLNKTNv2.Controllers
         private const string _userPoolId = "us-west-2_yt7xxSRrl";
         private readonly RegionEndpoint _region = RegionEndpoint.USWest2;
 
+        /// <summary>
+        /// Register a user for the service with a valid username and password.
+        /// </summary>
+        /// <param name="user">The <c>UserAuthDto</c> with username, password and valid email address of user to register.</param>
+        /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+        /// <response code="200">Returns authentication data.</response>
+        /// <response code="400">Poorly formed request.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("register")]
         public async Task<ActionResult<string>> Register(UserAuthDto user)
@@ -56,9 +67,18 @@ namespace PLNKTNv2.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Sign a user into the service via a valid username and password.
+        /// </summary>
+        /// <param name="user">The <c>UserAuthDto</c> with username and password of user to sign in.</param>
+        /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
+        /// <response code="200">Returns authentication data.</response>
+        /// <response code="400">Poorly formed request.</response>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminInitiateAuthResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet]
         [Route("signin")]
-        public async Task<ActionResult<string>> SignIn(UserAuthDto user)
+        public async Task<IActionResult> SignIn(UserAuthDto user)
         {
             var cognito = new AmazonCognitoIdentityProviderClient(_region);
 
@@ -74,7 +94,7 @@ namespace PLNKTNv2.Controllers
 
             var response = await cognito.AdminInitiateAuthAsync(request);
 
-            return Ok(response.AuthenticationResult.IdToken);
+            return Ok(response.AuthenticationResult);
         }
     }
 }

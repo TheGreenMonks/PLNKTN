@@ -22,9 +22,9 @@ using PLNKTNv2;
 
 namespace PLNKTNv2.Tests
 {
-    public class S3ProxyControllerTests : IDisposable
+    public class S3ProxyControllerTests/* : IDisposable*/
     {
-        string BucketName { get; set; }
+        /*string BucketName { get; set; }
         IAmazonS3 S3Client { get; set; }
 
         IConfigurationRoot Configuration { get; set; }
@@ -114,10 +114,10 @@ namespace PLNKTNv2.Tests
             }
         }
 
-
+        
         public void Dispose()
         {
             Dispose(true);
-        }
+        }*/
     }
 }

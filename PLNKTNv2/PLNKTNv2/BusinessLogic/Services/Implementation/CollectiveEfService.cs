@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PLNKTNv2.BusinessLogic
+namespace PLNKTNv2.BusinessLogic.Services.Implementation
 {
-    public static class CollectiveEfLogic
+    public class CollectiveEfService : ICollectiveEfService
     {
-        public static CollectiveEF GenerateCollectiveEF(DateTime timeStamp, IList<User> userList)
+        public CollectiveEF GenerateCollectiveEF(DateTime timeStamp, IEnumerable<User> userList)
         {
             var usersOnly = GetUserEntities(userList);
             float collectiveEfResult = ComputeCollectiveEFAsync(timeStamp, usersOnly);
@@ -20,7 +20,7 @@ namespace PLNKTNv2.BusinessLogic
             return collectiveEf;
         }
 
-        private static float ComputeCollectiveEFAsync(DateTime calculationDate, IEnumerable<User> userList)
+        private float ComputeCollectiveEFAsync(DateTime calculationDate, IEnumerable<User> userList)
         {
             float? totalCollectiveEf = 0;
             int count = 0;
@@ -43,7 +43,7 @@ namespace PLNKTNv2.BusinessLogic
             return (float)totalCollectiveEf / count;
         }
 
-        private static IEnumerable<User> GetUserEntities(IList<User> userList)
+        private IEnumerable<User> GetUserEntities(IEnumerable<User> userList)
         {
             return userList.Where(u => u.EcologicalMeasurements != null);
         }
