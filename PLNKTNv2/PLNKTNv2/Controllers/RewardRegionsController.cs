@@ -93,7 +93,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RewardRegion))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
             var result = await _unitOfWork.Repository<RewardRegion>().GetByIdAsync(id);
