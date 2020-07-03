@@ -6,7 +6,7 @@ using System.Net.Mail;
 
 namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
 {
-    internal class Email : IMessenger
+    public class Email : IMessenger
     {
         private readonly string pwFile = "C:\\gmpw.txt";
         private ICollection<string> messageLines = new List<string>();

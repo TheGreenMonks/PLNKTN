@@ -1,0 +1,122 @@
+{
+  "id": "newRewardId",
+  "title": "string",
+  "imageURL": "string",
+  "description": "string",
+  "link": "string",
+  "gridPosition": {
+    "x": 0,
+    "y": 0
+  },
+  "text_When_Completed": "string",
+  "text_When_Not_Completed": "string",
+  "source": "string",
+  "challenges": [
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    },
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    },
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    },
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    },
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    },
+    {
+      "id": "string",
+      "name": "string",
+      "imageURL": "string",
+      "description": "string",
+      "link": "string",
+      "text_When_Completed": "string",
+      "text_When_Not_Completed": "string",
+      "source": "string",
+      "rule": {
+        "amountToConsume": 0,
+        "category": "string",
+        "restrictionType": 0,
+        "subCategory": "string",
+        "time": 0
+      }
+    }
+  ],
+  "country": "string",
+  "overview": "string",
+  "impact": "string",
+  "tree_species": "string"
+}

@@ -1,0 +1,90 @@
+{
+  "first_name": "string",
+  "last_name": "string",
+  "created_at": "2020-07-02T18:41:27.016Z",
+  "email": "string",
+  "level": "string",
+  "ecologicalMeasurements": [
+    {
+      "date_taken": "2020-07-02T18:41:27.017Z",
+      "ecologicalFootprint": 0,
+      "transport": {
+        "bicycle": 0,
+        "car": 0,
+        "bus": 0,
+        "flight": 0,
+        "subway": 0,
+        "walking": 0
+      },
+      "diet": {
+        "plant_based": 0,
+        "beef": 0,
+        "pork": 0,
+        "poultry": 0,
+        "egg": 0,
+        "dairy": 0,
+        "seafood": 0
+      },
+      "electronics": {
+        "small": true,
+        "medium": true,
+        "large": true,
+        "used": true
+      },
+      "clothing": {
+        "small": true,
+        "medium": true,
+        "large": true,
+        "used": true
+      },
+      "footwear": {
+        "small": true,
+        "medium": true,
+        "large": true,
+        "used": true
+      }
+    }
+  ],
+  "livingSpace": 0,
+  "numPeopleHousehold": 0,
+  "carMPG": 0,
+  "shareData": true,
+  "country": "string",
+  "userRewards": [
+    {
+      "id": "existingUR",
+      "challenges": [
+        {
+          "id": "string",
+          "dateCompleted": "2020-07-02T18:41:27.017Z",
+          "status": 0,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "string",
+            "restrictionType": 0,
+            "subCategory": "string",
+            "time": 0
+          },
+          "notificationStatus": 0
+        }
+      ],
+      "dateCompleted": "2020-07-02T18:41:27.017Z",
+      "status": 0,
+      "notificationStatus": 0,
+      "isRewardGranted": true
+    }
+  ],
+  "grantedRewards": [
+    {
+      "count": 0,
+      "projects": [
+        {
+          "project_name": "string",
+          "tree_species": "string"
+        }
+      ],
+      "region_name": "string"
+    }
+  ],
+  "id": "string"
+}
