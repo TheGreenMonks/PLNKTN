@@ -14,7 +14,7 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
     public class UserServiceAddUserRewardToAllUsersShould
     {
         [Fact]
-        public void UpdateAllUsersWithUserReward()
+        public void AddUserRewardToAllUsers()
         {
             // Arrange
             // Setup classes
@@ -22,10 +22,9 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             IUserService sut = new UserService(iMessengerMock);
 
             // Setup sut method parameters
-            Reward reward;
             ICollection<User> users = new List<User>();
             string jsonTemp = File.ReadAllText("./Json/Models/Reward.json");
-            reward = JsonConvert.DeserializeObject<Reward>(jsonTemp);
+            Reward reward = JsonConvert.DeserializeObject<Reward>(jsonTemp);
             jsonTemp = File.ReadAllText("./Json/Models/User.json");
             User user = JsonConvert.DeserializeObject<User>(jsonTemp);
             for (int i = 0; i < 3; i++)
