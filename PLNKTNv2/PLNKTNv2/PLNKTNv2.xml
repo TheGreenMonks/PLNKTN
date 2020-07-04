@@ -48,25 +48,6 @@
             <response code="200">Returns authentication data.</response>
             <response code="400">Poorly formed request.</response>
         </member>
-        <member name="T:PLNKTNv2.Controllers.BinController">
-            <summary>
-            The Bin Controller holds methods to retrieve and manipulate data held about trees that have been planted by users.
-            The 'Bin' is a separate data store used to notify the One Tree Planted organisation how many trees
-            have been awarded and where. The table will be trawled periodically for trees planted and cleared when
-            the data is sent to OTP.  This prevents duplicate tree planting requests going to OTP.
-            </summary>
-            <remarks>
-            All functions require the user to be authenticated with JWT token before they will execute.
-            </remarks>
-        </member>
-        <member name="M:PLNKTNv2.Controllers.BinController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IBinService)">
-            <summary>
-            Constructor to create EcologicalMeasurementsController with DI assets.
-            </summary>
-            <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
-            <param name="account">Provides access to authenticated user data.</param>
-            <param name="binService">Provides business logic for processing data related to Bin items.</param>
-        </member>
         <member name="T:PLNKTNv2.Controllers.CollectiveEFController">
             <summary>
             The Collective Ecological Footprint Controller holds methods to retrieve and manipulate data held about user's EFs
@@ -196,13 +177,14 @@
             All functions require the user to be authenticated with JWT token before they will execute.
             </remarks>
         </member>
-        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IGrantedRewardService)">
+        <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Authentication.IAccount,PLNKTNv2.BusinessLogic.Services.IGrantedRewardService,PLNKTNv2.BusinessLogic.Services.IBinService)">
             <summary>
             Constructor to create GrantedRewardsController with DI assets.
             </summary>
             <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
             <param name="account">Provides access to authenticated user data.</param>
             <param name="grantedRewardService">Provides business logic for processing data related to granted rewards.</param>
+            <param name="binService">Provides business logic for processing data related to Bin items.</param>
         </member>
         <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.Get(System.String)">
             <summary>
@@ -241,10 +223,11 @@
         </member>
         <member name="M:PLNKTNv2.Controllers.GrantedRewardsController.Post(PLNKTNv2.Models.Dtos.UserGrantedRewardDto)">
             <summary>
-            Create new granted reward for logged in user in the database.
+            Create new granted reward for logged in user in the database. The granted reward will also be added
+            to the Bin table ready to be sent to the One Tree Planted organisation.
             </summary>
             <remarks>
-            Requires user to be logged in with special administrative credentials. Multiple trees can be planted in
+            Requires user to be logged in with credentials. Multiple trees can be planted in
             the same region and same project, therefore calling this function multiple times with the same data will have
             a knock on effect of planting multiple trees for the user.
             </remarks>
