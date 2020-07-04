@@ -30,11 +30,11 @@
             <param name="user">The ClaimsPrinciple implementation for a user</param>
             <returns>User name as string</returns>
         </member>
-        <member name="M:PLNKTNv2.Controllers.AuthenticationController.Register(PLNKTNv2.Models.Dtos.UserAuthDto)">
+        <member name="M:PLNKTNv2.Controllers.AuthenticationController.Register(PLNKTNv2.Models.Dtos.UserRegisterDto)">
             <summary>
             Register a user for the service with a valid username and password.
             </summary>
-            <param name="user">The <c>UserAuthDto</c> with username, password and valid email address of user to register.</param>
+            <param name="user">The <c>UserRegisterDto</c> with username, password and valid email address of user to register.</param>
             <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
             <response code="200">Returns authentication data.</response>
             <response code="400">Poorly formed request.</response>
@@ -43,7 +43,7 @@
             <summary>
             Sign a user into the service via a valid username and password.
             </summary>
-            <param name="user">The <c>UserAuthDto</c> with username and password of user to sign in.</param>
+            <param name="user">The <c>UserRegisterDto</c> with username and password of user to sign in.</param>
             <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
             <response code="200">Returns authentication data.</response>
             <response code="400">Poorly formed request.</response>

@@ -22,7 +22,7 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// Register a user for the service with a valid username and password.
         /// </summary>
-        /// <param name="user">The <c>UserAuthDto</c> with username, password and valid email address of user to register.</param>
+        /// <param name="user">The <c>UserRegisterDto</c> with username, password and valid email address of user to register.</param>
         /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
         /// <response code="200">Returns authentication data.</response>
         /// <response code="400">Poorly formed request.</response>
@@ -30,7 +30,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserAuthDto user)
+        public async Task<IActionResult> Register(UserRegisterDto user)
         {
             var cognito = new AmazonCognitoIdentityProviderClient(_region);
 
@@ -55,10 +55,8 @@ namespace PLNKTNv2.Controllers
             };
             request.UserAttributes.Add(customRoleAttribute);
 
-            // TODO: Client needs to ensure user is signed up and confirmed successfully
-            var response = await cognito.SignUpAsync(request);
-
-            var confResponse = await cognito.AdminConfirmSignUpAsync(new AdminConfirmSignUpRequest
+            await cognito.SignUpAsync(request);
+            await cognito.AdminConfirmSignUpAsync(new AdminConfirmSignUpRequest
             {
                 Username = user.Username,
                 UserPoolId = _userPoolId
@@ -70,7 +68,7 @@ namespace PLNKTNv2.Controllers
         /// <summary>
         /// Sign a user into the service via a valid username and password.
         /// </summary>
-        /// <param name="user">The <c>UserAuthDto</c> with username and password of user to sign in.</param>
+        /// <param name="user">The <c>UserRegisterDto</c> with username and password of user to sign in.</param>
         /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
         /// <response code="200">Returns authentication data.</response>
         /// <response code="400">Poorly formed request.</response>
