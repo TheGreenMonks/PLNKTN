@@ -26,24 +26,27 @@ namespace PLNKTNv2.Controllers
     {
         private readonly IAccount _account;
         private readonly string _appTotalTreesPlantedId = "AppTotalTreesPlanted";
+        private readonly IBinService _binService;
         private readonly IGrantedRewardService _grantedRewardService;
         private readonly IUnitOfWork _unitOfWork;
-
         /// <summary>
         /// Constructor to create GrantedRewardsController with DI assets.
         /// </summary>
         /// <param name="unitOfWork">Abstraction layer between the controller and DB Context and Repositories.</param>
         /// <param name="account">Provides access to authenticated user data.</param>
         /// <param name="grantedRewardService">Provides business logic for processing data related to granted rewards.</param>
+        /// <param name="binService">Provides business logic for processing data related to Bin items.</param>
         public GrantedRewardsController(
             IUnitOfWork unitOfWork,
             IAccount account,
-            IGrantedRewardService grantedRewardService
+            IGrantedRewardService grantedRewardService,
+            IBinService binService
             )
         {
             _unitOfWork = unitOfWork;
             _account = account;
             _grantedRewardService = grantedRewardService;
+            _binService = binService;
         }
 
         /// <summary>
@@ -126,10 +129,11 @@ namespace PLNKTNv2.Controllers
         }
 
         /// <summary>
-        /// Create new granted reward for logged in user in the database.
+        /// Create new granted reward for logged in user in the database. The granted reward will also be added
+        /// to the Bin table ready to be sent to the One Tree Planted organisation.
         /// </summary>
         /// <remarks>
-        /// Requires user to be logged in with special administrative credentials. Multiple trees can be planted in
+        /// Requires user to be logged in with credentials. Multiple trees can be planted in
         /// the same region and same project, therefore calling this function multiple times with the same data will have
         /// a knock on effect of planting multiple trees for the user.
         /// </remarks>
@@ -152,6 +156,9 @@ namespace PLNKTNv2.Controllers
             totalTreesPlanted.TreesCount++;
             await _unitOfWork.Repository<AppTotalTreesPlanted>().UpdateAsync(totalTreesPlanted);
             await _unitOfWork.Repository<User>().UpdateAsync(user);
+            Bin dbBin = await _unitOfWork.Repository<Bin>().GetByIdAsync(grantedRewardDto.Region_name);
+            _binService.InsertUserTreeToBin(grantedRewardDto.Project, dbBin);
+            await _unitOfWork.Repository<Bin>().UpdateAsync(dbBin);
 
             return CreatedAtAction("Get", new { grantedRewardDto.Region_name }, grantedRewardDto.Project);
         }
