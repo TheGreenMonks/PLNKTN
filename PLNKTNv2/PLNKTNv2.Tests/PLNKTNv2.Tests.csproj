@@ -36,4 +36,9 @@
   <ItemGroup>
     <Folder Include="SampleObjects\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Json\Models\Dtos\UserDetailsDto.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
