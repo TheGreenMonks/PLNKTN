@@ -36,8 +36,10 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
             }
         }
 
-        public User CreateUser(ICollection<Reward> rewards, UserDetailsDTO userDto, string id)
+        public User CreateUser(ICollection<Reward> rewards, CreateUserDetailsDTO userDto, string id)
         {
+            // Validation
+            _ = String.IsNullOrEmpty(id) ? throw new ArgumentException("The UserId is null or empty", "id") : false;
             ICollection<UserReward> userRewards = GenerateUserRewards(rewards);
 
             var user = new User()

@@ -14,6 +14,6 @@ namespace PLNKTNv2.BusinessLogic.Services
 
         void UpdateUserRewardInAllUsers(Reward reward, IEnumerable<User> users);
 
-        User CreateUser(ICollection<Reward> rewards, UserDetailsDTO userDto, string id);
+        User CreateUser(ICollection<Reward> rewards, CreateUserDetailsDTO userDto, string id);
     }
 }

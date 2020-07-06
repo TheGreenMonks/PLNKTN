@@ -456,7 +456,7 @@
             <returns><c>IActionResult</c> HTTP response with HTTP code and user count as int in body.</returns>
             <response code="200">Returns number of users in the database.</response>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.Post(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
+        <member name="M:PLNKTNv2.Controllers.UsersController.Post(PLNKTNv2.Models.Dtos.CreateUserDetailsDTO)">
             <summary>
             Create new user in the database.
             </summary>
@@ -471,7 +471,7 @@
             <response code="400">Poorly formed request.</response>
             <response code="409">Item already exists.</response>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.Patch(PLNKTNv2.Models.Dtos.UserDetailsDTO)">
+        <member name="M:PLNKTNv2.Controllers.UsersController.Patch(PLNKTNv2.Models.Dtos.PatchUserDetailsDto)">
             <summary>
             Replaces current user data with that provided in the request's HTTP body.
             </summary>

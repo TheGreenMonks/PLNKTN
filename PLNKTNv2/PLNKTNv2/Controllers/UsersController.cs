@@ -123,7 +123,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(User))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Post([FromBody] UserDetailsDTO userDto)
+        public async Task<IActionResult> Post([FromBody] CreateUserDetailsDTO userDto)
         {
             string id = _account.GetAccountId(this.User);
 
@@ -154,7 +154,7 @@ namespace PLNKTNv2.Controllers
         [HttpPatch]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Patch([FromBody] UserDetailsDTO dto)
+        public async Task<IActionResult> Patch([FromBody] PatchUserDetailsDto dto)
         {
             var id = _account.GetAccountId(this.User);
 
@@ -163,7 +163,6 @@ namespace PLNKTNv2.Controllers
                 Id = id,
                 First_name = dto.First_name,
                 Last_name = dto.Last_name,
-                Created_at = dto.Created_at,
                 Email = dto.Email,
                 Level = dto.Level,
                 LivingSpace = dto.LivingSpace,

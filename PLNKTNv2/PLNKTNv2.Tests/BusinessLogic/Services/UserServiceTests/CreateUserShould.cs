@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
@@ -28,7 +27,7 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             string userId = "2020-07-03T23-23-23";
             ICollection<Reward> rewards = new List<Reward>();
             string jsonTemp = File.ReadAllText("./Json/Models/Dtos/UserDetailsDto.json");
-            UserDetailsDTO userDto = JsonConvert.DeserializeObject<UserDetailsDTO>(jsonTemp);
+            CreateUserDetailsDTO userDto = JsonConvert.DeserializeObject<CreateUserDetailsDTO>(jsonTemp);
             jsonTemp = File.ReadAllText("./Json/Models/Reward.json");
             Reward reward = JsonConvert.DeserializeObject<Reward>(jsonTemp);
             for (int i = 0; i < 3; i++)
@@ -42,12 +41,117 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
 
             // Assert
             Assert.Equal(JsonConvert.SerializeObject(user.UserRewards), GenerateAnswer(3));
-            Assert.True(user.EcologicalMeasurements.Count() == 0);
-            Assert.True(user.GrantedRewards.Count() == 0);
-            Assert.True(user.UserRewards.Count() == 3);
-
         }
 
+        [Fact]
+        public void CreateUserWhenNoRewardsInSystem()
+        {
+            // Arrange
+            // Setup classes
+            IMessenger iMessengerMock = new Email();
+            IUserService sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string userId = "2020-07-03T23-23-23";
+            ICollection<Reward> rewards = new List<Reward>();
+            string jsonTemp = File.ReadAllText("./Json/Models/Dtos/UserDetailsDto.json");
+            CreateUserDetailsDTO userDto = JsonConvert.DeserializeObject<CreateUserDetailsDTO>(jsonTemp);
+
+            // Act
+            User user = sut.CreateUser(rewards, userDto, userId);
+
+            // Assert
+            Assert.Equal(JsonConvert.SerializeObject(user.UserRewards), GenerateAnswer(0));
+        }
+
+        [Fact]
+        public void CreateUserWhenCarMpgParamNull()
+        {
+            // Arrange
+            // Setup classes
+            IMessenger iMessengerMock = new Email();
+            IUserService sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string userId = "2020-07-03T23-23-23";
+            ICollection<Reward> rewards = new List<Reward>();
+            string jsonTemp = File.ReadAllText("./Json/Models/Dtos/UserDetailsDto.json");
+            CreateUserDetailsDTO userDto = JsonConvert.DeserializeObject<CreateUserDetailsDTO>(jsonTemp);
+            userDto.CarMPG = null;
+
+            // Act
+            User user = sut.CreateUser(rewards, userDto, userId);
+
+            // Assert
+            Assert.Equal(JsonConvert.SerializeObject(user.UserRewards), GenerateAnswer(0));
+        }
+
+        [Fact]
+        public void ErrorWithNoIdParam()
+        {
+            // Arrange
+            // Setup classes
+            IMessenger iMessengerMock = new Email();
+            IUserService sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string userId = string.Empty;
+            ICollection<Reward> rewards = new List<Reward>();
+            string jsonTemp = File.ReadAllText("./Json/Models/Dtos/UserDetailsDto.json");
+            CreateUserDetailsDTO userDto = JsonConvert.DeserializeObject<CreateUserDetailsDTO>(jsonTemp);
+            jsonTemp = File.ReadAllText("./Json/Models/Reward.json");
+            Reward reward = JsonConvert.DeserializeObject<Reward>(jsonTemp);
+            for (int i = 0; i < 3; i++)
+            {
+                reward.Id = "newRewardId" + rewards.Count();
+                rewards.Add(reward);
+            }
+
+            // Act Assert
+            Assert.ThrowsAny<ArgumentException>(() => sut.CreateUser(rewards, userDto, userId));
+        }
+
+        [Fact]
+        public void ExceptionWhenNoUserDtoParam()
+        {
+            // Arrange
+            // Setup classes
+            IMessenger iMessengerMock = new Email();
+            IUserService sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string userId = "2020-07-03T23-23-23";
+            ICollection<Reward> rewards = new List<Reward>();
+            string jsonTemp = File.ReadAllText("./Json/Models/Reward.json");
+            Reward reward = JsonConvert.DeserializeObject<Reward>(jsonTemp);
+            for (int i = 0; i < 3; i++)
+            {
+                reward.Id = "newRewardId" + rewards.Count();
+                rewards.Add(reward);
+            }
+
+            // Act Assert
+            Assert.Throws<NullReferenceException>(() => sut.CreateUser(rewards, null, userId));
+        }
+
+        [Fact]
+        public void ExceptionWhenRewardsParamNull()
+        {
+            // Arrange
+            // Setup classes
+            IMessenger iMessengerMock = new Email();
+            IUserService sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string userId = "2020-07-03T23-23-23";
+            string jsonTemp = File.ReadAllText("./Json/Models/Dtos/UserDetailsDto.json");
+            CreateUserDetailsDTO userDto = JsonConvert.DeserializeObject<CreateUserDetailsDTO>(jsonTemp);
+
+            // Act Assert
+            Assert.Throws<NullReferenceException>(() => sut.CreateUser(null, userDto, userId));
+        }
+
+        #region private methods
         // Create an example user reward and serialise to string to test against test cases.
         private string GenerateAnswer(int userRewardCount)
         {
@@ -92,5 +196,6 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
 
             return JsonConvert.SerializeObject(userRewards);
         }
+        #endregion
     }
 }
