@@ -1,9 +1,11 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using Amazon.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PLNKTNv2.BusinessLogic.Authentication;
 using PLNKTNv2.Models.Dtos;
 using System.Threading.Tasks;
 
@@ -18,6 +20,12 @@ namespace PLNKTNv2.Controllers
         private const string _clientId = "4s9n3lg2ptogi5o4pj899332kj";
         private const string _userPoolId = "us-west-2_yt7xxSRrl";
         private readonly RegionEndpoint _region = RegionEndpoint.USWest2;
+        private readonly IAccount _account;
+
+        public AuthenticationController(IAccount account)
+        {
+            _account = account;
+        }
 
         /// <summary>
         /// Register a user for the service with a valid username and password.
@@ -32,7 +40,15 @@ namespace PLNKTNv2.Controllers
         [Route("register")]
         public async Task<IActionResult> Register(UserRegisterDto user)
         {
-            var cognito = new AmazonCognitoIdentityProviderClient(_region);
+            AmazonCognitoIdentityProviderClient cognito;
+            if (_account.TryGetLocalAwsCredentials(_region, out AWSCredentials awsCredentials))
+            {
+                cognito = new AmazonCognitoIdentityProviderClient(awsCredentials, _region);
+            }
+            else
+            {
+                cognito = new AmazonCognitoIdentityProviderClient(_region);
+            }
 
             var request = new SignUpRequest
             {
@@ -78,7 +94,17 @@ namespace PLNKTNv2.Controllers
         [Route("signin")]
         public async Task<IActionResult> SignIn(UserAuthDto user)
         {
-            var cognito = new AmazonCognitoIdentityProviderClient(_region);
+            AmazonCognitoIdentityProviderClient cognito;
+            if (_account.TryGetLocalAwsCredentials(_region, out AWSCredentials awsCredentials))
+            {
+                cognito = new AmazonCognitoIdentityProviderClient(awsCredentials, _region);
+            }
+            else
+            {
+                cognito = new AmazonCognitoIdentityProviderClient(_region);
+            }
+
+            //var cognito = new AmazonCognitoIdentityProviderClient(_region);
 
             var request = new AdminInitiateAuthRequest
             {

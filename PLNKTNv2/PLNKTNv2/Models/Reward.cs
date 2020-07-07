@@ -5,7 +5,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PLNKTNv2.Models
 {
+#if DEBUG
+    [DynamoDBTable("DEV-Rewards")]
+#else
     [DynamoDBTable("Rewards")]
+#endif
     public class Reward
     {
         [DynamoDBHashKey]

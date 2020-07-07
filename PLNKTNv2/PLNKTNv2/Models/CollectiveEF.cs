@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Amazon.DynamoDBv2.DataModel;
+using System;
 
 namespace PLNKTNv2.Models
 {
+#if DEBUG
+    [DynamoDBTable("DEV-CollectiveEF")]
+#else
+    [DynamoDBTable("CollectiveEF")]
+#endif
     public class CollectiveEF
     {
         public DateTime Date_taken { get; set; }

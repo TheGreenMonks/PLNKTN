@@ -11,6 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "environmentVariables": {
+        "AWS_PROFILE_NAME": "Dexter",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

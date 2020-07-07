@@ -2,7 +2,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
-using Amazon.Runtime.CredentialManagement;
+using PLNKTNv2.BusinessLogic.Authentication;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,28 +24,36 @@ namespace PLNKTNv2.Persistence.Repositories.Implementation
         private readonly string _localCredsUri = "/Users/ahmedali89/Documents";
 
         // Set DB connection variables here
-        // AWS Toolkit profile name to locate the keys of.
-        private readonly string _profileName = "Ahmed";
         private bool disposedValue;
 
-        public DbContextFactory()
+        private readonly RegionEndpoint debugDb = RegionEndpoint.USWest1;
+        private readonly RegionEndpoint releaseDb = RegionEndpoint.USWest1;
+        private readonly IAccount _account;
+
+        public DbContextFactory(IAccount account)
         {
-            DbContext = CreateDbContext();
+            _account = account;
+
+            CreateDbContext();
         }
 
         public IDynamoDBContext DbContext { get; private set; }
 
-        // Caller can specify DbContext config as required as per below documentation, defaults to null.
-        // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetDynamoDBContext.html#OptionalConfigParams
-        //private DynamoDBContextConfig _config = null;
-        private IDynamoDBContext CreateDbContext()
+        /// <summary>
+        /// Creates a DynamoDB context to enable communication between the app and DyDB.
+        /// </summary>
+        /// <remarks>
+        /// Creates context using either 1-the credentials stored in the AWS SDK installed in Visual Studio,
+        /// 2-the credentials stored in a file stored locally on your machine OR, 3-the credentials granted to the
+        /// service running in the AWS ecosystem.
+        /// DB Endpoint is set as USWEST1 to represent the DB location.
+        /// </remarks>
+        private void CreateDbContext()
         {
-            var profileStore = new CredentialProfileStoreChain();
-
-            if (profileStore.TryGetAWSCredentials(_profileName, out AWSCredentials awsCredentials))
+            if (_account.TryGetLocalAwsCredentials(debugDb, out AWSCredentials awsCredentials))
             {
                 var credentials = awsCredentials.GetCredentials();
-                return GetDBClientOnLocal(credentials.AccessKey, credentials.SecretKey);
+                DbContext = GetDBClientOnLocal(credentials.AccessKey, credentials.SecretKey);
             }
             else if (File.Exists(_localCredsUri + _localCredsFilename))
             {
@@ -56,7 +64,7 @@ namespace PLNKTNv2.Persistence.Repositories.Implementation
                     keys.Add(stream.ReadLine());
                     keys.Add(stream.ReadLine());
 
-                    return GetDBClientOnLocal(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
+                    DbContext = GetDBClientOnLocal(keys.ElementAt<string>(0), keys.ElementAt<string>(1));
                 }
             }
             else
@@ -64,10 +72,13 @@ namespace PLNKTNv2.Persistence.Repositories.Implementation
                 AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig
                 {
                     // This client will access the US West 1 region (N Cali).
-                    RegionEndpoint = RegionEndpoint.USWest1
+                    RegionEndpoint = releaseDb
                 };
                 AmazonDynamoDBClient client = new AmazonDynamoDBClient(clientConfig);
-                return new DynamoDBContext(client, null);
+                DbContext = new DynamoDBContext(client, new DynamoDBContextConfig
+                {
+                    IgnoreNullValues = true
+                });
             }
         }
 
@@ -76,7 +87,7 @@ namespace PLNKTNv2.Persistence.Repositories.Implementation
             AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig
             {
                 // This client will access the US West 1 region (N Cali).
-                RegionEndpoint = RegionEndpoint.USWest1
+                RegionEndpoint = debugDb
             };
             AmazonDynamoDBClient client = new AmazonDynamoDBClient(accessKey, secretKey, clientConfig);
             return new DynamoDBContext(client, new DynamoDBContextConfig

@@ -536,6 +536,17 @@
             on an EC2 instance and create a DB context for that environment that can access the DB.
             </summary>
         </member>
+        <member name="M:PLNKTNv2.Persistence.Repositories.Implementation.DbContextFactory.CreateDbContext">
+            <summary>
+            Creates a DynamoDB context to enable communication between the app and DyDB.
+            </summary>
+            <remarks>
+            Creates context using either 1-the credentials stored in the AWS SDK installed in Visual Studio,
+            2-the credentials stored in a file stored locally on your machine OR, 3-the credentials granted to the
+            service running in the AWS ecosystem.
+            DB Endpoint is set as USWEST1 to represent the DB location.
+            </remarks>
+        </member>
         <member name="M:PLNKTNv2.Persistence.Repositories.IRepository`1.DeleteByIdAsync(System.String)">
             <summary>
             Removes entity T from the table.
