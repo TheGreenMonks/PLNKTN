@@ -120,7 +120,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EcologicalMeasurementDTO dto)
+        public async Task<IActionResult> Post([FromBody] PostEcologicalMeasurementDTO dto)
         {
             var ecologicalMeasurement = new EcologicalMeasurement
             {
@@ -142,7 +142,7 @@ namespace PLNKTNv2.Controllers
                 if (status.Equals(Status.CREATED_AT))
                 {
                     await _unitOfWork.Repository<User>().UpdateAsync(user);
-                    return CreatedAtAction("Get", new { date = dto.Date_taken }, ecologicalMeasurement);
+                    return CreatedAtAction("Get", new { date = dto.Date_taken.ToString("o") }, ecologicalMeasurement);
                 }
                 return Conflict("Ecological Measurement already exists.");
             }
@@ -164,7 +164,7 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch]
-        public async Task<IActionResult> Patch([FromBody] EcologicalMeasurementDTO dto)
+        public async Task<IActionResult> Patch([FromBody] PatchEcologicalMeasurementDTO dto)
         {
             var ecologicalMeasurement = new EcologicalMeasurement
             {

@@ -1,0 +1,39 @@
+{
+  "date_taken": "2020-07-08T00:00:00.000Z",
+  "ecologicalFootprint": 10,
+  "transport": {
+    "bicycle": 0,
+    "car": 0,
+    "bus": 0,
+    "flight": 0,
+    "subway": 0,
+    "walking": 0
+  },
+  "diet": {
+    "plant_based": 0,
+    "beef": 0,
+    "pork": 0,
+    "poultry": 0,
+    "egg": 0,
+    "dairy": 0,
+    "seafood": 0
+  },
+  "electronics": {
+    "small": true,
+    "medium": true,
+    "large": true,
+    "used": true
+  },
+  "clothing": {
+    "small": true,
+    "medium": true,
+    "large": true,
+    "used": true
+  },
+  "footwear": {
+    "small": true,
+    "medium": true,
+    "large": true,
+    "used": true
+  }
+}
