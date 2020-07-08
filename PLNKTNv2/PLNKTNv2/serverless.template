@@ -60,7 +60,8 @@
                   "Ref": "BucketName"
                 }
               ]
-            }
+            },
+            "AWS_PROFILE_NAME" : "Dexter"
           }
         },
         "Events": {

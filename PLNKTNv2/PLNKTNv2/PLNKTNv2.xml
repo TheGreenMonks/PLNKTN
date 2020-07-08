@@ -10,13 +10,6 @@
             authorisation information (JWT token).
             </summary>
         </member>
-        <member name="M:PLNKTNv2.BusinessLogic.Authentication.Account.GetAccountId(System.Security.Claims.ClaimsPrincipal)">
-            <summary>
-            Get the AWS Cognito user name (Id) of the current authenticated user.
-            </summary>
-            <param name="user">The ClaimsPrinciple implementation for JWT Bearer</param>
-            <returns>Cognito user name as string</returns>
-        </member>
         <member name="T:PLNKTNv2.BusinessLogic.Authentication.IAccount">
             <summary>
             Interface defining all methods for data retrieval and manipulation of a User's authentication and
@@ -29,6 +22,16 @@
             </summary>
             <param name="user">The ClaimsPrinciple implementation for a user</param>
             <returns>User name as string</returns>
+        </member>
+        <member name="M:PLNKTNv2.BusinessLogic.Authentication.IAccount.TryGetLocalAwsCredentials(Amazon.RegionEndpoint,Amazon.Runtime.AWSCredentials@)">
+            <summary>
+            Tries to get AWS user credentials from local store using the value of environment variable
+            "AWS_PROFILE_NAME" as the profile name.
+            </summary>
+            <param name="region">The RegionEndpoint to use for credentials</param>
+            <param name="credentials">Local AWSCredentials of user (this is out param)</param>
+            <returns>True for successful retrieval of credentials or false for no local credentials found.
+            Out param returns credentials object on successful retrieval.</returns>
         </member>
         <member name="M:PLNKTNv2.Controllers.AuthenticationController.Register(PLNKTNv2.Models.Dtos.UserRegisterDto)">
             <summary>
