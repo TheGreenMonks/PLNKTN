@@ -127,7 +127,7 @@ namespace PLNKTNv2.Controllers
         {
             string id = _account.GetAccountId(this.User);
 
-            var exists = await _unitOfWork.Repository<Reward>().GetByIdAsync(id);
+            var exists = await _unitOfWork.Repository<User>().GetByIdAsync(id);
             if (exists != null)
             {
                 return Conflict();

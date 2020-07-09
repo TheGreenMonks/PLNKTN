@@ -12,7 +12,7 @@ namespace PLNKTNv2.Models
     {
         public int Count { get; set; } = 0;
 
-        public IList<UserGrantedRewardProject> Projects { set; get; }
+        public List<UserGrantedRewardProject> Projects { set; get; }
 
         [DynamoDBHashKey]
         public string Region_name { get; set; }

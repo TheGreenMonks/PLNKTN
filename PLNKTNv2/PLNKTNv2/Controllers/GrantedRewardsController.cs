@@ -148,18 +148,32 @@ namespace PLNKTNv2.Controllers
         public async Task<IActionResult> Post([FromBody] UserGrantedRewardDto grantedRewardDto)
         {
             string id = _account.GetAccountId(this.User);
+
+            // Get all object froms the DB
             User user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
             AppTotalTreesPlanted totalTreesPlanted = await _unitOfWork.Repository<AppTotalTreesPlanted>()
                                                                             .GetByIdAsync(_appTotalTreesPlantedId);
+            Bin dbBin = await _unitOfWork.Repository<Bin>().GetByIdAsync(grantedRewardDto.Region_name);
 
+            // Ensure objects exists in DB
+            string errorMessage = user == null ? "User not found. " : "";
+            errorMessage += dbBin == null ? "Reward Region not found in Bin. " : "";
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                return NotFound(errorMessage);
+            }
+
+            // Mutate all objects to reflect new state
             _grantedRewardService.InsertUserGrantedReward(user, grantedRewardDto);
+            _binService.InsertUserTreeToBin(grantedRewardDto.Project, dbBin);
             totalTreesPlanted.TreesCount++;
+
+            // Persist all changes to the DB
             await _unitOfWork.Repository<AppTotalTreesPlanted>().UpdateAsync(totalTreesPlanted);
             await _unitOfWork.Repository<User>().UpdateAsync(user);
-            Bin dbBin = await _unitOfWork.Repository<Bin>().GetByIdAsync(grantedRewardDto.Region_name);
-            _binService.InsertUserTreeToBin(grantedRewardDto.Project, dbBin);
             await _unitOfWork.Repository<Bin>().UpdateAsync(dbBin);
 
+            // Return to the client
             return CreatedAtAction("Get", new { grantedRewardDto.Region_name }, grantedRewardDto.Project);
         }
     }

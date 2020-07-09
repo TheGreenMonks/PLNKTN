@@ -81,6 +81,7 @@ namespace PLNKTNv2
             services.AddTransient<IGrantedRewardService, GrantedRewardService>();
             services.AddTransient<IEcologicalMeasurementService, EcologicalMeasurementService>();
             services.AddTransient<ICollectiveEfService, CollectiveEfService>();
+            services.AddTransient<IBinService, BinService>();
 
             // Business Logic
             services.AddTransient<IAccount, Account>();

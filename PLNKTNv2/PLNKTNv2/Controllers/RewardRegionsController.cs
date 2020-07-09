@@ -127,12 +127,19 @@ namespace PLNKTNv2.Controllers
         {
             RewardRegion exists = await _unitOfWork.Repository<RewardRegion>().GetByIdAsync(region.Region_name);
             if (exists != null)
-            {
                 return Conflict();
-            }
+
+            // As a new Reward Region is created we need a region in the Bin as well for users to put hteir granted rewards for forwarding to OTP.
+            Bin bin = new Bin()
+            {
+                Count = 0,
+                Region_name = region.Region_name,
+                Projects = new List<UserGrantedRewardProject>()
+            };
+            await _unitOfWork.Repository<Bin>().UpdateAsync(bin);
 
             await _unitOfWork.Repository<RewardRegion>().InsertAsync(region);
-            return CreatedAtAction("Get", new { region_name = region.Region_name }, region);
+            return CreatedAtAction("Get", new { id = region.Region_name }, region);
         }
 
         /// <summary>
