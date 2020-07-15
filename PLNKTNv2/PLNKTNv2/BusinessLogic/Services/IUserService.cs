@@ -8,12 +8,14 @@ namespace PLNKTNv2.BusinessLogic.Services
     {
         void AddUserRewardToAllUsers(Reward reward, IEnumerable<User> users);
 
+        void CalculateUserRewardCompletion(List<User> users);
+
+        User CreateUser(ICollection<Reward> rewards, CreateUserDetailsDTO userDto, string id);
+
         void DeleteUserRewardFromAllUsers(string rewardId, IEnumerable<User> users);
 
         void UpdateUserReward(User user, UserReward model);
 
         void UpdateUserRewardInAllUsers(Reward reward, IEnumerable<User> users);
-
-        User CreateUser(ICollection<Reward> rewards, CreateUserDetailsDTO userDto, string id);
     }
 }

@@ -6,7 +6,6 @@ using PLNKTNv2.BusinessLogic.Services;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using PLNKTNv2.Persistence;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -133,7 +132,7 @@ namespace PLNKTNv2.Controllers
                 return Conflict();
             }
 
-            ICollection<Reward> rewards = (ICollection<Reward>) await _unitOfWork.Repository<Reward>().GetAllAsync();
+            ICollection<Reward> rewards = (ICollection<Reward>)await _unitOfWork.Repository<Reward>().GetAllAsync();
             User user = _userService.CreateUser(rewards, userDto, id);
 
             await _unitOfWork.Repository<User>().InsertAsync(user);
@@ -205,6 +204,33 @@ namespace PLNKTNv2.Controllers
                 return Ok();
             }
             return NotFound("User not found.");
+        }
+
+        /// <summary>
+        /// Calculate User Reward and Challenge completion for all users in the DB.
+        /// </summary>
+        /// <remarks>
+        /// Requires user to be logged in with special administrative credentials.
+        /// For every user the call will check all reward's challenges to see if they are complete by checking the user's
+        /// submitted ecological measurements against the challenge's rule condition for completion.  Once all challenges
+        /// for a reward are checked (6 per reward) the reward itself will be checked to see if it is complete. A reward
+        /// is complete when all its challenges are themselves complete. The call will do this for every challenge in every
+        /// reward in every user in the database.
+        /// </remarks>
+        /// <returns><c>Task/<IActionResult/></c> HTTP response with HTTP code.</returns>
+        /// <response code="200">Returns newly created item.</response>
+        /// <response code="400">Poorly formed request.</response>
+        [HttpPost("CalculateUserRewardCompletion")]
+        [Authorize(Policy = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post()
+        {
+            List<User> users = (List<User>)await _unitOfWork.Repository<User>().GetAllAsync();
+            _userService.CalculateUserRewardCompletion(users);
+            await _unitOfWork.Repository<User>().UpdateAllAsync(users);
+
+            return Ok();
         }
     }
 }

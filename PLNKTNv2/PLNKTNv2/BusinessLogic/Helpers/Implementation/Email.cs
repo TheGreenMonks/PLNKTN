@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
@@ -26,10 +27,11 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
         public void Send(string controllerName)
         {
             string strEmailMessageLines = GenerateEmailMessage(messageLines);
-            IDictionary<string, string> emailCreds = GetEmailCredentials(pwFile);
-            MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, emailCreds["fromEmail"], emailCreds["toEmail"]);
+            //IDictionary<string, string> emailCreds = GetEmailCredentials(pwFile);
+            //MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, emailCreds["fromEmail"], emailCreds["toEmail"]);
+            MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, "a@b.com", "a@c.com");
 
-            var smtp = new SmtpClient
+            /*var smtp = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
@@ -37,11 +39,11 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 Credentials = new NetworkCredential(message.From.Address, emailCreds["pw"]),
                 Timeout = 20000
-            };
+            };*/
 
-            smtp.Send(message);
+            //smtp.Send(message);
 
-            //Debug.WriteLine("Error: Email send error");
+            Debug.WriteLine(message.Body);
             //Debug.WriteLine("Location: RewardsController in 'sendEmail()' method.");
             //Debug.WriteLine("Cause: Could not send email, possibly due to bad password file, bad access or bad email set up.");
         }

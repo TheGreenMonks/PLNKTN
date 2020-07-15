@@ -1,4 +1,5 @@
-﻿using PLNKTNv2.BusinessLogic.Helpers;
+﻿using Microsoft.AspNetCore.Identity;
+using PLNKTNv2.BusinessLogic.Helpers;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using System;
@@ -114,13 +115,17 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
             }
         }
 
-        public void CalculateUserRewardCompletion(ICollection<User> users)
+        public void CalculateUserRewardCompletion(List<User> users)
         {
+            users.RemoveAll(u => u.Id == "UserCount" || u.Id == "AppTotalTreesPlanted");
+
             foreach (var user in users)
             {
                 CalculateUserChallengeCompletion(user, _messenger);
                 CalculateUserRewardCompletion(user, _messenger);
             }
+
+            _messenger.Send("Both Reward and Challenge Completion Calculation Controller Methods");
         }
 
         private void CalculateUserRewardCompletion(User user, IMessenger messenger)
