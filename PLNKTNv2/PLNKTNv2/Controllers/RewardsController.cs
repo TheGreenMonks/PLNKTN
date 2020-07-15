@@ -13,9 +13,9 @@ namespace PLNKTNv2.Controllers
     /// The Rewards Controller holds methods to retrieve and manipulate data held about rewards in the database on AWS.
     /// </summary>
     /// <remarks>
-    /// All functions require the user to be authenticated with JWT token and special credentials before they will execute.
+    /// All functions require the user to be authenticated with JWT token and either end user or special administrative credentials before they will execute.
     /// </remarks>
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "EndUser")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -62,7 +62,7 @@ namespace PLNKTNv2.Controllers
         /// Get all rewards from the database.
         /// </summary>
         /// <remarks>
-        /// Requires user to be logged in with special administrative credentials.
+        /// Requires user to be logged in with end user credentials.
         /// </remarks>
         /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
         /// <response code="200">Returns rewards data.</response>
@@ -80,8 +80,9 @@ namespace PLNKTNv2.Controllers
         /// Get a reward from the database by Id.
         /// </summary>
         /// <remarks>
-        /// Requires user to be logged in with special administrative credentials.
+        /// Requires user to be logged in with end user credentials.
         /// </remarks>
+        /// <param name="id">The <c>string</c> id of the reward to be retrieved.</param>
         /// <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
         /// <response code="200">Returns reward data.</response>
         /// <response code="400">Poorly formed request.</response>
@@ -116,6 +117,7 @@ namespace PLNKTNv2.Controllers
         /// <response code="400">Poorly formed request.</response>
         /// <response code="409">Item already exists.</response>
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Reward))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -143,6 +145,7 @@ namespace PLNKTNv2.Controllers
         /// </summary>
         /// <remarks>
         /// User must be logged in with special administrative credentials to execute. Full reward information must be sent.
+        /// The UserRewards for all users will also be updated with any new information.
         /// </remarks>
         /// <param name="reward">Representation of reward object with fields that can be manipulated by this request.</param>
         /// <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
@@ -150,6 +153,7 @@ namespace PLNKTNv2.Controllers
         /// <response code="400">Poorly formed request.</response>
         /// <response code="404">Item not found in the database.</response>
         [HttpPut]
+        [Authorize(Policy = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

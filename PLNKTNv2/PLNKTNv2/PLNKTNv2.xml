@@ -337,7 +337,7 @@
             The Rewards Controller holds methods to retrieve and manipulate data held about rewards in the database on AWS.
             </summary>
             <remarks>
-            All functions require the user to be authenticated with JWT token and special credentials before they will execute.
+            All functions require the user to be authenticated with JWT token and either end user or special administrative credentials before they will execute.
             </remarks>
         </member>
         <member name="M:PLNKTNv2.Controllers.RewardsController.#ctor(PLNKTNv2.Persistence.IUnitOfWork,PLNKTNv2.BusinessLogic.Services.IUserService)">
@@ -365,7 +365,7 @@
             Get all rewards from the database.
             </summary>
             <remarks>
-            Requires user to be logged in with special administrative credentials.
+            Requires user to be logged in with end user credentials.
             </remarks>
             <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
             <response code="200">Returns rewards data.</response>
@@ -376,8 +376,9 @@
             Get a reward from the database by Id.
             </summary>
             <remarks>
-            Requires user to be logged in with special administrative credentials.
+            Requires user to be logged in with end user credentials.
             </remarks>
+            <param name="id">The <c>string</c> id of the reward to be retrieved.</param>
             <returns><c>ActionResult</c> with appropriate code and data in the body.</returns>
             <response code="200">Returns reward data.</response>
             <response code="400">Poorly formed request.</response>
@@ -402,6 +403,7 @@
             </summary>
             <remarks>
             User must be logged in with special administrative credentials to execute. Full reward information must be sent.
+            The UserRewards for all users will also be updated with any new information.
             </remarks>
             <param name="reward">Representation of reward object with fields that can be manipulated by this request.</param>
             <returns><c>ActionResult</c> HTTP response with HTTP code.</returns>
