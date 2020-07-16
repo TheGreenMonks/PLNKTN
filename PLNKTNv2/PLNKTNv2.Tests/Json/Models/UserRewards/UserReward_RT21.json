@@ -1,0 +1,80 @@
+{
+  "Challenges": [
+    {
+      "Id": "DIET_SEAFOOD_0090",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Seafood",
+        "Time": 90
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_BEEF_0090",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Beef",
+        "Time": 90
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_EGG_0060",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Egg",
+        "Time": 60
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_PLANTS_0090",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 1,
+        "SubCategory": "Plant_based",
+        "Time": 90
+      },
+      "Status": 1
+    },
+    {
+      "Id": "TRAN_WALK_80",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 80,
+        "Category": "Transport",
+        "RestrictionType": 2,
+        "SubCategory": "Walking",
+        "Time": 1
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_DAIRY_0090",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Dairy",
+        "Time": 90
+      },
+      "Status": 1
+    }
+  ],
+  "Id": "REWARD_TREE_0021",
+  "IsRewardGranted": 0,
+  "NotificationStatus": 2,
+  "Status": 1
+}

@@ -1,0 +1,80 @@
+{
+  "Challenges": [
+    {
+      "Id": "DIET_POULTRY_0003",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Poultry",
+        "Time": 3
+      },
+      "Status": 1
+    },
+    {
+      "Id": "TRAN_BIKE_005",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 5,
+        "Category": "Transport",
+        "RestrictionType": 2,
+        "SubCategory": "Bicycle",
+        "Time": 1
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_PLANTS_0001",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 1,
+        "SubCategory": "Plant_based",
+        "Time": 1
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_BEEF_0003",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 0,
+        "SubCategory": "Beef",
+        "Time": 3
+      },
+      "Status": 1
+    },
+    {
+      "Id": "DIET_PLANTS_0003",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 0,
+        "Category": "Diet",
+        "RestrictionType": 1,
+        "SubCategory": "Plant_based",
+        "Time": 3
+      },
+      "Status": 1
+    },
+    {
+      "Id": "TRAN_WALK_010",
+      "NotificationStatus": 2,
+      "Rule": {
+        "AmountToConsume": 10,
+        "Category": "Transport",
+        "RestrictionType": 2,
+        "SubCategory": "Walking",
+        "Time": 1
+      },
+      "Status": 1
+    }
+  ],
+  "Id": "REWARD_TREE_0002",
+  "IsRewardGranted": 0,
+  "NotificationStatus": 2,
+  "Status": 1
+}

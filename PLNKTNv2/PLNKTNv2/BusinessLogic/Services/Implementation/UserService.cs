@@ -258,6 +258,10 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                         {
                             offset = 60;
                         }
+                        else if (_time > 60 && _time <= 90)
+                        {
+                            offset = 90;
+                        }
                         // Sets where the enumerator should start in the list of eco measurements
                         var indexStart = numOfEcoMeasurements - offset;
 
@@ -268,7 +272,8 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                          */
                         var _fullDateRange = false;
                         var challengeStart = DateTime.UtcNow.AddDays(-offset);
-                        var ecoMeasurementsOfInterest = user.EcologicalMeasurements.Where(e => e.Date_taken.Date >= challengeStart.Date).ToList();
+                        var ecoMeasurementsOfInterest = user.EcologicalMeasurements.Where(e => e.Date_taken.Date >= challengeStart.Date &&
+                                                                                            e.Date_taken.Date <= DateTime.UtcNow).ToList();
                         if (ecoMeasurementsOfInterest.Count >= _time)
                             _fullDateRange = true;
 

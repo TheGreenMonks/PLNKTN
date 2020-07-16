@@ -1,0 +1,104 @@
+{
+  "first_name": "Dexter-Test",
+  "last_name": "Cunningham-Test",
+  "created_at": "2020-07-15T14:38:08.231349Z",
+  "email": "dextercunningham@hotmail.co.uk",
+  "level": "1",
+  "ecologicalMeasurements": [],
+  "livingSpace": 500,
+  "numPeopleHousehold": 1,
+  "carMPG": 34,
+  "shareData": true,
+  "country": "UK",
+  "userRewards": [
+    {
+      "id": "REWARD_TREE_0001",
+      "challenges": [
+        {
+          "id": "DIET_PORK_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Pork",
+            "time": 1
+          },
+          "notificationStatus": 2
+        },
+        {
+          "id": "DIET_BEEF_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Beef",
+            "time": 1
+          },
+          "notificationStatus": 2
+        },
+        {
+          "id": "DIET_POULTRY_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Poultry",
+            "time": 1
+          },
+          "notificationStatus": 2
+        },
+        {
+          "id": "DIET_SEAFOOD_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Seafood",
+            "time": 1
+          },
+          "notificationStatus": 2
+        },
+        {
+          "id": "DIET_DAIRY_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Dairy",
+            "time": 1
+          },
+          "notificationStatus": 2
+        },
+        {
+          "id": "DIET_EGG_0001",
+          "dateCompleted": null,
+          "status": 1,
+          "rule": {
+            "amountToConsume": 0,
+            "category": "Diet",
+            "restrictionType": 0,
+            "subCategory": "Egg",
+            "time": 1
+          },
+          "notificationStatus": 2
+        }
+      ],
+      "dateCompleted": null,
+      "status": 1,
+      "notificationStatus": 2,
+      "isRewardGranted": false
+    }
+  ],
+  "grantedRewards": [],
+  "id": "1987-5-1-23-59-59-000"
+}
