@@ -14,5 +14,7 @@ namespace PLNKTNv2.Models
         public UserRewardChallengeRule Rule { get; set; }
 
         public NotificationStatus NotificationStatus { get; set; }
+
+        public int AmountCompleted { get; set; }
     }
 }

@@ -671,6 +671,160 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
         }
 
+        [Theory]
+        [InlineData(5, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(59, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(60, UserRewardChallengeStatus.Complete)]
+        public void HaveCorrectAmountCompleted_60DaySkipEggsChallenge(int daysSkipped, UserRewardChallengeStatus isChallengeComplete)
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 60; i++)
+            {
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 1,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
+
+            for (int i = 0; i < daysSkipped; i++)
+            {
+                user.EcologicalMeasurements[i].Diet.Egg = 0;
+            }
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "DIET_EGG_0060"); ;
+
+            Assert.Equal(isChallengeComplete, challenge.Status);
+            Assert.Equal(daysSkipped, challenge.AmountCompleted);
+        }
+
+        [Theory]
+        [InlineData(10, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(89, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(90, UserRewardChallengeStatus.Complete)]
+        public void HaveCorrectAmountCompleted_90DayOnlyThisPlantsChallenge(int daysEaten, UserRewardChallengeStatus isChallengeComplete)
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 90; i++)
+            {
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 1,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
+
+            for (int i = 0; i < daysEaten; i++)
+            {
+                user.EcologicalMeasurements[i].Diet.Beef = 0;
+                user.EcologicalMeasurements[i].Diet.Dairy = 0;
+                user.EcologicalMeasurements[i].Diet.Egg = 0;
+                user.EcologicalMeasurements[i].Diet.Plant_based = 1;
+                user.EcologicalMeasurements[i].Diet.Pork = 0;
+                user.EcologicalMeasurements[i].Diet.Poultry = 0;
+                user.EcologicalMeasurements[i].Diet.Seafood = 0;
+            }
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "DIET_PLANTS_0090"); ;
+
+            Assert.Equal(isChallengeComplete, challenge.Status);
+            Assert.Equal(daysEaten, challenge.AmountCompleted);
+        }
+
+        [Theory]
+        [InlineData(40, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(79, UserRewardChallengeStatus.Incomplete)]
+        [InlineData(80, UserRewardChallengeStatus.Complete)]
+        public void HaveCorrectAmountCompleted_80MileWalkChallenge(int amountConsumed, UserRewardChallengeStatus isChallengeComplete)
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Transport = new Transport()
+                {
+                    Bicycle = 0,
+                    Bus = 0,
+                    Car = 0,
+                    Flight = 0,
+                    Subway = 0,
+                    Walking = amountConsumed
+                },
+                Date_taken = DateTime.UtcNow.Date.AddDays(-1),
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(_emTemp);
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+
+            Assert.Equal(isChallengeComplete, challenge.Status);
+            Assert.Equal(amountConsumed, challenge.AmountCompleted);
+        }
+
         [Fact]
         public void Complete_80MileWalkChallenge_WhenRequirementsMetOver80Days()
         {

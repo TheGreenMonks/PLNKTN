@@ -5,7 +5,7 @@ namespace PLNKTNv2.Models
 {
     public class UserRewardChallengeRule
     {
-        public int AmountToConsume { get; set; }
+        public int? AmountToConsume { get; set; }
 
         [Category]
         public string Category { get; set; }
@@ -17,6 +17,6 @@ namespace PLNKTNv2.Models
         public string SubCategory { get; set; }
 
         [Range(1, 365)]
-        public int Time { get; set; }
+        public int? Time { get; set; }
     }
 }

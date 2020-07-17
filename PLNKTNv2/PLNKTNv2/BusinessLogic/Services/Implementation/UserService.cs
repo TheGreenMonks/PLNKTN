@@ -207,15 +207,6 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
              * other categories are included as they have properties of different types in them...
              */
 
-            //var strChallenge = "Challenge";
-            // Get all users from the DB who have NOT NULL Reward arrays
-            //var dbUsers = await _userRepository.GetAllUsers();
-
-            // Email messenger to manage results messenger
-            //IEmailHelper messenger = new EmailLogic();
-
-            // Flag to indicate if changes to challenge status have been made
-            bool changesMade = false;
             // Sort eco measurements by date for easier processing in all challenge rule checks.
             user.EcologicalMeasurements = user.EcologicalMeasurements.OrderBy(e => e.Date_taken.Date).ToList();
 
@@ -230,9 +221,11 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                     var _subCategory = _challenge.Rule.SubCategory;
                     var _time = _challenge.Rule.Time;
                     var _restrictionType = _challenge.Rule.RestrictionType;
-                    int amountToConsume = _challenge.Rule.AmountToConsume;
+                    int? amountToConsume = _challenge.Rule.AmountToConsume;
                     // Flag to assess success of user against challenge rule.
-                    var isSuccessful = false;
+                    //var isSuccessful = false;
+                    ChallengeProgress challengeProgress = ChallengeProgress.No_Data;
+                    int amountComplete = 0;
 
                     if (String.Equals(_category, "Diet"))
                     {
@@ -290,7 +283,7 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                         if (_restrictionType == ChallengeType.Skip && _fullDateRange)
                         {
                             // A counter to count the number of times an item has been skipped
-                            var skippedEnoughTimes = 0;
+                            int skippedEnoughTimes = 0;
 
                             foreach (var ecoMeasurement in ecoMeasurementsOfInterest)
                             {
@@ -311,13 +304,20 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                                         skippedEnoughTimes++;
                                     }
 
-                                    // Checks if challenge item has been skipped enough times to complete the challenge
-                                    if (skippedEnoughTimes == _time)
-                                    {
-                                        isSuccessful = true;
-                                        break;
-                                    }
+                                    
                                 }
+                            }
+
+                            // Checks if challenge item has been skipped enough times to complete the challenge
+                            if (skippedEnoughTimes == _time)
+                            {
+                                challengeProgress = ChallengeProgress.Complete;
+                                amountComplete = skippedEnoughTimes;
+                            }
+                            else
+                            {
+                                challengeProgress = ChallengeProgress.Partial;
+                                amountComplete = skippedEnoughTimes;
                             }
                         }
                         else if (_restrictionType == ChallengeType.Only_This && _fullDateRange)
@@ -363,13 +363,18 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                                 {
                                     onlyUsedEnoughtTimes++;
                                 }
+                            }
 
-                                // Checks if challenge item has been discretely used enough times to complete the challenge
-                                if (onlyUsedEnoughtTimes == _time)
-                                {
-                                    isSuccessful = true;
-                                    break;
-                                }
+                            // Checks if challenge item has been discretely used enough times to complete the challenge
+                            if (onlyUsedEnoughtTimes == _time)
+                            {
+                                challengeProgress = ChallengeProgress.Complete;
+                                amountComplete = onlyUsedEnoughtTimes;
+                            }
+                            else
+                            {
+                                challengeProgress = ChallengeProgress.Partial;
+                                amountComplete = onlyUsedEnoughtTimes;
                             }
                         }
                     }
@@ -388,36 +393,37 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
 
                                 itemTotal += (int)item;
 
-                                if (itemTotal >= amountToConsume)
-                                {
-                                    isSuccessful = true;
-                                    break;
-                                }
+                                _challenge.AmountCompleted = itemTotal;
+                            }
+
+                            if (itemTotal >= amountToConsume)
+                            {
+                                challengeProgress = ChallengeProgress.Complete;
+                                amountComplete = itemTotal;
+                            }
+                            else
+                            {
+                                challengeProgress = ChallengeProgress.Partial;
+                                amountComplete = itemTotal;
                             }
                         }
                     }
 
                     // Change the challenge status if user is successful.
-                    if (isSuccessful)
+                    if (challengeProgress == ChallengeProgress.Complete)
                     {
                         _challenge.Status = UserRewardChallengeStatus.Complete;
                         _challenge.NotificationStatus = NotificationStatus.Not_Notified;
                         _challenge.DateCompleted = DateTime.UtcNow;
-                        changesMade = true;
+                        _challenge.AmountCompleted = amountComplete;
                         messenger.AddLine(user.Id, "Challenge", _challenge.Id);
+                    }
+                    else
+                    {
+                        _challenge.AmountCompleted = amountComplete;
                     }
                 }
             }
-
-            // Save changes to DB (removes eco emasurements as they don't all need to be sent back to the server.
-/*            if (changesMade)
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }*/
         }
 
         private bool EcoMeasurementHasActivity(string _category, EcologicalMeasurement ecoMeasurement)
