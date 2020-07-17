@@ -4,6 +4,7 @@ using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace PLNKTNv2.BusinessLogic.Services.Implementation
@@ -271,11 +272,18 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                          * This works becasue the _user.EcologicalMeasurements list is ordered earlier in this method.
                          */
                         var _fullDateRange = false;
-                        var challengeStart = DateTime.UtcNow.AddDays(-offset);
+                        var challengeStart = DateTime.UtcNow.AddDays(-offset).Date;
                         var ecoMeasurementsOfInterest = user.EcologicalMeasurements.Where(e => e.Date_taken.Date >= challengeStart.Date &&
-                                                                                            e.Date_taken.Date <= DateTime.UtcNow).ToList();
+                                                                                            e.Date_taken.Date <= DateTime.UtcNow.Date).ToList();
                         if (ecoMeasurementsOfInterest.Count >= _time)
                             _fullDateRange = true;
+
+                        /* Debug code to see what is in large sets of ecoMeasurementsOfInterest
+                        foreach (var item in ecoMeasurementsOfInterest)
+                        {
+                            Debug.WriteLine(item.Date_taken.Date + " : " + item.Diet.Beef + item.Diet.Dairy + 
+                                item.Diet.Egg + item.Diet.Pork + item.Diet.Poultry + item.Diet.Seafood + item.Diet.Plant_based);
+                        }*/
 
                         // Check if the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
                         // check there are enough eco measurements in the given date range to successfully complete the challenge

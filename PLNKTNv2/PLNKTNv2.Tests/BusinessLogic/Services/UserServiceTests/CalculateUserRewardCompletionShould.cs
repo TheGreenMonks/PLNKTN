@@ -564,9 +564,10 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
                         Subway = 0,
                         Walking = 0
                     },
-                    Date_taken = DateTime.UtcNow.AddDays(-i),
+                    Date_taken = DateTime.UtcNow.Date,
                     EcologicalFootprint = (float?)0.9
                 };
+                _emTemp.Date_taken = _emTemp.Date_taken.AddDays(- (i + 1));
                 user.EcologicalMeasurements.Add(_emTemp);
             }
 
@@ -578,6 +579,46 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
 
             Assert.Equal(UserRewardChallengeStatus.Complete, challenge.Status);
             Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void Complete_90DaySkipBeefChallenge_WhenRequirementsMetSequential_DbData()
+        {
+            // Arrange
+            // Setup classes
+            iMessengerMock = new Email();
+            sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            users = new List<User>();
+            string jsonTemp = File.ReadAllText("./Json/Models/Alli_17-07-2020.json");
+            user = JsonConvert.DeserializeObject<User>(jsonTemp);
+            user.EcologicalMeasurements.Add(new EcologicalMeasurement()
+            {
+                Date_taken = new DateTime(2020, 6, 19),
+                Diet = new Diet()
+                {
+                    Beef = 0,
+                    Dairy = 0,
+                    Egg = 0,
+                    Plant_based = 1,
+                    Pork = 0,
+                    Poultry = 0,
+                    Seafood = 0
+                },
+                EcologicalFootprint = (float?)0.9
+            });
+            users.Add(user);
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards.Find(ur => ur.Id == "REWARD_TREE_0018")
+                .Challenges.Find(urc => urc.Id == "DIET_BEEF_0090");
+
+            Assert.Equal(UserRewardChallengeStatus.Complete, challenge.Status);
+            // Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
         }
 
         protected virtual void Dispose(bool disposing)
