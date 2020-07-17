@@ -582,43 +582,267 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         }
 
         [Fact]
-        public void Complete_90DaySkipBeefChallenge_WhenRequirementsMetSequential_DbData()
+        public void Complete_60DaySkipEggsChallenge_WhenRequirementsMetSequential()
         {
             // Arrange
-            // Setup classes
-            iMessengerMock = new Email();
-            sut = new UserService(iMessengerMock);
-
-            // Setup sut method parameters
-            users = new List<User>();
-            string jsonTemp = File.ReadAllText("./Json/Models/Alli_17-07-2020.json");
-            user = JsonConvert.DeserializeObject<User>(jsonTemp);
-            user.EcologicalMeasurements.Add(new EcologicalMeasurement()
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 60; i++)
             {
-                Date_taken = new DateTime(2020, 6, 19),
-                Diet = new Diet()
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
                 {
-                    Beef = 0,
-                    Dairy = 0,
-                    Egg = 0,
-                    Plant_based = 1,
-                    Pork = 0,
-                    Poultry = 0,
-                    Seafood = 0
-                },
-                EcologicalFootprint = (float?)0.9
-            });
-            users.Add(user);
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
 
             // Act
             sut.CalculateUserRewardCompletion(users);
 
             // Assert
-            var challenge = users[0].UserRewards.Find(ur => ur.Id == "REWARD_TREE_0018")
-                .Challenges.Find(urc => urc.Id == "DIET_BEEF_0090");
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "DIET_EGG_0060"); ;
 
             Assert.Equal(UserRewardChallengeStatus.Complete, challenge.Status);
-            // Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void NotComplete_60DaySkipEggsChallenge_WhenRequirementsNotMet()
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 60; i++)
+            {
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
+
+            user.EcologicalMeasurements[0].Diet.Egg = 1;
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "DIET_EGG_0060"); ;
+
+            Assert.Equal(UserRewardChallengeStatus.Incomplete, challenge.Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void Complete_80MileWalkChallenge_WhenRequirementsMetOver80Days()
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 80; i++)
+            {
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 1
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+
+            Assert.Equal(UserRewardChallengeStatus.Complete, challenge.Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void Complete_80MileWalkChallenge_WhenRequirementsMetOver1Day()
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+
+            EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 0,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Transport = new Transport()
+                {
+                    Bicycle = 0,
+                    Bus = 0,
+                    Car = 0,
+                    Flight = 0,
+                    Subway = 0,
+                    Walking = 80
+                },
+                Date_taken = DateTime.UtcNow.Date.AddDays(-5),
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(_emTemp);
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+
+            Assert.Equal(UserRewardChallengeStatus.Complete, challenge.Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void NotComplete_80MileWalkChallenge_WhenWalked79MilesIn1DayRecently()
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+
+            EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 0,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Transport = new Transport()
+                {
+                    Bicycle = 0,
+                    Bus = 0,
+                    Car = 0,
+                    Flight = 0,
+                    Subway = 0,
+                    Walking = 79
+                },
+                Date_taken = DateTime.UtcNow.Date.AddDays(-5),
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(_emTemp);
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+
+            Assert.Equal(UserRewardChallengeStatus.Incomplete, challenge.Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
+        }
+
+        [Fact]
+        public void NotComplete_80MileWalkChallenge_WhenRequirementsNotMet()
+        {
+            // Arrange
+            SetUpRewardTree0021Data();
+            for (int i = 0; i < 80; i++)
+            {
+                EcologicalMeasurement _emTemp = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 1
+                    },
+                    Date_taken = DateTime.UtcNow.Date.AddDays(-(i + 1)),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(_emTemp);
+            }
+
+            user.EcologicalMeasurements[0].Transport.Walking = 0;
+
+            // Act
+            sut.CalculateUserRewardCompletion(users);
+
+            // Assert
+            var challenge = users[0].UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+
+            Assert.Equal(UserRewardChallengeStatus.Incomplete, challenge.Status);
+            Assert.Equal(UserRewardStatus.Incomplete, users[0].UserRewards[0].Status);
         }
 
         protected virtual void Dispose(bool disposing)
