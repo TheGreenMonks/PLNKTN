@@ -176,14 +176,13 @@ namespace PLNKTNv2.Controllers
         }
 
         /// <summary>
-        /// Uupdates a complete user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+        /// Updates a / multiple user reward(s) with data provided in the request's HTTP body (user Id retrieved from JWT token).
         /// </summary>
         /// <remarks>
-        /// User must be logged in with end user credentials to execute. The full userReward unit of information must be sent.
-        /// This includes all of the challenge infomration that is not being updated. The function basically removes the user
-        /// reward and replaces it.
+        /// User must be logged in with end user credentials to execute. Partial objects are allowed. Refer to object
+        /// schemas for required structure.
         /// </remarks>
-        /// <param name="model"></param>
+        /// <param name="userRewards">A Collection of UserRewards to be updated</param>
         /// <returns><c>Task ActionResult </c> HTTP response with HTTP code.</returns>
         /// <response code="200">Item updated in the database successfully.</response>
         /// <response code="404">Item not found in database.</response>
@@ -192,14 +191,14 @@ namespace PLNKTNv2.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Put([FromBody] UserReward model)
+        public async Task<IActionResult> Put([FromBody] ICollection<UserRewardDto> userRewards)
         {
             var id = _account.GetAccountId(this.User);
             User user = _unitOfWork.Repository<User>().GetByIdAsync(id).Result;
 
             if (user != null)
             {
-                _userService.UpdateUserReward(user, model);
+                _userService.UpdateUserRewards(user, userRewards);
                 await _unitOfWork.Repository<User>().UpdateAsync(user);
                 return Ok();
             }

@@ -73,10 +73,30 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
             }
         }
 
-        public void UpdateUserReward(User user, UserReward model)
+        public void UpdateUserRewards(User user, ICollection<UserRewardDto> userRewardDtos)
         {
-            user.UserRewards.RemoveAll(ur => ur.Id == model.Id);
-            user.UserRewards.Add(model);
+            foreach (var userRewardDto in userRewardDtos)
+            {
+                UserReward _currentUserReward = user.UserRewards.Find(ur => ur.Id == userRewardDto.Id);
+
+                if (userRewardDto.Challenges != null)
+                {
+                    foreach (var challenge in userRewardDto.Challenges)
+                    {
+                        UserRewardChallenge _currentUserRewardChallenge = _currentUserReward.Challenges.Find(urc => urc.Id == challenge.Id);
+                        _currentUserRewardChallenge.NotificationStatus = (NotificationStatus)challenge.NotificationStatus;
+                    }
+                }
+
+                if (userRewardDto.NotificationStatus != null)
+                {
+                    _currentUserReward.NotificationStatus = (NotificationStatus) userRewardDto.NotificationStatus;
+                }
+                if (userRewardDto.IsRewardGranted != null)
+                {
+                    _currentUserReward.IsRewardGranted = (bool) userRewardDto.IsRewardGranted;
+                }
+            }
         }
 
         public void UpdateUserRewardInAllUsers(Reward reward, IEnumerable<User> users)

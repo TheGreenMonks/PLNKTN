@@ -489,16 +489,15 @@
             <response code="200">Item updated in the database successfully.</response>
             <response code="400">Poorly formed request.</response>
         </member>
-        <member name="M:PLNKTNv2.Controllers.UsersController.Put(PLNKTNv2.Models.UserReward)">
+        <member name="M:PLNKTNv2.Controllers.UsersController.Put(System.Collections.Generic.ICollection{PLNKTNv2.Models.UserRewardDto})">
             <summary>
-            Uupdates a complete user reward with data provided in the request's HTTP body (user Id retrieved from JWT token).
+            Updates a / multiple user reward(s) with data provided in the request's HTTP body (user Id retrieved from JWT token).
             </summary>
             <remarks>
-            User must be logged in with end user credentials to execute. The full userReward unit of information must be sent.
-            This includes all of the challenge infomration that is not being updated. The function basically removes the user
-            reward and replaces it.
+            User must be logged in with end user credentials to execute. Partial objects are allowed. Refer to object
+            schemas for required structure.
             </remarks>
-            <param name="model"></param>
+            <param name="userRewards">A Collection of UserRewards to be updated</param>
             <returns><c>Task ActionResult </c> HTTP response with HTTP code.</returns>
             <response code="200">Item updated in the database successfully.</response>
             <response code="404">Item not found in database.</response>

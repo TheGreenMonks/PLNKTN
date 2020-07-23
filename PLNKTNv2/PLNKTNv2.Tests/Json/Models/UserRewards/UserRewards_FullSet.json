@@ -1,0 +1,1808 @@
+[
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 30,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_010",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 10,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_005",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 5,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 30
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0005",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_015",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 15,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0002",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 2
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 3
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0004",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_320",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 320,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_040",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 40,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 30
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0013",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_120",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 120,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 30
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0016",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0001",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_480",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 480,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_020",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 20,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 90
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0014",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_005",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 5,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_010",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 10,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0002",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_120",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 120,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 60
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0020",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_020",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 20,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0015",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 14
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0011",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_005",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 5,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0006",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 7
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0007",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_80",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 80,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 90
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0021",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_005",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 5,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 30
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0010",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0002",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 2
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 7
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0008",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_020",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 20,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 90
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_240",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 240,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0018",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0001",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 3
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0003",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 3
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0003",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0007",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 7
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 14
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0012",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PLANTS_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 1,
+            "SubCategory": "Plant_based",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_POULTRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Poultry",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_PORK_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Pork",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0090",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 90
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0019",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+    {
+      "Challenges": [
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_EGG_0014",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Egg",
+            "Time": 14
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_DAIRY_0030",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Dairy",
+            "Time": 30
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_WALK_040",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 40,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Walking",
+            "Time": 1
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_BEEF_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Beef",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "DIET_SEAFOOD_0060",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 0,
+            "Category": "Diet",
+            "RestrictionType": 0,
+            "SubCategory": "Seafood",
+            "Time": 60
+          },
+          "Status": 1
+        },
+        {
+          "AmountCompleted": 0,
+          "Id": "TRAN_BIKE_120",
+          "NotificationStatus": 2,
+          "Rule": {
+            "AmountToConsume": 120,
+            "Category": "Transport",
+            "RestrictionType": 2,
+            "SubCategory": "Bicycle",
+            "Time": 1
+          },
+          "Status": 1
+        }
+      ],
+      "Id": "REWARD_TREE_0017",
+      "IsRewardGranted": 0,
+      "NotificationStatus": 2,
+      "Status": 1
+    },
+  {
+    "Challenges": [
+      {
+        "AmountCompleted": 0,
+        "Id": "DIET_DAIRY_0007",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 0,
+          "Category": "Diet",
+          "RestrictionType": 0,
+          "SubCategory": "Dairy",
+          "Time": 7
+        },
+        "Status": 1
+      },
+      {
+        "AmountCompleted": 0,
+        "Id": "DIET_PLANTS_0007",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 0,
+          "Category": "Diet",
+          "RestrictionType": 1,
+          "SubCategory": "Plant_based",
+          "Time": 7
+        },
+        "Status": 1
+      },
+      {
+        "AmountCompleted": 0,
+        "Id": "DIET_DAIRY_0014",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 0,
+          "Category": "Diet",
+          "RestrictionType": 0,
+          "SubCategory": "Dairy",
+          "Time": 14
+        },
+        "Status": 1
+      },
+      {
+        "AmountCompleted": 0,
+        "Id": "TRAN_BIKE_060",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 60,
+          "Category": "Transport",
+          "RestrictionType": 2,
+          "SubCategory": "Bicycle",
+          "Time": 1
+        },
+        "Status": 1
+      },
+      {
+        "AmountCompleted": 0,
+        "Id": "DIET_BEEF_0014",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 0,
+          "Category": "Diet",
+          "RestrictionType": 0,
+          "SubCategory": "Beef",
+          "Time": 14
+        },
+        "Status": 1
+      },
+      {
+        "AmountCompleted": 0,
+        "Id": "DIET_SEAFOOD_0007",
+        "NotificationStatus": 2,
+        "Rule": {
+          "AmountToConsume": 0,
+          "Category": "Diet",
+          "RestrictionType": 0,
+          "SubCategory": "Seafood",
+          "Time": 7
+        },
+        "Status": 1
+      }
+    ],
+    "Id": "REWARD_TREE_0009",
+    "IsRewardGranted": 0,
+    "NotificationStatus": 2,
+    "Status": 1
+  }
+]

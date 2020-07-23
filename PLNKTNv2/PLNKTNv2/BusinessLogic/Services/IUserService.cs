@@ -14,7 +14,7 @@ namespace PLNKTNv2.BusinessLogic.Services
 
         void DeleteUserRewardFromAllUsers(string rewardId, IEnumerable<User> users);
 
-        void UpdateUserReward(User user, UserReward model);
+        void UpdateUserRewards(User user, ICollection<UserRewardDto> userRewards);
 
         void UpdateUserRewardInAllUsers(Reward reward, IEnumerable<User> users);
     }

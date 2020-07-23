@@ -40,6 +40,12 @@
     <None Update="Json\Models\Dtos\UserDetailsDto.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Json\Models\UserRewards\UserRewards_FullSet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Json\Models\UserRewards\UserRewards_SmallSet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Json\Models\EcologicalMeasurement.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
