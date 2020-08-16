@@ -120,5 +120,12 @@ namespace PLNKTNv2.Controllers
 
             return Ok(response.AuthenticationResult);
         }
+
+        [HttpGet]
+        [Route("test")]
+        public IActionResult Test()
+        {
+            return Ok("Test complete.");
+        }
     }
 }
