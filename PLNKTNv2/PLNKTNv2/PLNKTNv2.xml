@@ -519,6 +519,14 @@
             <response code="200">Returns newly created item.</response>
             <response code="400">Poorly formed request.</response>
         </member>
+        <member name="M:PLNKTNv2.Function.FunctionHandler(System.String,Amazon.Lambda.Core.ILambdaContext)">
+            <summary>
+            A simple function that takes a string and does a ToUpper
+            </summary>
+            <param name="input"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
         <member name="T:PLNKTNv2.LambdaEntryPoint">
             <summary>
             This class extends from APIGatewayProxyFunction which contains the method FunctionHandlerAsync which is the 

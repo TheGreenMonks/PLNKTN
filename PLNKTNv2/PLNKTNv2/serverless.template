@@ -82,6 +82,36 @@
         }
       }
     },
+    "PeriodicExecution": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "PLNKTNv2::PLNKTNv2.Function::FunctionHandler",
+        "Runtime": "dotnetcore3.1",
+        "CodeUri": "",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambdaFullAccess"
+        ],
+        "Environment": {
+          "Variables": {
+            "AppS3Bucket": {
+              "Fn::If": [
+                "CreateS3Bucket",
+                {
+                  "Ref": "Bucket"
+                },
+                {
+                  "Ref": "BucketName"
+                }
+              ]
+            },
+            "AWS_PROFILE_NAME" : "Dexter"
+          }
+        }
+      }
+    },
     "Bucket": {
       "Type": "AWS::S3::Bucket",
       "Condition": "CreateS3Bucket",
