@@ -13,9 +13,9 @@ namespace PLNKTNv2
         /// /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public string FunctionHandler(ILambdaContext context)
         {
-            return input + "Test Complete FH.".ToUpper();
+            return "Test Complete FH.".ToUpper();
         }
     }
 }
