@@ -109,6 +109,16 @@
             },
             "AWS_PROFILE_NAME" : "Dexter"
           }
+        },
+        "Events": {
+          "TriggerRule": {
+            "Type": "Schedule",
+            "Properties": {
+              "Description": "Calls the Periodic Execution Function every 24 hours.",
+              "Name": "PLNKTNv2PeriodicExecutionRule",
+              "Schedule": "rate(1 minute)"
+            }
+          }
         }
       }
     },
