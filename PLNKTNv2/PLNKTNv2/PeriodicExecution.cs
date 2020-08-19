@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace PLNKTNv2
 {
-    public class Function
+    public class PeriodicExecution
     {
         /// <summary>
         /// Gets security credentials of admin user from AWS secrets store, gets and ID token from AWS Cognito 
         /// and calls /Prod/api/users/CalculateUserRewardCompletion as admin.
         /// </summary>
         /// <param name="context">The Lambda context information sent to the function.</param>
-        public async Task FunctionHandler(ILambdaContext context)
+        public async Task PeriodicExecutionFunctionHandler(ILambdaContext context)
         {
             LambdaLogger.Log("**** PLNKTNv2 START Auto Invocation of /Prod/api/signin ****");
 

@@ -85,7 +85,7 @@
     "PeriodicExecution": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "PLNKTNv2::PLNKTNv2.Function::FunctionHandler",
+        "Handler": "PLNKTNv2::PLNKTNv2.PeriodicExecution::PeriodicExecutionFunctionHandler",
         "Runtime": "dotnetcore3.1",
         "CodeUri": "",
         "MemorySize": 256,
@@ -96,17 +96,6 @@
         ],
         "Environment": {
           "Variables": {
-            "AppS3Bucket": {
-              "Fn::If": [
-                "CreateS3Bucket",
-                {
-                  "Ref": "Bucket"
-                },
-                {
-                  "Ref": "BucketName"
-                }
-              ]
-            },
             "AWS_PROFILE_NAME" : "Dexter"
           }
         },
