@@ -519,13 +519,12 @@
             <response code="200">Returns newly created item.</response>
             <response code="400">Poorly formed request.</response>
         </member>
-        <member name="M:PLNKTNv2.Function.FunctionHandler(System.String,Amazon.Lambda.Core.ILambdaContext)">
+        <member name="M:PLNKTNv2.Function.FunctionHandler(Amazon.Lambda.Core.ILambdaContext)">
             <summary>
-            A simple function that takes a string and does a ToUpper
+            Gets security credentials of admin user from AWS secrets store, gets and ID token from AWS Cognito 
+            and calls /Prod/api/users/CalculateUserRewardCompletion as admin.
             </summary>
-            <param name="input"></param>
-            <param name="context"></param>
-            <returns></returns>
+            <param name="context">The Lambda context information sent to the function.</param>
         </member>
         <member name="T:PLNKTNv2.LambdaEntryPoint">
             <summary>
