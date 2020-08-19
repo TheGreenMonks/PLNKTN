@@ -105,7 +105,7 @@
             "Properties": {
               "Description": "Calls the Periodic Execution Function every 24 hours.",
               "Name": "PLNKTNv2PeriodicExecutionRule",
-              "Schedule": "rate(1 minute)"
+              "Schedule": "rate(1 day)"
             }
           }
         }

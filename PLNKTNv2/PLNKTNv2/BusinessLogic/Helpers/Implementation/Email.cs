@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amazon.Lambda.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +10,7 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
 {
     public class Email : IMessenger
     {
-        private readonly string pwFile = "C:\\gmpw.txt";
+        //private readonly string pwFile = "C:\\gmpw.txt";
         private ICollection<string> messageLines = new List<string>();
 
         public void AddLine(string userId, string itemCompleted, string itemCompletedId)
@@ -29,7 +30,7 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
             string strEmailMessageLines = GenerateEmailMessage(messageLines);
             //IDictionary<string, string> emailCreds = GetEmailCredentials(pwFile);
             //MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, emailCreds["fromEmail"], emailCreds["toEmail"]);
-            MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, "a@b.com", "a@c.com");
+            //MailMessage message = GenerateEmail(strEmailMessageLines, controllerName, "a@b.com", "a@c.com");
 
             /*var smtp = new SmtpClient
             {
@@ -43,11 +44,16 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
 
             //smtp.Send(message);
 
-            Debug.WriteLine(message.Body);
-            //Debug.WriteLine("Location: RewardsController in 'sendEmail()' method.");
-            //Debug.WriteLine("Cause: Could not send email, possibly due to bad password file, bad access or bad email set up.");
+            string body = "The " + controllerName + " Completion Calculation method was executed at " +
+                DateTime.UtcNow.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n\n" +
+                "The following " + controllerName + "(s) have been completed:\n\n" + strEmailMessageLines +
+
+                "\nBest regards,\n\n\n" + "The PLNKTN Web App";
+
+            Debug.WriteLine(body);
+            LambdaLogger.Log(body);
         }
-        private MailMessage GenerateEmail(string strMessages, string controllerName, string fromEmail, string toEmail)
+        /*private MailMessage GenerateEmail(string strMessages, string controllerName, string fromEmail, string toEmail)
         {
             // Code to set up email and send it.
             var fromAddress = new MailAddress(fromEmail, "PLNKTN Web App");
@@ -66,7 +72,7 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
             })
 
                 return message;
-        }
+        }*/
 
         private string GenerateEmailMessage(ICollection<string> messageLines)
         {
@@ -86,7 +92,8 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
 
             return strMessages;
         }
-        private IDictionary<string, string> GetEmailCredentials(string pwFile)
+
+        /*private IDictionary<string, string> GetEmailCredentials(string pwFile)
         {
             IDictionary<string, string> emailCreds = new Dictionary<string, string>();
 
@@ -101,6 +108,6 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
             }
 
             return emailCreds;
-        }
+        }*/
     }
 }

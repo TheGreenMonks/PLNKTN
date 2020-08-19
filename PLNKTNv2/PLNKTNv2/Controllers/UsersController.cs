@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Amazon.Lambda.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLNKTNv2.BusinessLogic.Authentication;
@@ -226,8 +227,13 @@ namespace PLNKTNv2.Controllers
         public async Task<IActionResult> Post()
         {
             List<User> users = (List<User>)await _unitOfWork.Repository<User>().GetAllAsync();
+            LambdaLogger.Log("**** All Users retrieved from DB ****");
+
             _userService.CalculateUserRewardCompletion(users);
+            LambdaLogger.Log("**** All User's challenge and reward status' have bene calculated ****");
+
             await _unitOfWork.Repository<User>().UpdateAllAsync(users);
+            LambdaLogger.Log("**** All modified User data saved to DB ****");
 
             return Ok();
         }
