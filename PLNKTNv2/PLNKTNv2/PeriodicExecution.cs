@@ -110,12 +110,48 @@ namespace PLNKTNv2
             finally
             {
                 requestMessage.Dispose();
-                _httpClient.Dispose();
             }
 
             LambdaLogger.Log("**** CalculateUserRewardCompletion call complete with status code result: " + webApiResponse.StatusCode + " ****");
 
             LambdaLogger.Log("**** PLNKTNv2 END Auto Invocation of /Prod/api/users/CalculateUserRewardCompletion ****");
+
+
+
+            LambdaLogger.Log("**** PLNKTNv2 START Auto Invocation of /Prod/api/CollectiveEf ****");
+
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cognitoDetails.IdToken);
+
+            string dateTimeUtcNow = DateTime.UtcNow.ToString("s");
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/CollectiveEf/" + dateTimeUtcNow);
+
+            try
+            {
+                webApiResponse = await _httpClient.SendAsync(requestMessage);
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (HttpRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                requestMessage.Dispose();
+                _httpClient.Dispose();
+            }
+
+            LambdaLogger.Log("**** CollectiveEf call complete with status code result: " + webApiResponse.StatusCode + " ****");
+
+            LambdaLogger.Log("**** PLNKTNv2 END Auto Invocation of /Prod/api/CollectiveEf ****");
         }
 
         private string GetSecret(string secretName)
