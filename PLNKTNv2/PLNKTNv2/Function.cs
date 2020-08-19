@@ -31,6 +31,7 @@ namespace PLNKTNv2
 
             string userPasswordJSONRaw = GetSecret("dexter-admin");
             Dictionary<string, string> pw = JsonConvert.DeserializeObject<Dictionary<string, string>>(userPasswordJSONRaw);
+            LambdaLogger.Log("**** Secret retrieved ****");
 
             UserAuthDto user = new UserAuthDto()
             {
@@ -77,8 +78,11 @@ namespace PLNKTNv2
             string responseBodyAsString = await webApiResponse.Content.ReadAsStringAsync();
             AuthenticationResultType cognitoDetails = JsonConvert.DeserializeObject<AuthenticationResultType>(responseBodyAsString);
             requestMessage.Dispose();
+            LambdaLogger.Log("**** Admin user login complete ****");
 
             LambdaLogger.Log("**** PLNKTNv2 END Auto Invocation of /Prod/api/signin ****");
+
+
 
             LambdaLogger.Log("**** PLNKTNv2 START Auto Invocation of /Prod/api/users/CalculateUserRewardCompletion ****");
 
@@ -109,7 +113,7 @@ namespace PLNKTNv2
                 _httpClient.Dispose();
             }
 
-            LambdaLogger.Log("**** " + webApiResponse.StatusCode + " ****");
+            LambdaLogger.Log("**** CalculateUserRewardCompletion call complete with status code result: " + webApiResponse.StatusCode + " ****");
 
             LambdaLogger.Log("**** PLNKTNv2 END Auto Invocation of /Prod/api/users/CalculateUserRewardCompletion ****");
         }
