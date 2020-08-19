@@ -11,6 +11,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -24,7 +25,7 @@ namespace PLNKTNv2
         /// and calls /Prod/api/users/CalculateUserRewardCompletion as admin.
         /// </summary>
         /// <param name="context">The Lambda context information sent to the function.</param>
-        public async void FunctionHandler(ILambdaContext context)
+        public async Task FunctionHandler(ILambdaContext context)
         {
             LambdaLogger.Log("**** PLNKTNv2 START Auto Invocation of /Prod/api/signin ****");
 
