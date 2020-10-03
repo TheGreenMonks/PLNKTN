@@ -679,7 +679,7 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0021Data();
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < daysSkipped; i++)
             {
                 EcologicalMeasurement _emTemp = new EcologicalMeasurement()
                 {
@@ -731,7 +731,7 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0021Data();
-            for (int i = 0; i < 90; i++)
+            for (int i = 0; i < daysEaten; i++)
             {
                 EcologicalMeasurement _emTemp = new EcologicalMeasurement()
                 {

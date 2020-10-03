@@ -284,12 +284,9 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                          * by variable 'offset' (this provides the date range) for the challenge to be assessed against.
                          * This works becasue the _user.EcologicalMeasurements list is ordered earlier in this method.
                          */
-                        var _fullDateRange = false;
                         var challengeStart = DateTime.UtcNow.AddDays(-offset).Date;
                         var ecoMeasurementsOfInterest = user.EcologicalMeasurements.Where(e => e.Date_taken.Date >= challengeStart.Date &&
                                                                                             e.Date_taken.Date <= DateTime.UtcNow.Date).ToList();
-                        if (ecoMeasurementsOfInterest.Count >= _time)
-                            _fullDateRange = true;
 
                         /* Debug code to see what is in large sets of ecoMeasurementsOfInterest
                         foreach (var item in ecoMeasurementsOfInterest)
@@ -300,7 +297,7 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
 
                         // Check if the rule restriction is SKIP, i.e. do not eat beef for 1 week AND
                         // check there are enough eco measurements in the given date range to successfully complete the challenge
-                        if (_restrictionType == ChallengeType.Skip && _fullDateRange)
+                        if (_restrictionType == ChallengeType.Skip)
                         {
                             // A counter to count the number of times an item has been skipped
                             int skippedEnoughTimes = 0;
@@ -323,8 +320,6 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                                     {
                                         skippedEnoughTimes++;
                                     }
-
-                                    
                                 }
                             }
 
@@ -340,7 +335,7 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                                 amountComplete = skippedEnoughTimes;
                             }
                         }
-                        else if (_restrictionType == ChallengeType.Only_This && _fullDateRange)
+                        else if (_restrictionType == ChallengeType.Only_This)
                         {
                             // A counter to count the number of times an item has been discretely used
                             var onlyUsedEnoughtTimes = 0;
