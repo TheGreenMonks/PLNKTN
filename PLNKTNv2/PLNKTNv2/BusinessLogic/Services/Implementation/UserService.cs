@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using PLNKTNv2.BusinessLogic.Helpers;
+﻿using PLNKTNv2.BusinessLogic.Helpers;
 using PLNKTNv2.Models;
 using PLNKTNv2.Models.Dtos;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace PLNKTNv2.BusinessLogic.Services.Implementation
@@ -145,6 +143,14 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                 CalculateUserChallengeCompletion(user, _messenger);
                 CalculateUserRewardCompletion(user, _messenger);
             }
+
+            _messenger.Send("Both Reward and Challenge Completion Calculation Controller Methods");
+        }
+
+        public void CalculateMyRewardCompletion(User user)
+        {
+            CalculateUserChallengeCompletion(user, _messenger);
+            CalculateUserRewardCompletion(user, _messenger);
 
             _messenger.Send("Both Reward and Challenge Completion Calculation Controller Methods");
         }
@@ -324,7 +330,7 @@ namespace PLNKTNv2.BusinessLogic.Services.Implementation
                             }
 
                             // Checks if challenge item has been skipped enough times to complete the challenge
-                            if (skippedEnoughTimes == _time)
+                            if (skippedEnoughTimes >= _time)
                             {
                                 challengeProgress = ChallengeProgress.Complete;
                                 amountComplete = skippedEnoughTimes;

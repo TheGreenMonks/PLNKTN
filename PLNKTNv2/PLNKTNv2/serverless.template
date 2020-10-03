@@ -82,35 +82,6 @@
         }
       }
     },
-    "PeriodicExecution": {
-      "Type": "AWS::Serverless::Function",
-      "Properties": {
-        "Handler": "PLNKTNv2::PLNKTNv2.PeriodicExecution::PeriodicExecutionFunctionHandler",
-        "Runtime": "dotnetcore3.1",
-        "CodeUri": "",
-        "MemorySize": 256,
-        "Timeout": 30,
-        "Role": null,
-        "Policies": [
-          "AWSLambdaFullAccess"
-        ],
-        "Environment": {
-          "Variables": {
-            "AWS_PROFILE_NAME" : "Dexter"
-          }
-        },
-        "Events": {
-          "TriggerRule": {
-            "Type": "Schedule",
-            "Properties": {
-              "Description": "Calls the Periodic Execution Function every 24 hours.",
-              "Name": "PLNKTNv2PeriodicExecutionRule",
-              "Schedule": "rate(1 day)"
-            }
-          }
-        }
-      }
-    },
     "Bucket": {
       "Type": "AWS::S3::Bucket",
       "Condition": "CreateS3Bucket",

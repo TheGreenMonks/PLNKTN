@@ -10,6 +10,8 @@ namespace PLNKTNv2.BusinessLogic.Services
 
         void CalculateUserRewardCompletion(List<User> users);
 
+        void CalculateMyRewardCompletion(User user);
+
         User CreateUser(ICollection<Reward> rewards, CreateUserDetailsDTO userDto, string id);
 
         void DeleteUserRewardFromAllUsers(string rewardId, IEnumerable<User> users);

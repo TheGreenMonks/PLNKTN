@@ -237,5 +237,38 @@ namespace PLNKTNv2.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Calculate User Reward and Challenge completion for the specified user.
+        /// </summary>
+        /// <remarks>
+        /// User must be logged in with end user credentials to execute.
+        /// Will check all reward's and challenges to see if they are complete by checking the user's
+        /// submitted ecological measurements against the challenge's rule condition for completion.  Once all challenges
+        /// for a reward are checked (6 per reward) the reward itself will be checked to see if it is complete. A reward
+        /// is complete when all its challenges are themselves complete. The call will do this for every challenge in every
+        /// reward in every user in the database.
+        /// </remarks>
+        /// <returns><c>Task ActionResult </c> HTTP response with HTTP code.</returns>
+        /// <response code="200">Item updated in the database successfully.</response>
+        /// <response code="404">Item not found in database.</response>
+        /// <response code="400">Poorly formed request.</response>
+        [HttpPost("CalculateMyRewardCompletion")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CalculateMyRewardCompletion()
+        {
+            var id = _account.GetAccountId(this.User);
+            User user = _unitOfWork.Repository<User>().GetByIdAsync(id).Result;
+
+            if (user != null)
+            {
+                _userService.CalculateMyRewardCompletion(user);
+                await _unitOfWork.Repository<User>().UpdateAsync(user);
+                return Ok();
+            }
+            return NotFound("User not found.");
+        }
     }
 }
