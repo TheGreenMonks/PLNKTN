@@ -33,6 +33,7 @@ namespace PLNKTNv2.BusinessLogic.Helpers.Implementation
 
             Debug.WriteLine(body);
             LambdaLogger.Log(body);
+            Console.WriteLine(body);
         }
 
         private string GenerateEmailMessage(ICollection<string> messageLines)
