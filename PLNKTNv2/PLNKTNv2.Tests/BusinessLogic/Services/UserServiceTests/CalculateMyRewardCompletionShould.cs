@@ -5,6 +5,7 @@ using PLNKTNv2.BusinessLogic.Services;
 using PLNKTNv2.BusinessLogic.Services.Implementation;
 using PLNKTNv2.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -24,6 +25,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Beef = 0;
 
             // Act
@@ -31,6 +49,75 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
 
             // Assert
             Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").Status == UserRewardChallengeStatus.Complete);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").AmountCompleted >= 1);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").NotificationStatus >= NotificationStatus.Not_Notified);
+        }
+
+        [Fact]
+        public void IncompleteChallengeWhenNotSkipBeef1DayWith1EcoMeasure()
+        {
+            // Arrange
+            SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
+            // Act
+            sut.CalculateMyRewardCompletion(user);
+
+            // Assert
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").Status == UserRewardChallengeStatus.Incomplete);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").AmountCompleted == 0);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").NotificationStatus >= NotificationStatus.Not_Complete);
+        }
+
+        [Fact]
+        public void CompleteChallengeWhenSkipBeef1DayWith3EcoMeasures()
+        {
+            // Arrange
+            SetUpRewardTree0001Data();
+            for (int i = 0; i < 3; i++)
+            {
+                ecologicalMeasurement = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 1,
+                        Dairy = 1,
+                        Egg = 1,
+                        Plant_based = 1,
+                        Pork = 1,
+                        Poultry = 1,
+                        Seafood = 1
+                    },
+                    Date_taken = DateTime.UtcNow.AddDays(-i),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(ecologicalMeasurement);
+            }
+            user.EcologicalMeasurements.ElementAt(1).Diet.Beef = 0;
+            user.EcologicalMeasurements.ElementAt(2).Diet.Beef = 0;
+
+            // Act
+            sut.CalculateMyRewardCompletion(user);
+
+            // Assert
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").Status == UserRewardChallengeStatus.Complete);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").AmountCompleted >= 1);
+            Assert.True(user.UserRewards.ElementAt(0).Challenges.Find(urc => urc.Id == "DIET_BEEF_0001").NotificationStatus >= NotificationStatus.Not_Notified);
         }
 
         [Fact]
@@ -38,6 +125,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Dairy = 0;
 
             // Act
@@ -52,6 +156,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Egg = 0;
 
             // Act
@@ -66,6 +187,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Pork = 0;
 
             // Act
@@ -80,6 +218,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Poultry = 0;
 
             // Act
@@ -94,6 +249,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Seafood = 0;
 
             // Act
@@ -115,6 +287,23 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
         {
             // Arrange
             SetUpRewardTree0001Data();
+            ecologicalMeasurement = new EcologicalMeasurement()
+            {
+                Diet = new Diet()
+                {
+                    Beef = 1,
+                    Dairy = 1,
+                    Egg = 1,
+                    Plant_based = 1,
+                    Pork = 1,
+                    Poultry = 1,
+                    Seafood = 1
+                },
+                Date_taken = DateTime.UtcNow,
+                EcologicalFootprint = (float?)0.9
+            };
+            user.EcologicalMeasurements.Add(ecologicalMeasurement);
+
             user.EcologicalMeasurements.ElementAt(0).Diet.Pork = 0;
             user.EcologicalMeasurements.ElementAt(0).Diet.Beef = 0;
             user.EcologicalMeasurements.ElementAt(0).Diet.Poultry = 0;
@@ -991,10 +1180,121 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             sut.CalculateMyRewardCompletion(user);
 
             // Assert
-            var challenge = user.UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80"); ;
+            var challenge = user.UserRewards[0].Challenges.Find(urc => urc.Id == "TRAN_WALK_80");
 
             Assert.Equal(UserRewardChallengeStatus.Incomplete, challenge.Status);
             Assert.Equal(UserRewardStatus.Incomplete, user.UserRewards[0].Status);
+        }
+
+        [Theory]
+        [InlineData(1, UserRewardChallengeStatus.Incomplete, NotificationStatus.Not_Complete)]
+        [InlineData(2, UserRewardChallengeStatus.Complete, NotificationStatus.Not_Notified)]
+        [InlineData(7, UserRewardChallengeStatus.Complete, NotificationStatus.Not_Notified)]
+        public void CorrectChallengeStatusWhenOnlyEatPlants2Days(int numEcoMeasures, UserRewardChallengeStatus isComplete, NotificationStatus isNotfied)
+        {
+            // Arrange
+            SetUpRewardTreeFullSet();
+            for (int i = 0; i < numEcoMeasures; i++)
+            {
+                ecologicalMeasurement = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 0,
+                        Dairy = 0,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 0,
+                        Poultry = 0,
+                        Seafood = 0
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.AddDays(-i),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(ecologicalMeasurement);
+            }
+
+            // Act
+            sut.CalculateMyRewardCompletion(user);
+
+            // Assert
+            foreach (var reward in user.UserRewards)
+            {
+                var _chal = reward.Challenges.Find(urc => urc.Id == "DIET_PLANTS_0002");
+
+                if (_chal != null)
+                {
+                    Assert.True(_chal.Status == isComplete);
+                    Assert.True(_chal.AmountCompleted == numEcoMeasures);
+                    Assert.True(_chal.NotificationStatus == isNotfied);
+                }
+            }
+        }
+
+        [Fact]
+        public void CompleteChallengeWhenOnlyEatPlants2DaysSpreadOverWeek()
+        {
+            // Arrange
+            SetUpRewardTreeFullSet();
+            for (int i = 0; i < 7; i++)
+            {
+                ecologicalMeasurement = new EcologicalMeasurement()
+                {
+                    Diet = new Diet()
+                    {
+                        Beef = 0,
+                        Dairy = 0,
+                        Egg = 0,
+                        Plant_based = 1,
+                        Pork = 0,
+                        Poultry = 0,
+                        Seafood = 0
+                    },
+                    Transport = new Transport()
+                    {
+                        Bicycle = 0,
+                        Bus = 0,
+                        Car = 0,
+                        Flight = 0,
+                        Subway = 0,
+                        Walking = 0
+                    },
+                    Date_taken = DateTime.UtcNow.AddDays(-i),
+                    EcologicalFootprint = (float?)0.9
+                };
+                user.EcologicalMeasurements.Add(ecologicalMeasurement);
+            }
+
+            user.EcologicalMeasurements.ElementAt(0).Diet.Beef = 1;
+            user.EcologicalMeasurements.ElementAt(2).Diet.Beef = 1;
+            user.EcologicalMeasurements.ElementAt(4).Diet.Beef = 1;
+            user.EcologicalMeasurements.ElementAt(5).Diet.Beef = 1;
+            user.EcologicalMeasurements.ElementAt(6).Diet.Beef = 1;
+
+            // Act
+            sut.CalculateMyRewardCompletion(user);
+
+            // Assert
+            foreach (var reward in user.UserRewards)
+            {
+                var _chal = reward.Challenges.Find(urc => urc.Id == "DIET_PLANTS_0002");
+
+                if (_chal != null)
+                {
+                    Assert.True(_chal.Status == UserRewardChallengeStatus.Complete);
+                    Assert.True(_chal.AmountCompleted == 2);
+                    Assert.True(_chal.NotificationStatus == NotificationStatus.Not_Notified);
+                }
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -1025,22 +1325,6 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             // Setup sut method parameters
             string jsonTemp = File.ReadAllText("./Json/Models/NewUser_RT1.json");
             user = JsonConvert.DeserializeObject<User>(jsonTemp);
-            ecologicalMeasurement = new EcologicalMeasurement()
-            {
-                Diet = new Diet()
-                {
-                    Beef = 1,
-                    Dairy = 1,
-                    Egg = 1,
-                    Plant_based = 1,
-                    Pork = 1,
-                    Poultry = 1,
-                    Seafood = 1
-                },
-                Date_taken = DateTime.UtcNow,
-                EcologicalFootprint = (float?)0.9
-            };
-            user.EcologicalMeasurements.Add(ecologicalMeasurement);
         }
 
         private void SetUpRewardTree0002Data()
@@ -1067,6 +1351,19 @@ namespace PLNKTNv2.Tests.BusinessLogic.Services.UserServiceTests
             user = JsonConvert.DeserializeObject<User>(jsonTemp);
             jsonTemp = File.ReadAllText("./Json/Models/UserRewards/UserReward_RT21.json");
             user.UserRewards.Add(JsonConvert.DeserializeObject<UserReward>(jsonTemp));
+        }
+
+        private void SetUpRewardTreeFullSet()
+        {
+            // Setup classes
+            iMessengerMock = new Email();
+            sut = new UserService(iMessengerMock);
+
+            // Setup sut method parameters
+            string jsonTemp = File.ReadAllText("./Json/Models/User_Blank_New.json");
+            user = JsonConvert.DeserializeObject<User>(jsonTemp);
+            jsonTemp = File.ReadAllText("./Json/Models/UserRewards/UserRewards_FullSet.json");
+            user.UserRewards = JsonConvert.DeserializeObject<List<UserReward>>(jsonTemp);
         }
     }
 }
